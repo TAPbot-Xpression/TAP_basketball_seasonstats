@@ -10,8 +10,7 @@ TOMMIE_URL = "https://tommiesports.com/sports/mbball/stats/2025-26"
 AWAY_CONFIG_FILE = "away_team_config.json"
 OUTPUT_JSON = "docs/stats.json"
 
-STAT_KEYS = 
-["AVG", "FG%", "3PT%", "FT%", "OFF", "DEF", "AST", "TO", "STL", "BLK", "MIN"]
+STAT_KEYS = ["AVG", "FG%", "3PT%", "FT%", "OFF", "DEF", "AST", "TO", "STL", "BLK", "MIN"]
 
 HEADERS = {
     "User-Agent": (
@@ -71,7 +70,7 @@ def clean_player_name_and_number(raw_text):
     dup_match = re.match(r"^(.+?)\s*(\d{1,3})\s*(.+)$", text)
     if dup_match:
         part1 = dup_match.group(1)
-        num   = dup_match.group(2)
+        num = dup_match.group(2)
         part2 = dup_match.group(3)
         p1_clean = re.sub(r"[^a-zA-Z]", "", part1).lower()
         p2_clean = re.sub(r"[^a-zA-Z]", "", part2).lower()
@@ -116,8 +115,7 @@ def is_summary_row(name):
     if not name:
         return True
     n = name.strip().lower()
-    summary_names = 
-["total", "opponents", "team", "tm", "#", "player", "totals"]
+    summary_names = ["total", "opponents", "team", "tm", "#", "player", "totals"]
     return n in summary_names or n.startswith("total") or n.startswith("opponent")
 
 
@@ -127,26 +125,19 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
     Target stats: AVG, FG%, 3PT%, FT%, OFF, DEF, AST, TO, STL, BLK, MIN
     """
     soup = BeautifulSoup(html, "html.parser")
-    players = 
-[]
+    players = []
 
     # ── Strategy 1: HTML Tables ─────────────────────────────────────────────
     tables = soup.find_all("table")
     for table in tables:
-        # Find headers
         header_rows = table.find_all("tr")
         if not header_rows:
             continue
 
-        raw_headers = 
-[]
-        # Check first 2 rows for possible multi-row headers
-        for r in header_rows
-[:2]:
-            ths = r.find_all(
-["th", "td"])
-            row_texts = 
-[th.get_text(strip=True) for th in ths]
+        raw_headers = []
+        for r in header_rows[:2]:
+            ths = r.find_all(["th", "td"])
+            row_texts = [th.get_text(strip=True) for th in ths]
             if any(normalize_header(t) for t in row_texts):
                 raw_headers = row_texts
                 break
@@ -154,31 +145,24 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
         if not raw_headers:
             continue
 
-        mapped_headers = 
-[normalize_header(h) for h in raw_headers]
+        mapped_headers = [normalize_header(h) for h in raw_headers]
         matched_stat_count = sum(1 for m in mapped_headers if m in STAT_KEYS)
         
-        # We need a table that contains at least 3 matching stats
         if matched_stat_count < 3:
             continue
 
         rows = table.find_all("tr")
         for row in rows:
-            cells = row.find_all(
-["td", "th"])
+            cells = row.find_all(["td", "th"])
             if len(cells) < 3:
                 continue
 
-            cell_texts = 
-[c.get_text(strip=True) for c in cells]
+            cell_texts = [c.get_text(strip=True) for c in cells]
             
-            # Determine player name / number
             raw_name = ""
             for idx in range(min(3, len(cell_texts))):
-                txt = cell_texts
-[idx]
-                if txt and not re.match(r"^
-[\d\.\-%]+$", txt):
+                txt = cell_texts[idx]
+                if txt and not re.match(r"^[\d\.\-%]+$", txt):
                     raw_name = txt
                     break
 
@@ -197,19 +181,13 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
                 "stats": {k: "-" for k in STAT_KEYS}
             }
 
-            # Map stats by column alignment
             for i, key in enumerate(mapped_headers):
                 if key and i < len(cell_texts):
-                    val = cell_texts
-[i]
+                    val = cell_texts[i]
                     if val != "":
-                        player
-["stats"]
-[key] = val
+                        player["stats"][key] = val
 
-            # Keep only rows where at least one valid stat was parsed
-            if any(v != "-" for v in player
-["stats"].values()):
+            if any(v != "-" for v in player["stats"].values()):
                 players.append(player)
 
         if players:
@@ -221,14 +199,12 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
         for script in scripts:
             text = script.string or ""
             if "individual" in text.lower() and "stats" in text.lower():
-                matches = re.findall(r'\{
-[^{}]{200,}\}', text)
+                matches = re.findall(r'\{[^{}]{200,}\}', text)
                 for m in matches:
                     try:
                         data = json.loads(m)
                         if isinstance(data, dict) and "players" in data:
-                            for p in data
-["players"]:
+                            for p in data["players"]:
                                 raw_p_name = p.get("name", p.get("display_name", ""))
                                 if is_summary_row(raw_p_name):
                                     continue
@@ -246,12 +222,9 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
                                 for raw_k, val in p.items():
                                     norm = normalize_header(raw_k)
                                     if norm:
-                                        player
-["stats"]
-[norm] = str(val)
+                                        player["stats"][norm] = str(val)
 
-                                if any(v != "-" for v in player
-["stats"].values()):
+                                if any(v != "-" for v in player["stats"].values()):
                                     players.append(player)
                     except Exception:
                         pass
@@ -260,8 +233,7 @@ def parse_stats_table(html, team_type="home", team_name="St. Thomas Tommies"):
 
 
 def scrape_team(url, team_type="home", team_name="Team"):
-    print(f"Scraping 
-[{team_type.upper()}] {team_name}: {url}")
+    print(f"Scraping [{team_type.upper()}] {team_name}: {url}")
     try:
         html = fetch_html(url)
         players = parse_stats_table(html, team_type=team_type, team_name=team_name)
@@ -269,8 +241,7 @@ def scrape_team(url, team_type="home", team_name="Team"):
         return players
     except Exception as e:
         print(f"  ERROR scraping {team_name}: {e}")
-        return 
-[]
+        return []
 
 
 # ── MAIN ─────────────────────────────────────────────────────────────────────
@@ -285,8 +256,7 @@ def main():
     # 2. Scrape Away Team (if configured)
     config = load_away_config()
     away_team_name = config.get("label", "Away Team")
-    away_players = 
-[]
+    away_players = []
 
     if config.get("url"):
         last = config.get("last_scraped")
@@ -299,10 +269,8 @@ def main():
                 hours_since = 999
 
         if hours_since >= 24 or last is None:
-            away_players = scrape_team(config
-["url"], team_type="away", team_name=away_team_name)
-            config
-["last_scraped"] = datetime.utcnow().isoformat() + "Z"
+            away_players = scrape_team(config["url"], team_type="away", team_name=away_team_name)
+            config["last_scraped"] = datetime.utcnow().isoformat() + "Z"
             save_away_config(config)
         else:
             print(f"Away team last scraped {hours_since:.1f}h ago (< 24h threshold)")
