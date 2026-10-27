@@ -1,10 +1,7 @@
 {
-  "meta": {
-    "tommie_url": "https://tommiesports.com/sports/mbball/stats/2025-26",
-    "away_url": "https://greenbayphoenix.com/sports/mens-basketball/stats/2025-26",
-    "away_label": "Away Team",
-    "last_run": "2026-10-27T16:34:53.058482Z",
-    "stat_keys": [
+  "metadata": {
+    "last_updated_utc": "2026-10-27T17:46:47.450611Z",
+    "stat_categories": [
       "AVG",
       "FG%",
       "3PT%",
@@ -18,341 +15,322 @@
       "MIN"
     ]
   },
-  "tommie": [
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.055327Z",
-      "name": "#",
-      "AST": "3PT",
-      "TO": "3PTA",
-      "STL": "3PT%",
-      "BLK": "FTM"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.055606Z",
-      "name": "Minessale, Nolan",
-      "AST": "44",
-      "TO": "144",
-      "STL": ".306",
-      "BLK": "174"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.055778Z",
-      "name": "Janowski, Nick",
-      "AST": "62",
-      "TO": "183",
-      "STL": ".339",
-      "BLK": "75"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.055950Z",
-      "name": "Johnson-arigu, Isaiah",
-      "AST": "26",
-      "TO": "80",
-      "STL": ".325",
-      "BLK": "72"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056118Z",
-      "name": "Bjerke, Carter",
-      "AST": "79",
-      "TO": "176",
-      "STL": ".449",
-      "BLK": "20"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056285Z",
-      "name": "Oosterbaan, Ben",
-      "AST": "39",
-      "TO": "106",
-      "STL": ".368",
-      "BLK": "18"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056449Z",
-      "name": "Dufault, Ryan",
-      "AST": "3",
-      "TO": "9",
-      "STL": ".333",
-      "BLK": "35"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056624Z",
-      "name": "Herro, Austin",
-      "AST": "14",
-      "TO": "37",
-      "STL": ".378",
-      "BLK": "36"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056789Z",
-      "name": "Coleman, Jermaine",
-      "AST": "35",
-      "TO": "103",
-      "STL": ".340",
-      "BLK": "11"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.056956Z",
-      "name": "Tibbits, Hayden",
-      "AST": "15",
-      "TO": "44",
-      "STL": ".341",
-      "BLK": "11"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057125Z",
-      "name": "Franks, Tim",
-      "AST": "6",
-      "TO": "10",
-      "STL": ".600",
-      "BLK": "5"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057289Z",
-      "name": "Humphries Jr., Tommy",
-      "AST": "1",
-      "TO": "4",
-      "STL": ".250",
-      "BLK": "1"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057452Z",
-      "name": "Counts, Kyle",
-      "AST": "1",
-      "TO": "2",
-      "STL": ".500",
-      "BLK": "0"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057630Z",
-      "name": "Lafferty, Ryan",
-      "AST": "1",
-      "TO": "5",
-      "STL": ".200",
-      "BLK": "0"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057796Z",
-      "name": "Tauer, Adam",
-      "AST": "0",
-      "TO": "1",
-      "STL": ".000",
-      "BLK": "1"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.057961Z",
-      "name": "Tauer, Jack",
-      "AST": "1",
-      "TO": "1",
-      "STL": "1.000",
-      "BLK": "0"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.058066Z",
-      "name": "Total",
-      "AST": "327",
-      "TO": "905",
-      "STL": ".361",
-      "BLK": "459"
-    },
-    {
-      "team": "St. Thomas Tommies",
-      "scraped_at": "2026-10-27T16:34:53.058167Z",
-      "name": "Opponents",
-      "AST": "259",
-      "TO": "837",
-      "STL": ".309",
-      "BLK": "440"
-    }
-  ],
-  "away": [
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.965532Z",
-      "name": "TOT",
-      "AST": "PTS",
-      "TO": "AVG",
-      "STL": "OFF",
-      "BLK": "DEF"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.965729Z",
-      "name": "O'Hara, C.J.10O'Hara, C.J.",
-      "AST": ".280",
-      "TO": "139",
-      "STL": "175",
-      "BLK": ".794"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.965905Z",
-      "name": "Hall, Marcus13Hall, Marcus",
-      "AST": ".406",
-      "TO": "97",
-      "STL": "127",
-      "BLK": ".764"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966097Z",
-      "name": "Allen, Justin07Allen, Justin",
-      "AST": ".253",
-      "TO": "99",
-      "STL": "120",
-      "BLK": ".825"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966272Z",
-      "name": "Ruedinger, Preston02Ruedinger, Preston",
-      "AST": ".411",
-      "TO": "69",
-      "STL": "76",
-      "BLK": ".908"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966447Z",
-      "name": "Wilkins, Caden23Wilkins, Caden",
-      "AST": ".403",
-      "TO": "28",
-      "STL": "41",
-      "BLK": ".683"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966626Z",
-      "name": "Thomas, LeBron22Thomas, LeBron",
-      "AST": ".111",
-      "TO": "54",
-      "STL": "79",
-      "BLK": ".684"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966799Z",
-      "name": "Hewlett, Dontrell12Hewlett, Dontrell",
-      "AST": ".143",
-      "TO": "4",
-      "STL": "8",
-      "BLK": ".500"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.966990Z",
-      "name": "Bethea, Ramel00Bethea, Ramel",
-      "AST": ".000",
-      "TO": "14",
-      "STL": "21",
-      "BLK": ".667"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.967165Z",
-      "name": "Stroud, Rob15Stroud, Rob",
-      "AST": ".167",
-      "TO": "12",
-      "STL": "16",
-      "BLK": ".750"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.967336Z",
-      "name": "Wrecke, Mac04Wrecke, Mac",
-      "AST": ".360",
-      "TO": "16",
-      "STL": "23",
-      "BLK": ".696"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.967507Z",
-      "name": "Todorovic, Vukasin40Todorovic, Vukasin",
-      "AST": ".143",
-      "TO": "12",
-      "STL": "20",
-      "BLK": ".600"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.967676Z",
-      "name": "Cicic, Maruan20Cicic, Maruan",
-      "AST": ".000",
-      "TO": "7",
-      "STL": "11",
-      "BLK": ".636"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.967847Z",
-      "name": "Hines, Josh01Hines, Josh",
-      "AST": ".333",
-      "TO": "0",
-      "STL": "2",
-      "BLK": ".000"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.968036Z",
-      "name": "Van Kauwenberg, Keegan03Van Kauwenberg, Keegan",
-      "AST": ".346",
-      "TO": "0",
-      "STL": "0",
-      "BLK": ".000"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.968210Z",
-      "name": "Fitzgerald, Brady21Fitzgerald, Brady",
-      "AST": ".000",
-      "TO": "1",
-      "STL": "2",
-      "BLK": ".500"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.968373Z",
-      "name": "TM",
-      "AST": ".000",
-      "TO": "0",
-      "STL": "0",
-      "BLK": ".000"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.968520Z",
-      "name": "Total",
-      "AST": ".362",
-      "TO": "552",
-      "STL": "721",
-      "BLK": ".766"
-    },
-    {
-      "team": "Away Team",
-      "scraped_at": "2026-10-27T15:37:44.968669Z",
-      "name": "Opponents",
-      "AST": ".361",
-      "TO": "505",
-      "STL": "680",
-      "BLK": ".743"
-    }
-  ]
+  "home_team": {
+    "name": "St. Thomas Tommies",
+    "url": "https://tommiesports.com/sports/mbball/stats/2025-26",
+    "player_count": 16,
+    "roster": [
+      {
+        "jersey": "",
+        "name": "Player uniform",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "AST",
+          "TO": "TO",
+          "STL": "STL",
+          "BLK": "BLK",
+          "MIN": "MINUTES"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Minessale, Nolan",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "44",
+          "TO": "144",
+          "STL": ".306",
+          "BLK": "174",
+          "MIN": "1056"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Janowski, Nick",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "62",
+          "TO": "183",
+          "STL": ".339",
+          "BLK": "75",
+          "MIN": "1069"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Johnson-arigu, Isaiah",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "26",
+          "TO": "80",
+          "STL": ".325",
+          "BLK": "72",
+          "MIN": "704"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Bjerke, Carter",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "79",
+          "TO": "176",
+          "STL": ".449",
+          "BLK": "20",
+          "MIN": "843"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Oosterbaan, Ben",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "39",
+          "TO": "106",
+          "STL": ".368",
+          "BLK": "18",
+          "MIN": "818"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Dufault, Ryan",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "3",
+          "TO": "9",
+          "STL": ".333",
+          "BLK": "35",
+          "MIN": "583"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Herro, Austin",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "14",
+          "TO": "37",
+          "STL": ".378",
+          "BLK": "36",
+          "MIN": "643"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Coleman, Jermaine",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "35",
+          "TO": "103",
+          "STL": ".340",
+          "BLK": "11",
+          "MIN": "473"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Tibbits, Hayden",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "15",
+          "TO": "44",
+          "STL": ".341",
+          "BLK": "11",
+          "MIN": "282"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Franks, Tim",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "6",
+          "TO": "10",
+          "STL": ".600",
+          "BLK": "5",
+          "MIN": "66"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Humphries Jr., Tommy",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "1",
+          "TO": "4",
+          "STL": ".250",
+          "BLK": "1",
+          "MIN": "40"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Counts, Kyle",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "1",
+          "TO": "2",
+          "STL": ".500",
+          "BLK": "0",
+          "MIN": "21"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Lafferty, Ryan",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "1",
+          "TO": "5",
+          "STL": ".200",
+          "BLK": "0",
+          "MIN": "147"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Tauer, Adam",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "0",
+          "TO": "1",
+          "STL": ".000",
+          "BLK": "1",
+          "MIN": "34"
+        }
+      },
+      {
+        "jersey": "",
+        "name": "Tauer, Jack",
+        "team": "St. Thomas Tommies",
+        "team_type": "home",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "1",
+          "TO": "1",
+          "STL": "1.000",
+          "BLK": "0",
+          "MIN": "21"
+        }
+      }
+    ]
+  },
+  "away_team": {
+    "name": "Away Team",
+    "url": "https://greenbayphoenix.com/sports/mens-basketball/stats/2025-26",
+    "last_scraped": "2026-10-27T15:37:44.968683Z",
+    "player_count": 0,
+    "roster": []
+  }
 }
