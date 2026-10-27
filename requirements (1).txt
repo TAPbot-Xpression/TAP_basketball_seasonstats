@@ -1,0 +1,12 @@
+# ── HTTP & HTML Parsing ────────────────────────────────────────────────────
+requests==2.32.3          # HTTP requests for fetching stat pages
+beautifulsoup4==4.12.3    # HTML parsing
+lxml==5.2.2               # Fast HTML/XML parser (used by BeautifulSoup)
+
+# ── JavaScript-Rendered Page Fallback ─────────────────────────────────────
+# Uncomment the lines below ONLY if switching to a Selenium-based scraper
+# selenium==4.21.0
+# webdriver-manager==4.0.1
+
+# ── Data Handling ──────────────────────────────────────────────────────────
+python-dateutil==2.9.0    # Robust date/time parsing for last_scraped timestamps

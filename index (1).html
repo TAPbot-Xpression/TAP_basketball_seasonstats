@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tommie Basketball · Season Stats</title>
+  <style>
+    /* ── DESIGN TOKENS ─────────────────────────────────────────────────── */
+    :root {
+      --navy:       #1a2744;
+      --navy-mid:   #243058;
+      --navy-light: #2e3d6e;
+      --gold:       #c8a84b;
+      --gold-bright:#f0c84a;
+      --gold-dim:   #8a6f2e;
+      --white:      #f4f6fb;
+      --muted:      #8a93b0;
+      --row-hover:  rgba(200, 168, 75, 0.08);
+      --border:     rgba(200, 168, 75, 0.18);
+      --radius:     10px;
+      --font:       'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* ── RESET & BASE ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── HEADER ────────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0f1a33 0%, var(--navy-mid) 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 28px 40px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 18px; }
+
+    /* Signature move: oversized bold team name with gold accent bar */
+    .team-name {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      color: var(--white);
+    }
+    .team-name span {
+      color: var(--gold);
+    }
+
+    .season-badge {
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      align-self: flex-end;
+      margin-bottom: 4px;
+    }
+
+    .last-updated {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: right;
+    }
+    .last-updated strong { color: var(--gold); }
+
+    /* ── MAIN LAYOUT ───────────────────────────────────────────────────── */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 0;
+    }
+
+    /* ── AWAY TEAM INPUT PANEL ─────────────────────────────────────────── */
+    .away-panel {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 28px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .away-panel label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .away-panel input[type="url"] {
+      flex: 1;
+      min-width: 260px;
+      background: var(--navy);
+      border: 1.5px solid var(--gold-dim);
+      border-radius: 6px;
+      color: var(--white);
+      font-size: 0.92rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .away-panel input[type="url"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200, 168, 75, 0.18);
+    }
+    .away-panel input[type="url"]::placeholder { color: var(--muted); }
+
+    .away-panel button {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .away-panel button:hover  { background: var(--gold-bright); }
+    .away-panel button:active { transform: scale(0.97); }
+
+    .away-note {
+      width: 100%;
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: -6px;
+    }
+    .away-note strong { color: var(--gold); }
+
+    #away-status {
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 5px;
+      display: none;
+    }
+    #away-status.success { background: rgba(72,200,100,0.15); color: #5de08a; display: block; }
+    #away-status.error   { background: rgba(220,60,60,0.15);  color: #f07070; display: block; }
+
+    /* ── STATS GRID ────────────────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── STAT CARD ─────────────────────────────────────────────────────── */
+    .stat-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .card-title.tommie { color: var(--gold); }
+    .card-title.away   { color: #7eb8f7; }
+
+    .card-url {
+      font-size: 0.7rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    /* ── TABLE ─────────────────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--navy-light);
+      color: var(--gold);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 10px 10px;
+      text-align: right;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+      z-index: 1;
+    }
+    thead th:first-child { text-align: left; min-width: 130px; }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--row-hover); }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody td {
+      padding: 9px 10px;
+      text-align: right;
+      color: var(--white);
+      white-space: nowrap;
+    }
+    tbody td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    /* Highlight top value in each stat column */
+    td.top-val { color: var(--gold-bright); font-weight: 700; }
+
+    /* ── EMPTY / LOADING STATES ────────────────────────────────────────── */
+    .empty-state {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .empty-state .icon { font-size: 2.2rem; margin-bottom: 10px; }
+
+    .loading-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy-mid), var(--gold), var(--navy-mid));
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--gold-dim); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-left">
+    <div>
+      <div class="team-name">ST. THOMAS <span>TOMMIES</span></div>
+      <div style="font-size:0.78rem; color:var(--muted); margin-top:4px;">Men's Basketball · Individual Season Stats</div>
+    </div>
+    <div class="season-badge">2025–26</div>
+  </div>
+  <div class="last-updated" id="last-updated">Loading…</div>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Away Team URL Input -->
+  <div class="away-panel">
+    <label for="away-url">⚔ Away Team Stats URL</label>
+    <input
+      type="url"
+      id="away-url"
+      placeholder="https://example.com/sports/mens-basketball/stats/2025-26"
+    />
+    <button onclick="submitAwayUrl()">Save &amp; Queue Scrape</button>
+    <span id="away-status"></span>
+    <p class="away-note">
+      Paste the opponent's stats page URL above and click <strong>Save &amp; Queue Scrape</strong>.
+      The scraper will pull their stats within <strong>24 hours</strong> and display them here automatically.
+    </p>
+  </div>
+
+  <!-- Stats Tables -->
+  <div class="stats-grid">
+
+    <!-- Tommie Card -->
+    <div class="stat-card">
+      <div class="card-header">
+        <span class="card-title tommie">🏀 St. Thomas Tommies</span>
+        <span class="card-url" id="tommie-url"></span>
+      </div>
+      <div class="loading-bar" id="tommie-loader"></div>
+      <div class="table-wrap" id="tommie-table-wrap">
+        <div class="empty-state"><div class="icon">⏳</div>Loading stats…</div>
+      </div>
+    </div>
+
+    <!-- Away Card -->
+    <div class="stat-card">
+      <div class="card-header">
+        <span class="card-title away" id="away-card-title">⚔ Away Team</span>
+        <span class="card-url" id="away-card-url"></span>
+      </div>
+      <div class="loading-bar" id="away-loader"></div>
+      <div class="table-wrap" id="away-table-wrap">
+        <div class="empty-state">
+          <div class="icon">🔗</div>
+          Paste an opponent's stats URL above to load their data.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  Data auto-refreshed via GitHub Actions · Source:
+  <a href="https://tommiesports.com/sports/mbball/stats/2025-26" target="_blank">tommiesports.com</a>
+  · Built for St. Thomas Athletics
+</footer>
+
+<!-- ── JAVASCRIPT ───────────────────────────────────────────────────────── -->
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────────────
+  // IMPORTANT: Replace these with your actual GitHub username and repo name
+  const GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
+  const GITHUB_REPO  = "YOUR_REPO_NAME";
+  const STATS_JSON   = "docs/stats.json";
+  const CONFIG_FILE  = "away_team_config.json";
+
+  const STAT_COLS = ["AVG","FG%","3PT%","FT%","OFF","DEF","AST","TO","STL","BLK","MIN"];
+
+  // ── LOAD STATS ───────────────────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      // Cache-bust so GitHub Pages always serves fresh JSON
+      const res = await fetch(`${STATS_JSON}?cb=${Date.now()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // Last updated
+      const lu = document.getElementById("last-updated");
+      if (data.meta?.last_run) {
+        const d = new Date(data.meta.last_run);
+        lu.innerHTML = `Last updated: <strong>${d.toLocaleString()}</strong>`;
+      } else {
+        lu.textContent = "Last updated: unknown";
+      }
+
+      // Tommie URL badge
+      if (data.meta?.tommie_url) {
+        document.getElementById("tommie-url").textContent = data.meta.tommie_url;
+      }
+
+      // Render tables
+      renderTable("tommie-table-wrap", "tommie-loader", data.tommie || [], "tommie");
+
+      if (data.away && data.away.length > 0) {
+        const awayLabel = data.meta?.away_label || "Away Team";
+        document.getElementById("away-card-title").textContent = `⚔ ${awayLabel}`;
+        if (data.meta?.away_url) {
+          document.getElementById("away-card-url").textContent = data.meta.away_url;
+        }
+        renderTable("away-table-wrap", "away-loader", data.away, "away");
+      } else {
+        document.getElementById("away-loader").style.display = "none";
+        // Pre-fill input if URL is already configured
+        if (data.meta?.away_url) {
+          document.getElementById("away-url").value = data.meta.away_url;
+        }
+      }
+
+    } catch (err) {
+      console.error("Failed to load stats.json:", err);
+      document.getElementById("tommie-table-wrap").innerHTML =
+        `<div class="empty-state"><div class="icon">⚠️</div>Could not load stats. Make sure the scraper has run at least once.</div>`;
+      document.getElementById("away-table-wrap").innerHTML = "";
+      document.getElementById("tommie-loader").style.display = "none";
+      document.getElementById("away-loader").style.display = "none";
+    }
+  }
+
+  // ── RENDER TABLE ─────────────────────────────────────────────────────────
+  function renderTable(wrapId, loaderId, players, type) {
+    const wrap = document.getElementById(wrapId);
+    const loader = document.getElementById(loaderId);
+    loader.style.display = "none";
+
+    if (!players || players.length === 0) {
+      wrap.innerHTML = `<div class="empty-state"><div class="icon">📭</div>No player data found yet.</div>`;
+      return;
+    }
+
+    // Determine which stat columns actually have data
+    const activeCols = STAT_COLS.filter(col => players.some(p => p[col] !== undefined && p[col] !== ""));
+
+    // Find top value per column for highlighting
+    const topVals = {};
+    activeCols.forEach(col => {
+      const vals = players.map(p => parseFloat(p[col])).filter(v => !isNaN(v));
+      if (vals.length) topVals[col] = Math.max(...vals);
+    });
+
+    let html = `<table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          ${activeCols.map(c => `<th>${c}</th>`).join("")}
+        </tr>
+      </thead>
+      <tbody>`;
+
+    players.forEach(p => {
+      html += `<tr>
+        <td>${escHtml(p.name || "—")}</td>
+        ${activeCols.map(col => {
+          const val = p[col] !== undefined ? p[col] : "—";
+          const isTop = topVals[col] !== undefined && parseFloat(val) === topVals[col];
+          return `<td class="${isTop ? "top-val" : ""}">${escHtml(String(val))}</td>`;
+        }).join("")}
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    wrap.innerHTML = html;
+  }
+
+  // ── SUBMIT AWAY URL ───────────────────────────────────────────────────────
+  // This writes away_team_config.json via the GitHub Contents API.
+  // Requires a fine-grained PAT stored as a GitHub Actions secret (STATS_PAT).
+  // For a simpler setup, you can also just edit away_team_config.json directly in the repo.
+  async function submitAwayUrl() {
+    const urlInput = document.getElementById("away-url");
+    const status   = document.getElementById("away-status");
+    const url      = urlInput.value.trim();
+
+    status.className = "";
+    status.style.display = "none";
+
+    if (!url || !url.startsWith("http")) {
+      status.textContent = "Please enter a valid URL starting with http(s)://";
+      status.className = "error";
+      return;
+    }
+
+    // Derive a label from the URL hostname
+    const label = deriveLabel(url);
+
+    const newConfig = {
+      url,
+      label,
+      last_scraped: null   // Reset so scraper picks it up immediately
+    };
+
+    try {
+      // Get current file SHA (required by GitHub API to update a file)
+      const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONFIG_FILE}`;
+
+      // NOTE: This call requires a GitHub Personal Access Token (PAT) with
+      // repo write access. Store it as a secret and inject it at build time,
+      // OR instruct users to edit away_team_config.json directly in the repo.
+      // For a fully client-side approach, replace the block below with a
+      // serverless function (e.g. Netlify Function or GitHub Actions manual trigger).
+
+      const shaRes = await fetch(apiBase, {
+        headers: { "Accept": "application/vnd.github+json" }
+      });
+      const shaData = await shaRes.json();
+      const sha = shaData.sha;
+
+      const body = JSON.stringify({
+        message: `chore: update away team URL to ${label}`,
+        content: btoa(JSON.stringify(newConfig, null, 2)),
+        sha
+      });
+
+      const putRes = await fetch(apiBase, {
+        method: "PUT",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json",
+          // Replace GITHUB_PAT_TOKEN with your injected token value at build time
+          // "Authorization": "Bearer YOUR_PAT_HERE"
+        },
+        body
+      });
+
+      if (putRes.ok) {
+        status.textContent = `✅ Away team set to "${label}". Stats will update within 24 hours.`;
+        status.className = "success";
+        document.getElementById("away-card-title").textContent = `⚔ ${label}`;
+      } else {
+        throw new Error(`GitHub API returned ${putRes.status}`);
+      }
+
+    } catch (err) {
+      // Fallback: show manual instructions
+      status.textContent = `⚠️ Auto-save unavailable. Edit away_team_config.json in your repo manually with the URL above.`;
+      status.className = "error";
+      console.error(err);
+    }
+  }
+
+  // ── HELPERS ───────────────────────────────────────────────────────────────
+  function deriveLabel(url) {
+    try {
+      const host = new URL(url).hostname.replace(/^www\./, "");
+      return host.split(".")[0].replace(/-/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    } catch { return "Away Team"; }
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  loadStats();
+</script>
+
+</body>
+</html>
