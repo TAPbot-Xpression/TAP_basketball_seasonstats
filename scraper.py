@@ -70,11 +70,11 @@ def clean_player_name_and_number(raw_text):
     # Check for duplicated format: "LastName, FirstName##LastName, FirstName"
     dup_match = re.match(r"^(.+?)\s*(\d{1,3})\s*(.+)$", text)
     if dup_match:
-        part1, num, part2 = dup_match.groups()
-        p1_clean = re.sub(r"
-[^a-zA-Z]", "", part1).lower()
-        p2_clean = re.sub(r"
-[^a-zA-Z]", "", part2).lower()
+        part1 = dup_match.group(1)
+        num   = dup_match.group(2)
+        part2 = dup_match.group(3)
+        p1_clean = re.sub(r"[^a-zA-Z]", "", part1).lower()
+        p2_clean = re.sub(r"[^a-zA-Z]", "", part2).lower()
         if p1_clean == p2_clean or p1_clean in p2_clean or p2_clean in p1_clean:
             return num, part1.strip()
 
