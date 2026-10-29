@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "last_updated_utc": "2026-10-29T12:36:56.835213Z",
+    "last_updated_utc": "2026-10-29T18:37:05.553463Z",
     "stat_categories": [
       "AVG",
       "FG%",
@@ -329,8 +329,313 @@
   "away_team": {
     "name": "Away Team",
     "url": "https://greenbayphoenix.com/sports/mens-basketball/stats/2025-26",
-    "last_scraped": "2026-10-28T18:34:06.023304Z",
-    "player_count": 0,
-    "roster": []
+    "last_scraped": "2026-10-29T18:37:05.553258Z",
+    "player_count": 16,
+    "roster": [
+      {
+        "jersey": "",
+        "name": "TOT",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": "PTS",
+          "TO": "AVG",
+          "STL": "OFF",
+          "BLK": "DEF",
+          "MIN": "FG%"
+        }
+      },
+      {
+        "jersey": "10",
+        "name": "O'Hara, C.J.",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".280",
+          "TO": "139",
+          "STL": "175",
+          "BLK": ".794",
+          "MIN": "1075"
+        }
+      },
+      {
+        "jersey": "13",
+        "name": "Hall, Marcus",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".406",
+          "TO": "97",
+          "STL": "127",
+          "BLK": ".764",
+          "MIN": "1041"
+        }
+      },
+      {
+        "jersey": "07",
+        "name": "Allen, Justin",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".253",
+          "TO": "99",
+          "STL": "120",
+          "BLK": ".825",
+          "MIN": "847"
+        }
+      },
+      {
+        "jersey": "02",
+        "name": "Ruedinger, Preston",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".411",
+          "TO": "69",
+          "STL": "76",
+          "BLK": ".908",
+          "MIN": "1162"
+        }
+      },
+      {
+        "jersey": "23",
+        "name": "Wilkins, Caden",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".403",
+          "TO": "28",
+          "STL": "41",
+          "BLK": ".683",
+          "MIN": "712"
+        }
+      },
+      {
+        "jersey": "22",
+        "name": "Thomas, LeBron",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".111",
+          "TO": "54",
+          "STL": "79",
+          "BLK": ".684",
+          "MIN": "388"
+        }
+      },
+      {
+        "jersey": "12",
+        "name": "Hewlett, Dontrell",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".143",
+          "TO": "4",
+          "STL": "8",
+          "BLK": ".500",
+          "MIN": "45"
+        }
+      },
+      {
+        "jersey": "00",
+        "name": "Bethea, Ramel",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".000",
+          "TO": "14",
+          "STL": "21",
+          "BLK": ".667",
+          "MIN": "379"
+        }
+      },
+      {
+        "jersey": "15",
+        "name": "Stroud, Rob",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".167",
+          "TO": "12",
+          "STL": "16",
+          "BLK": ".750",
+          "MIN": "66"
+        }
+      },
+      {
+        "jersey": "04",
+        "name": "Wrecke, Mac",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".360",
+          "TO": "16",
+          "STL": "23",
+          "BLK": ".696",
+          "MIN": "261"
+        }
+      },
+      {
+        "jersey": "40",
+        "name": "Todorovic, Vukasin",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".143",
+          "TO": "12",
+          "STL": "20",
+          "BLK": ".600",
+          "MIN": "196"
+        }
+      },
+      {
+        "jersey": "20",
+        "name": "Cicic, Maruan",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".000",
+          "TO": "7",
+          "STL": "11",
+          "BLK": ".636",
+          "MIN": "242"
+        }
+      },
+      {
+        "jersey": "01",
+        "name": "Hines, Josh",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".333",
+          "TO": "0",
+          "STL": "2",
+          "BLK": ".000",
+          "MIN": "56"
+        }
+      },
+      {
+        "jersey": "03",
+        "name": "Van Kauwenberg, Keegan",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".346",
+          "TO": "0",
+          "STL": "0",
+          "BLK": ".000",
+          "MIN": "175"
+        }
+      },
+      {
+        "jersey": "21",
+        "name": "Fitzgerald, Brady",
+        "team": "Away Team",
+        "team_type": "away",
+        "stats": {
+          "AVG": "-",
+          "FG%": "-",
+          "3PT%": "-",
+          "FT%": "-",
+          "OFF": "-",
+          "DEF": "-",
+          "AST": ".000",
+          "TO": "1",
+          "STL": "2",
+          "BLK": ".500",
+          "MIN": "5"
+        }
+      }
+    ]
   }
 }
