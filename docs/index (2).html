@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Summit League Men's Basketball Stats · TAPbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Team Color Themes (Dynamically applied via data-theme) ─────────────── */
+    :root {
+      --bg:             #080c14;
+      --surface:        #0f1623;
+      --surface-2:      #161f30;
+      --surface-3:      #1d2840;
+      --border:         #1e2d47;
+      --border-light:   #2a3d5c;
+
+      /* Dynamic Theme Variables (Defaults to Kansas City) */
+      --team-primary:   #002b49;
+      --team-accent:    #004b87;
+      --team-glow:      rgba(0, 75, 135, 0.38);
+      --team-light:     #bae6fd;
+      --team-btn-text:  #ffffff;
+
+      /* Medal Tones */
+      --gold:           #fbbf24;
+      --gold-bg:        rgba(251, 191, 36, 0.12);
+      --silver:         #e2e8f0;
+      --silver-bg:      rgba(226, 232, 240, 0.12);
+      --bronze:         #f97316;
+      --bronze-bg:      rgba(249, 115, 22, 0.12);
+
+      --text:           #e8edf5;
+      --text-muted:     #7a8fa8;
+      --text-faint:     #3d5068;
+
+      --green:          #10b981;
+      --red:            #ef4444;
+
+      --radius:         12px;
+      --radius-sm:      8px;
+    }
+
+    [data-theme="kansas_city"] {
+      --team-primary:   #002b49;
+      --team-accent:    #004b87;
+      --team-glow:      rgba(0, 75, 135, 0.38);
+      --team-light:     #bae6fd;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="north_dakota"] {
+      --team-primary:   #005a36;
+      --team-accent:    #009a44;
+      --team-glow:      rgba(0, 154, 68, 0.35);
+      --team-light:     #bbf7d0;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="north_dakota_state"] {
+      --team-primary:   #005643;
+      --team-accent:    #007a5e;
+      --team-glow:      rgba(0, 122, 94, 0.38);
+      --team-light:     #86efac;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="omaha"] {
+      --team-primary:   #1a1a1a;
+      --team-accent:    #d12631;
+      --team-glow:      rgba(209, 38, 49, 0.38);
+      --team-light:     #fecaca;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="oral_roberts"] {
+      --team-primary:   #002d62;
+      --team-accent:    #c5b358;
+      --team-glow:      rgba(197, 179, 88, 0.35);
+      --team-light:     #fef3c7;
+      --team-btn-text:  #000000;
+    }
+
+    [data-theme="south_dakota"] {
+      --team-primary:   #780000;
+      --team-accent:    #c8102e;
+      --team-glow:      rgba(200, 16, 46, 0.35);
+      --team-light:     #fecdd3;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="south_dakota_state"] {
+      --team-primary:   #0033a0;
+      --team-accent:    #0055b8;
+      --team-glow:      rgba(0, 85, 184, 0.38);
+      --team-light:     #93c5fd;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="st_thomas"] {
+      --team-primary:   #5b2d86;
+      --team-accent:    #8b5cf6;
+      --team-glow:      rgba(139, 92, 246, 0.32);
+      --team-light:     #ddd6fe;
+      --team-btn-text:  #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 2.25rem 1.25rem 4rem;
+      transition: background-color 0.3s;
+    }
+
+    .container { max-width: 1240px; margin: 0 auto; }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    header {
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+    }
+
+    .wordmark {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .wordmark-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--team-accent);
+      font-family: 'JetBrains Mono', monospace;
+      transition: color 0.2s;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: #e2e8f0;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      text-align: left;
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+
+    .meta a {
+      color: var(--team-accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .meta a:hover { text-decoration: underline; }
+
+    /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
+    .selector-block {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-caption {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.55rem;
+      display: block;
+    }
+
+    .team-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .team-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.6rem 1.05rem;
+      border-radius: 9999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .team-pill:hover {
+      border-color: var(--border-light);
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .team-pill.active {
+      background: var(--surface-2);
+      border-color: var(--team-accent);
+      color: #fff;
+      box-shadow: 0 0 15px var(--team-glow);
+    }
+
+    .team-pill-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Search Spotlight ────────────────────────────────────────────────────── */
+    .search-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      pointer-events: none;
+    }
+
+    #playerSearch {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.35rem;
+      font-weight: 700;
+      width: 120px;
+      padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+      text-align: center;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    #playerSearch:focus {
+      border-color: var(--team-accent);
+      box-shadow: 0 0 0 3px var(--team-glow);
+    }
+
+    .search-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .not-found {
+      display: none;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      color: #f87171;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Spotlight Card ──────────────────────────────────────────────────────── */
+    #spotlightCard {
+      display: none;
+      background: var(--surface);
+      border: 1.5px solid var(--team-accent);
+      border-radius: var(--radius);
+      box-shadow: 0 0 35px var(--team-glow), 0 8px 32px rgba(0,0,0,0.5);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .spotlight-header {
+      background: linear-gradient(135deg, var(--team-primary) 0%, var(--surface-2) 100%);
+      padding: 1.15rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .jersey-badge {
+      background: var(--team-accent);
+      color: var(--team-btn-text, #ffffff);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.7rem;
+      font-weight: 800;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--team-glow);
+    }
+
+    .spotlight-name {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .spotlight-sub {
+      font-size: 0.82rem;
+      color: var(--team-light);
+      margin-top: 0.15rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .stat-cell {
+      background: var(--surface);
+      padding: 0.8rem 0.95rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      position: relative;
+      transition: background 0.15s;
+    }
+
+    .stat-cell:hover { background: var(--surface-2); }
+
+    .stat-key {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── Top 3 Medal Styling ─────────────────────────────────────────────────── */
+    .stat-cell.rank-1 {
+      background: var(--gold-bg);
+      border-bottom: 2px solid var(--gold);
+    }
+    .stat-cell.rank-1 .stat-val { color: var(--gold); }
+
+    .stat-cell.rank-2 {
+      background: var(--silver-bg);
+      border-bottom: 2px solid var(--silver);
+    }
+    .stat-cell.rank-2 .stat-val { color: var(--silver); }
+
+    .stat-cell.rank-3 {
+      background: var(--bronze-bg);
+      border-bottom: 2px solid var(--bronze);
+    }
+    .stat-cell.rank-3 .stat-val { color: var(--bronze); }
+
+    .rank-tag {
+      font-size: 0.65rem;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 800;
+    }
+    .rank-1 .rank-tag { background: var(--gold); color: #000; }
+    .rank-2 .rank-tag { background: var(--silver); color: #000; }
+    .rank-3 .rank-tag { background: var(--bronze); color: #000; }
+
+    /* ── Full Table Card ─────────────────────────────────────────────────────── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .table-card-header {
+      background: var(--surface-2);
+      padding: 0.9rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    thead th {
+      background: rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.7rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    thead th.col-left { text-align: left; cursor: default; }
+    thead th.col-center-fixed { text-align: center; cursor: default; }
+
+    thead th:hover:not(.col-left):not(.col-center-fixed) {
+      color: var(--text);
+      background: var(--team-glow);
+    }
+
+    thead th.sorted { color: var(--team-accent); }
+
+    tbody td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--text);
+      white-space: nowrap;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    tbody td.col-player {
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    tbody td.col-jersey {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      width: 48px;
+      text-align: left;
+    }
+
+    tbody td.col-pos,
+    tbody td.col-yr {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      width: 54px;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+    tbody tr.row-highlight td {
+      background: var(--team-glow) !important;
+    }
+
+    tbody tr.row-highlight td.col-jersey { color: var(--team-accent); }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+    .status-dot.error { background: var(--red); }
+
+    .empty {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body data-theme="kansas_city">
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="wordmark">
+      <span class="wordmark-eyebrow" id="eyebrowText">TAPbot · 2025-26 Season</span>
+      <h1 id="pageTitle">Summit League Basketball Season Stats</h1>
+      <div class="meta" id="metaBar">Loading data…</div>
+    </div>
+  </header>
+
+  <!-- Team Selector (Alphabetical Order) -->
+  <section class="selector-block">
+    <span class="section-caption">Select Team</span>
+    <div class="team-pills" id="teamPills">
+      <button class="team-pill active" data-team="kansas_city" onclick="selectTeam('kansas_city', this)">
+        <span class="team-pill-dot" style="color:#004b87"></span> Kansas City
+      </button>
+      <button class="team-pill" data-team="north_dakota" onclick="selectTeam('north_dakota', this)">
+        <span class="team-pill-dot" style="color:#009a44"></span> North Dakota
+      </button>
+      <button class="team-pill" data-team="north_dakota_state" onclick="selectTeam('north_dakota_state', this)">
+        <span class="team-pill-dot" style="color:#007a5e"></span> North Dakota State
+      </button>
+      <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
+        <span class="team-pill-dot" style="color:#d12631"></span> Omaha
+      </button>
+      <button class="team-pill" data-team="oral_roberts" onclick="selectTeam('oral_roberts', this)">
+        <span class="team-pill-dot" style="color:#c5b358"></span> Oral Roberts
+      </button>
+      <button class="team-pill" data-team="south_dakota" onclick="selectTeam('south_dakota', this)">
+        <span class="team-pill-dot" style="color:#c8102e"></span> South Dakota
+      </button>
+      <button class="team-pill" data-team="south_dakota_state" onclick="selectTeam('south_dakota_state', this)">
+        <span class="team-pill-dot" style="color:#0055b8"></span> South Dakota State
+      </button>
+      <button class="team-pill" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
+        <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
+      </button>
+    </div>
+  </section>
+
+  <!-- Player Search -->
+  <section class="search-section">
+    <span class="section-caption">Search Team Roster</span>
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <span class="search-icon">#</span>
+        <input
+          id="playerSearch"
+          type="number"
+          min="0"
+          max="99"
+          placeholder="00"
+          autocomplete="off"
+          aria-label="Player jersey number"
+        />
+      </div>
+      <span class="search-hint">Enter a jersey number to spotlight a specific player's stats</span>
+    </div>
+  </section>
+
+  <!-- Not Found Banner -->
+  <div class="not-found" id="notFound">
+    No player found with that jersey number on this roster.
+  </div>
+
+  <!-- Spotlight Card -->
+  <div id="spotlightCard">
+    <div class="spotlight-header">
+      <div class="jersey-badge" id="spotJersey">—</div>
+      <div>
+        <div class="spotlight-name" id="spotName">—</div>
+        <div class="spotlight-sub" id="spotSub">Summit League Men's Basketball</div>
+      </div>
+    </div>
+
+    <!-- Basketball Stat Grid -->
+    <div>
+      <div class="stat-section-title">🏀 Season Per Game & Percentage Stats</div>
+      <div class="stat-grid" id="spotStatGrid"></div>
+    </div>
+  </div>
+
+  <!-- Full Table Card -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title" id="tableTitle">Season Stats — Full Roster</span>
+      <div class="status-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="statsTable">
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody">
+          <tr><td colspan="14" class="empty">Loading stats…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Team Registry & Config ──────────────────────────────────────────────────
+  const TEAMS = {
+    kansas_city: {
+      id: 'kansas_city',
+      name: 'Kansas City Roos',
+      shortName: 'Kansas City',
+      file: 'kansas_city.json'
+    },
+    north_dakota: {
+      id: 'north_dakota',
+      name: 'North Dakota Fighting Hawks',
+      shortName: 'North Dakota',
+      file: 'north_dakota.json'
+    },
+    north_dakota_state: {
+      id: 'north_dakota_state',
+      name: 'North Dakota State Bison',
+      shortName: 'North Dakota State',
+      file: 'north_dakota_state.json'
+    },
+    omaha: {
+      id: 'omaha',
+      name: 'Omaha Mavericks',
+      shortName: 'Omaha',
+      file: 'omaha.json'
+    },
+    oral_roberts: {
+      id: 'oral_roberts',
+      name: 'Oral Roberts Golden Eagles',
+      shortName: 'Oral Roberts',
+      file: 'oral_roberts.json'
+    },
+    south_dakota: {
+      id: 'south_dakota',
+      name: 'South Dakota Coyotes',
+      shortName: 'South Dakota',
+      file: 'south_dakota.json'
+    },
+    south_dakota_state: {
+      id: 'south_dakota_state',
+      name: 'South Dakota State Jackrabbits',
+      shortName: 'South Dakota State',
+      file: 'south_dakota_state.json'
+    },
+    st_thomas: {
+      id: 'st_thomas',
+      name: 'St. Thomas Tommies',
+      shortName: 'St. Thomas',
+      file: 'st_thomas.json'
+    }
+  };
+
+  // ── Basketball Stat Columns ────────────────────────────────────────────────
+  const STAT_COLUMNS = [
+    { key: 'avg',          label: 'AVG' },
+    { key: 'fg_pct',       label: 'FG%' },
+    { key: 'three_pt_pct', label: '3PT%' },
+    { key: 'ft_pct',       label: 'FT%' },
+    { key: 'tot_reb',      label: 'TOT' },
+    { key: 'ast',          label: 'AST' },
+    { key: 'to',           label: 'TO' },
+    { key: 'stl',          label: 'STL' },
+    { key: 'blk',          label: 'BLK' },
+    { key: 'min',          label: 'MIN' }
+  ];
+
+  let CURRENT_TEAM = 'kansas_city';
+  let RAW_DATA = null;
+  let PLAYERS = [];
+  let sortCol = null;
+  let sortDir = -1;
+  let searchNum = '';
+  let RANKS = {};
+
+  // ── Team Switching ──────────────────────────────────────────────────────────
+  function selectTeam(teamId, btn) {
+    if (!TEAMS[teamId]) return;
+    CURRENT_TEAM = teamId;
+
+    document.body.setAttribute('data-theme', teamId);
+    document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    document.getElementById('playerSearch').value = '';
+    searchNum = '';
+    document.getElementById('spotlightCard').style.display = 'none';
+    document.getElementById('notFound').style.display = 'none';
+
+    loadTeamData(teamId);
+  }
+
+  // ── Stat Parser ─────────────────────────────────────────────────────────────
+  function parseStat(val) {
+    if (val === undefined || val === null || val === '-' || val === '--' || val === '') {
+      return -999999;
+    }
+    const cleanStr = String(val).replace('%', '').trim();
+    const num = parseFloat(cleanStr);
+    return isNaN(num) ? -999999 : num;
+  }
+
+  // ── Calculate Top 3 Ranks Across Roster ──────────────────────────────────────
+  function calculateRanks() {
+    RANKS = {};
+    STAT_COLUMNS.forEach(c => {
+      const vals = PLAYERS
+        .map(p => parseStat(p[c.key]))
+        .filter(v => v !== -999999);
+      const distinct = [...new Set(vals)].sort((a, b) => b - a);
+      RANKS[c.key] = { 1: distinct[0], 2: distinct[1], 3: distinct[2] };
+    });
+  }
+
+  function getRank(key, val) {
+    const num = parseStat(val);
+    if (num === -999999) return null;
+    const r = RANKS[key];
+    if (!r) return null;
+    if (num === r[1]) return 1;
+    if (num === r[2]) return 2;
+    if (num === r[3]) return 3;
+    return null;
+  }
+
+  // ── Load Stats JSON ─────────────────────────────────────────────────────────
+  async function loadTeamData(teamId) {
+    const team = TEAMS[teamId];
+    document.getElementById('statusDot').className = 'status-dot';
+    document.getElementById('statusText').textContent = 'Loading…';
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="14" class="empty">Loading ${team.shortName} stats…</td></tr>`;
+
+    try {
+      const res = await fetch(`${team.file}?t=${Date.now()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      RAW_DATA = await res.json();
+
+      // Normalize array structure: whether { players: [...] } or direct array [...]
+      if (RAW_DATA && Array.isArray(RAW_DATA.players)) {
+        PLAYERS = RAW_DATA.players;
+      } else if (Array.isArray(RAW_DATA)) {
+        PLAYERS = RAW_DATA;
+      } else {
+        PLAYERS = [];
+      }
+
+      // Ensure standard property names
+      PLAYERS = PLAYERS.map(p => ({
+        name:         p.name || p.player || p.player_name || '—',
+        number:       p.number !== undefined && p.number !== null ? String(p.number) : (p.jersey ? String(p.jersey) : ''),
+        position:     p.position || p.pos || '',
+        year:         p.year || p.class || '',
+        avg:          p.avg || p.ppg || '',
+        fg_pct:       p.fg_pct || p['fg%'] || '',
+        three_pt_pct: p.three_pt_pct || p['3pt%'] || p['3p%'] || '',
+        ft_pct:       p.ft_pct || p['ft%'] || '',
+        tot_reb:      p.tot_reb || p.reb || p.tot || '',
+        ast:          p.ast || p.apg || '',
+        to:           p.to || p.turnovers || '',
+        stl:          p.stl || '',
+        blk:          p.blk || '',
+        min:          p.min || p.mpg || ''
+      }));
+
+      calculateRanks();
+
+      const teamName = RAW_DATA.team || team.name;
+      document.getElementById('spotSub').textContent = `${teamName} · Men's Basketball`;
+      document.getElementById('statusDot').className = 'status-dot';
+      document.getElementById('statusText').textContent = `${PLAYERS.length} Players`;
+
+      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
+      document.getElementById('metaBar').innerHTML =
+        `<strong>${team.name}</strong> · Updated: ${updatedTime} · <a href="${team.file}" target="_blank">${team.file} ↗</a>`;
+
+      sortCol = null;
+      renderTable();
+    } catch (err) {
+      document.getElementById('statusDot').className = 'status-dot error';
+      document.getElementById('statusText').textContent = 'Error';
+      document.getElementById('tableBody').innerHTML =
+        `<tr><td colspan="14" class="empty" style="color:#f87171">
+          Failed to load stats for ${team.name} (${team.file}).<br>
+          <small style="color:var(--text-muted)">Ensure the scraper has run and generated this file.</small>
+        </td></tr>`;
+      document.getElementById('metaBar').textContent = `Error loading ${team.file}`;
+    }
+  }
+
+  // ── Render Full Table ──────────────────────────────────────────────────────
+  function renderTable() {
+    const head = document.getElementById('tableHead');
+    const body = document.getElementById('tableBody');
+
+    head.innerHTML = `<tr>
+      <th class="col-left">#</th>
+      <th class="col-center-fixed">Pos</th>
+      <th class="col-center-fixed">Yr</th>
+      <th class="col-left">Player</th>
+      ${STAT_COLUMNS.map(c => `
+        <th onclick="sortBy('${c.key}')" class="${sortCol === c.key ? 'sorted' : ''}">
+          ${c.label}${sortCol === c.key ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
+        </th>
+      `).join('')}
+    </tr>`;
+
+    if (!PLAYERS.length) {
+      body.innerHTML = `<tr><td colspan="14" class="empty">No roster data found for this team.</td></tr>`;
+      return;
+    }
+
+    let sorted = [...PLAYERS];
+    if (sortCol) {
+      sorted.sort((a, b) => {
+        const av = parseStat(a[sortCol]);
+        const bv = parseStat(b[sortCol]);
+        return (av - bv) * sortDir;
+      });
+    }
+
+    body.innerHTML = sorted.map(r => {
+      const isHL = searchNum && String(r.number) === String(searchNum);
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
+        <td class="col-jersey">${r.number || '—'}</td>
+        <td class="col-pos">${r.position || '—'}</td>
+        <td class="col-yr">${r.year || '—'}</td>
+        <td class="col-player">${esc(r.name)}</td>
+        ${STAT_COLUMNS.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Sorting ────────────────────────────────────────────────────────────────
+  function sortBy(col) {
+    if (sortCol === col) {
+      sortDir *= -1;
+    } else {
+      sortCol = col;
+      sortDir = -1; // Default to descending order for stats
+    }
+    renderTable();
+    if (searchNum) highlightRow(searchNum);
+  }
+
+  // ── Spotlight Search ───────────────────────────────────────────────────────
+  document.getElementById('playerSearch').addEventListener('input', function () {
+    searchNum = this.value.trim();
+    const notFound = document.getElementById('notFound');
+    const card     = document.getElementById('spotlightCard');
+
+    if (!searchNum) {
+      card.style.display = 'none';
+      notFound.style.display = 'none';
+      highlightRow('');
+      return;
+    }
+
+    const player = PLAYERS.find(p => String(p.number) === searchNum);
+
+    if (!player) {
+      card.style.display = 'none';
+      notFound.style.display = 'block';
+      highlightRow('');
+      return;
+    }
+
+    notFound.style.display = 'none';
+    card.style.display     = 'block';
+
+    const playerName = player.name || '—';
+    const playerPos  = player.position ? ` · ${player.position}` : '';
+    const playerYr   = player.year ? ` · ${player.year}` : '';
+
+    document.getElementById('spotJersey').textContent = `#${player.number || searchNum}`;
+    document.getElementById('spotName').textContent   = playerName;
+    document.getElementById('spotSub').textContent    = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name}${playerPos}${playerYr}`;
+
+    const grid = document.getElementById('spotStatGrid');
+    grid.innerHTML = STAT_COLUMNS.map(c => {
+      const val = player[c.key] || '—';
+      const rank = getRank(c.key, val);
+      const rankClass = rank ? `rank-${rank}` : '';
+      const rankBadge = rank ? `<span class="rank-tag">${rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</span>` : '';
+
+      return `<div class="stat-cell ${rankClass}">
+        <span class="stat-key">${c.label} ${rankBadge}</span>
+        <span class="stat-val">${val}</span>
+      </div>`;
+    }).join('');
+
+    highlightRow(searchNum);
+  });
+
+  function highlightRow(num) {
+    document.querySelectorAll('#tableBody tr').forEach(tr => {
+      tr.classList.toggle('row-highlight', !!num && tr.dataset.num === String(num));
+    });
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Initial load
+  loadTeamData('kansas_city');
+</script>
+
+</body>
+</html>
