@@ -1,9 +1,12 @@
 """
 scrape_basketball.py
-Scrapes Summit League Men's Basketball season cumulative player stats and rosters.
-Targets ONLY season aggregate tables/data and strictly excludes Game-by-Game tables,
-schedule rows, team leader sidebars, and staff.
-Outputs individual team JSON files as well as docs/all_teams.json.
+Scrapes Summit League Men's Basketball player season cumulative stats and rosters.
+- Focuses strictly on Player Stats season cumulative/averages (pointsPerGame, etc.)
+- Excludes Game-by-Game tables, match logs, opponent summaries, and team leader panels
+- Eliminates MIN (Minutes)
+- Filters out non-player rows (percentages, column headers, coaches/staff)
+- Pulls Position (G/F) and Year (FR, SO, JR, SR, GR, R-*) from roster verification
+- Outputs individual team JSON files (<slug>.json) and docs/all_teams.json
 """
 
 import json
@@ -82,12 +85,12 @@ TEAMS_CONFIG = [
     },
 ]
 
-DISCARD_EXACT_NAMES = {
+DISCARD_TOKENS = {
     "ft%", "blk", "ast", "tot", "avg", "pts", "off", "def", "min", "stl",
     "to", "fg%", "3pt%", "3p%", "gp", "gs", "pct", "reb", "player", "no.",
     "total", "totals", "team", "opponent", "opponents", "view bio", "bio",
     "team tm team", "tm", "overall", "conference", "image", "full name", "name",
-    "scoring", "averages"
+    "scoring", "averages", "minutes", "fg", "3pt", "ft", "rebounds"
 }
 
 STAFF_KEYWORDS = [
@@ -109,11 +112,11 @@ def fetch_url(url: str) -> Optional[str]:
 
 def clean_name(raw_name: str) -> str:
     """
-    Cleans raw player name strings:
+    Cleans raw player names:
     - Removes 'View Bio', 'Image', stray quotes
-    - Resolves duplicated names like 'Branch, Karmello Branch' or 'Evans, CjEvans, Cj'
+    - Resolves duplicated strings e.g. 'Minessale, NolanMinessale, Nolan' or 'Branch, Karmello Branch'
     - Transforms 'Branch, Karmello' -> 'Karmello Branch'
-    - Eliminates embedded jersey digits
+    - Strips embedded jersey numbers
     """
     if not raw_name:
         return ""
@@ -124,22 +127,20 @@ def clean_name(raw_name: str) -> str:
     if not text:
         return ""
 
-    # Check for concatenated duplicate like 'Hudgens, Trent02Hudgens, Trent' or 'Evans, CjEvans, Cj'
+    # Check for duplicated concat format (e.g. 'Hudgens, Trent02Hudgens, Trent')
     match_dup = re.search(r"^(.*?)(?:\d{1,2})?\1$", text)
     if match_dup and len(match_dup.group(1)) > 3:
         text = match_dup.group(1)
 
-    # Standardize comma format 'Last, First'
+    # Standardize 'Last, First' -> 'First Last'
     if "," in text:
         parts = [p.strip() for p in text.split(",", 1)]
         last = parts[0]
         first = parts[1] if len(parts) > 1 else ""
 
-        # Remove digits
         last = re.sub(r"\b\d{1,2}\b", "", last).strip()
         first = re.sub(r"\b\d{1,2}\b", "", first).strip()
 
-        # If first contains last already (e.g. 'Karmello Branch')
         if last.lower() in first.lower() and len(first.split()) > 1:
             text = first
         elif first and last:
@@ -147,21 +148,17 @@ def clean_name(raw_name: str) -> str:
         else:
             text = first or last
 
-    # Remove stray embedded digits and multiple spaces
     text = re.sub(r"\b\d{1,2}\b", "", text)
-    text = " ".join(text.split()).strip()
-    return text
+    return " ".join(text.split()).strip()
 
 
-def clean_number(raw_num: str) -> str:
-    """Extracts jersey number cleanly (e.g. '00', '01', '7', '21')."""
+def clean_number(raw_num: Any) -> str:
+    """Extracts jersey number cleanly (e.g. '00', '04', '11', '0')."""
     if raw_num is None:
         return ""
     text = str(raw_num).strip().replace("#", "")
     m = re.match(r"^(\d{1,2})$", text)
-    if m:
-        return m.group(1)
-    return ""
+    return m.group(1) if m else ""
 
 
 def normalize_position(pos_str: str) -> str:
@@ -181,10 +178,7 @@ def normalize_position(pos_str: str) -> str:
 
 
 def normalize_year(yr_str: str) -> str:
-    """
-    Standardizes academic class years:
-    FR, SO, JR, SR, GR, 5TH, or Redshirts (R-FR, R-SO, R-JR, R-SR).
-    """
+    """Standardizes academic class standing."""
     if not yr_str:
         return ""
     y = yr_str.upper().strip()
@@ -203,17 +197,16 @@ def normalize_year(yr_str: str) -> str:
     return ""
 
 
-def is_valid_player_row(name: str) -> bool:
-    """Validates that candidate is an actual basketball player row."""
+def is_valid_player_name(name: str) -> bool:
+    """Checks that candidate name is a valid player and not a header, score, or staff title."""
     if not name or len(name.strip()) < 2:
         return False
 
     low = name.strip().lower()
-
-    if low in DISCARD_EXACT_NAMES:
+    if low in DISCARD_TOKENS:
         return False
 
-    # Discard single words that look like first names only or pure numbers/decimals/dates
+    # Discard pure numbers, decimals (.845, 12.1), and dates (11/19/25)
     if re.match(r"^(\.\d+|\d+(\.\d+)?|\d{1,2}/\d{1,2}/\d{2,4})$", low):
         return False
 
@@ -221,9 +214,11 @@ def is_valid_player_row(name: str) -> bool:
     if re.search(r"\b(vs|at|\d+-\d+)\b", low):
         return False
 
-    # Discard summary and staff keywords
+    # Discard summary keywords
     if any(tok in low for tok in ["team tm", "opponents", "opponent", "total", "totals", "attendance"]):
         return False
+
+    # Discard coaching staff
     if any(staff in low for staff in STAFF_KEYWORDS):
         return False
 
@@ -232,8 +227,9 @@ def is_valid_player_row(name: str) -> bool:
 
 def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
     """
-    Scrapes team roster for validation, Position (G/F), and Academic Year.
-    Excludes staff and non-players.
+    Scrapes the roster page to create a lookup map by player name and jersey number.
+    Extracts validated Position (G/F) and Year (FR, SO, JR, SR, GR, etc.).
+    Excludes coaches and support staff.
     """
     html = fetch_url(roster_url)
     roster_lookup: Dict[str, Dict[str, str]] = {}
@@ -242,18 +238,19 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # Filter out staff containers if present
-    for staff_section in soup.find_all(class_=re.compile(r"staff|coaches", re.I)):
-        staff_section.decompose()
+    # Remove coach / staff elements
+    for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
+        staff.decompose()
 
-    players = soup.find_all(class_=re.compile(r"roster-player|roster__item|sidearm-roster-player|s-person-details", re.I))
+    # Find Sidearm roster cards/items
+    player_items = soup.find_all(class_=re.compile(r"roster-player|roster__item|sidearm-roster-player|s-person-details", re.I))
 
-    for p in players:
+    for p in player_items:
         name_el = p.find(class_=re.compile(r"name|player-name", re.I))
         raw_name = name_el.get_text(separator=" ", strip=True) if name_el else ""
         c_name = clean_name(raw_name)
 
-        if not c_name or not is_valid_player_row(c_name):
+        if not is_valid_player_name(c_name):
             continue
 
         num_el = p.find(class_=re.compile(r"jersey|number|player-number", re.I))
@@ -278,7 +275,7 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
         if c_num:
             roster_lookup[f"#{c_num}"] = info
 
-    # Strategy 2: Sidearm Table format
+    # Fallback to HTML table if modern cards not found
     if not roster_lookup:
         for row in soup.find_all("tr"):
             cols = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
@@ -295,10 +292,10 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
                     if not yr:
                         yr = normalize_year(col)
                     c_clean = clean_name(col)
-                    if not name_cand and is_valid_player_row(c_clean) and not normalize_position(col) and not normalize_year(col):
+                    if not name_cand and is_valid_player_name(c_clean) and not normalize_position(col) and not normalize_year(col):
                         name_cand = c_clean
 
-                if name_cand and is_valid_player_row(name_cand):
+                if name_cand and is_valid_player_name(name_cand):
                     info = {
                         "name": name_cand,
                         "number": num,
@@ -312,16 +309,16 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
     return roster_lookup
 
 
-def parse_nuxt_json_stats(html: str) -> List[Dict[str, Any]]:
+def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
     """
-    Parses Sidearm Nuxt payload focusing exclusively on individual player objects
-    containing season totals/averages and ignoring game-by-game items.
+    Extracts player stats from Sidearm Nuxt JSON data.
+    Directly targets pointsPerGame (Scoring AVG / PPG) and aggregate stats while omitting MIN.
     """
     players = []
     patterns = [
+        r'<script id="__NUXT_DATA__"[^>]*>(.*?)</script>',
         r"__NUXT_DATA__\s*=\s*(\[.*?\]);",
-        r"window\.__NUXT__\s*=\s*(.*?);\s*</script>",
-        r'<script id="__NUXT_DATA__"[^>]*>(.*?)</script>'
+        r"window\.__NUXT__\s*=\s*(.*?);\s*</script>"
     ]
 
     for pat in patterns:
@@ -329,62 +326,72 @@ def parse_nuxt_json_stats(html: str) -> List[Dict[str, Any]]:
         if not m:
             continue
         try:
-            data = json.loads(m.group(1))
+            raw_json = m.group(1)
+            data = json.loads(raw_json)
             if not isinstance(data, list):
                 continue
 
+            def resolve(val: Any) -> Any:
+                if isinstance(val, int) and 0 <= val < len(data):
+                    target = data[val]
+                    if isinstance(target, (str, int, float)):
+                        return str(target)
+                return str(val) if val is not None else ""
+
             for item in data:
-                if isinstance(item, dict):
-                    # Discard game-by-game logs and footers
-                    if "opponent" in item or "winOrLoss" in item or "boxscoreUrl" in item:
-                        continue
-                    if item.get("isAFooterStat") is True:
-                        continue
+                if not isinstance(item, dict):
+                    continue
 
-                    # Look for player name key
-                    raw_name = item.get("playerName") or item.get("nameFromStats") or item.get("name") or item.get("player")
-                    if not raw_name or not isinstance(raw_name, str):
-                        continue
+                # Ignore game logs and footers
+                if "opponent" in item or "winOrLoss" in item or "boxscoreUrl" in item:
+                    continue
+                if item.get("isAFooterStat") is True:
+                    continue
 
-                    c_name = clean_name(raw_name)
-                    if not is_valid_player_row(c_name):
-                        continue
+                # Player name resolution
+                raw_name = item.get("playerName") or item.get("nameFromStats") or item.get("name")
+                if raw_name is None:
+                    continue
 
-                    raw_num = item.get("playerUniform") or item.get("jersey") or item.get("number") or ""
-                    c_num = clean_number(str(raw_num))
+                name_str = resolve(raw_name)
+                c_name = clean_name(name_str)
+                if not is_valid_player_name(c_name):
+                    continue
 
-                    # Must have cumulative / season stats
-                    avg_val = str(item.get("pointsPerGame") or item.get("pts_avg") or item.get("ppg") or item.get("avg") or "")
-                    min_val = str(item.get("minutesPerGame") or item.get("min_avg") or item.get("mpg") or "")
-                    tot_reb = str(item.get("reboundsPerGame") or item.get("reb_avg") or item.get("rpg") or item.get("totalRebounds") or "")
-                    ast_val = str(item.get("assistsPerGame") or item.get("ast_avg") or item.get("apg") or item.get("assists") or "")
-                    to_val = str(item.get("turnoversPerGame") or item.get("to_avg") or item.get("turnovers") or "")
-                    stl_val = str(item.get("stealsPerGame") or item.get("stl_avg") or item.get("steals") or "")
-                    blk_val = str(item.get("blocksPerGame") or item.get("blk_avg") or item.get("blocks") or "")
+                # Uniform number
+                raw_num = item.get("playerUniform") or item.get("jersey") or item.get("number")
+                c_num = clean_number(resolve(raw_num))
 
-                    fg_pct = str(item.get("fieldGoalsPercentage") or item.get("fg_pct") or item.get("fgPct") or "")
-                    three_pct = str(item.get("threePointFieldGoalsPercentage") or item.get("three_pt_pct") or item.get("threePtPct") or "")
-                    ft_pct = str(item.get("freeThrowsPercentage") or item.get("ft_pct") or item.get("ftPct") or "")
+                # Scoring average (PPG) - NOT rebounds per game or minutes
+                ppg = resolve(item.get("pointsPerGame") or item.get("pts_avg") or item.get("ppg"))
+                fg_pct = resolve(item.get("fieldGoalsPercentage") or item.get("fg_pct") or item.get("fgPct"))
+                three_pct = resolve(item.get("threePointFieldGoalsPercentage") or item.get("three_pt_pct") or item.get("threePtPct"))
+                ft_pct = resolve(item.get("freeThrowsPercentage") or item.get("ft_pct") or item.get("ftPct"))
+                tot_reb = resolve(item.get("rebounds") or item.get("totalRebounds") or item.get("tot_reb"))
+                ast = resolve(item.get("assists") or item.get("ast"))
+                to = resolve(item.get("turnovers") or item.get("to"))
+                stl = resolve(item.get("steals") or item.get("stl"))
+                blk = resolve(item.get("blocks") or item.get("blk"))
 
-                    # Verify at least one essential basketball field is populated
-                    if not any([avg_val, min_val, fg_pct, ft_pct, tot_reb]):
-                        continue
+                # Validate valid stats exist
+                if not any([ppg, fg_pct, ft_pct, tot_reb, ast]):
+                    continue
 
-                    players.append({
-                        "name": c_name,
-                        "number": c_num,
-                        "avg": avg_val,
-                        "fg_pct": fg_pct,
-                        "three_pt_pct": three_pct,
-                        "ft_pct": ft_pct,
-                        "tot_reb": tot_reb,
-                        "ast": ast_val,
-                        "to": to_val,
-                        "stl": stl_val,
-                        "blk": blk_val,
-                        "min": min_val
-                    })
-        except Exception:
+                players.append({
+                    "name": c_name,
+                    "number": c_num,
+                    "avg": ppg,
+                    "fg_pct": fg_pct,
+                    "three_pt_pct": three_pct,
+                    "ft_pct": ft_pct,
+                    "tot_reb": tot_reb,
+                    "ast": ast,
+                    "to": to,
+                    "stl": stl,
+                    "blk": blk
+                })
+        except Exception as e:
+            logger.debug(f"Nuxt parse exception: {e}")
             continue
 
         if players:
@@ -395,28 +402,26 @@ def parse_nuxt_json_stats(html: str) -> List[Dict[str, Any]]:
 
 def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
     """
-    Parses Sidearm statistical tables, isolating the full season cumulative Player Stats table.
-    Explicitly ignores Game-by-Game tables, Opponent comparisons, and category leader blocks.
+    Parses stats from Sidearm HTML statistical tables.
+    Explicitly targets Scoring AVG (PPG), TOT rebounds, etc. Omits MIN.
     """
     soup = BeautifulSoup(html, "html.parser")
     players = []
 
     for table in soup.find_all("table"):
-        # Check parents to avoid Game-by-Game or Leaders containers
-        parent_text = " ".join([p.get_text() for p in table.parents if p.name in ["div", "section"]])[:400].lower()
-        if any(bad in parent_text for bad in ["game-by-game", "schedule", "highs/lows", "stats-leader"]):
+        parent_text = " ".join([p.get_text() for p in table.parents if p.name in ["div", "section"]])[:300].lower()
+        if any(bad in parent_text for bad in ["game-by-game", "schedule", "leaders"]):
             continue
 
         rows = table.find_all("tr")
         if not rows:
             continue
 
-        # Look for the subheader row containing standard basketball columns
+        # Look for the subheader row
         header_row = None
         for r in rows[:4]:
             txts = [c.get_text(strip=True).upper() for c in r.find_all(["th", "td"])]
-            # Must have basketball season headers
-            if ("PLAYER" in txts or "NAME" in txts) and ("MIN" in txts or "AVG" in txts or "PTS" in txts):
+            if ("PLAYER" in txts or "NAME" in txts) and ("PTS" in txts or "AVG" in txts or "FGM" in txts):
                 if not any(k in txts for k in ["OPPONENT", "DATE", "RESULT", "SCORE", "W/L"]):
                     header_row = r
                     break
@@ -426,7 +431,8 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
 
         header_cols = [c.get_text(strip=True).upper() for c in header_row.find_all(["th", "td"])]
 
-        # Map column positions by index
+        # Map column positions specifically:
+        # In Sidearm, MINUTES AVG comes first, SCORING PTS AVG comes second
         col_map: Dict[str, int] = {}
         saw_first_avg = False
 
@@ -436,17 +442,14 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
                 col_map["number"] = idx
             elif c in ("PLAYER", "NAME"):
                 col_map["name"] = idx
-            elif c == "MIN" and "min" not in col_map:
-                col_map["min"] = idx
             elif c in ("AVG", "PPG", "PTS/G"):
                 if not saw_first_avg:
-                    # In Sidearm basketball, MINUTES has an AVG column first (min per game)
-                    # and SCORING has an AVG column second (pts per game)
-                    if "min" in col_map and col_map["min"] == idx - 1:
-                        col_map["min_avg"] = idx
+                    # If this AVG is preceded by MIN, it's min per game, so the second AVG is scoring points
+                    if "min" in col_map or (idx > 0 and "MIN" in header_cols[idx - 1]):
+                        saw_first_avg = True
                     else:
                         col_map["avg"] = idx
-                    saw_first_avg = True
+                        saw_first_avg = True
                 else:
                     col_map["avg"] = idx
             elif c in ("FG%", "FGPCT"):
@@ -455,7 +458,7 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
                 col_map["three_pt_pct"] = idx
             elif c in ("FT%", "FTPCT"):
                 col_map["ft_pct"] = idx
-            elif c in ("TOT", "REB", "RPG", "REB/G"):
+            elif c in ("TOT", "REB", "TOTAL"):
                 col_map["tot_reb"] = idx
             elif c in ("AST", "APG"):
                 col_map["ast"] = idx
@@ -476,10 +479,8 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
 
             row_texts = [td.get_text(strip=True) for td in cells]
 
-            # Player name extraction
+            # Extract player name
             raw_name = ""
-            raw_num = ""
-
             name_link = row.find("a", href=re.compile(r"roster/[^/]+/\d+", re.I))
             if name_link:
                 raw_name = name_link.get_text(strip=True)
@@ -489,10 +490,11 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
                 raw_name = row_texts[1]
 
             c_name = clean_name(raw_name)
-            if not is_valid_player_row(c_name):
+            if not is_valid_player_name(c_name):
                 continue
 
             # Jersey Number
+            raw_num = ""
             if "number" in col_map and col_map["number"] < len(row_texts):
                 raw_num = row_texts[col_map["number"]]
             elif row_texts[0].isdigit() or row_texts[0] in ("00", "0"):
@@ -503,18 +505,15 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
             def get_stat(key: str) -> str:
                 if key in col_map and col_map[key] < len(row_texts):
                     v = row_texts[col_map[key]].strip()
-                    if v.lower() in DISCARD_EXACT_NAMES or v == "View Bio":
+                    if v.lower() in DISCARD_TOKENS or v == "View Bio":
                         return ""
                     return v
                 return ""
 
-            scoring_avg = get_stat("avg")
-            min_val = get_stat("min_avg") or get_stat("min")
-
             players.append({
                 "name": c_name,
                 "number": c_num,
-                "avg": scoring_avg,
+                "avg": get_stat("avg"),
                 "fg_pct": get_stat("fg_pct"),
                 "three_pt_pct": get_stat("three_pt_pct"),
                 "ft_pct": get_stat("ft_pct"),
@@ -522,8 +521,7 @@ def parse_html_table_stats(html: str) -> List[Dict[str, Any]]:
                 "ast": get_stat("ast"),
                 "to": get_stat("to"),
                 "stl": get_stat("stl"),
-                "blk": get_stat("blk"),
-                "min": min_val
+                "blk": get_stat("blk")
             })
 
         if players:
@@ -542,28 +540,28 @@ def scrape_team(team_cfg: Dict[str, str]) -> Dict[str, Any]:
     roster_lookup = scrape_roster(team_cfg["roster_url"])
     logger.info(f"  Found {len(roster_lookup)} roster entries for {team_name}")
 
-    # 2. Fetch Stats page
+    # 2. Fetch Stats page (HTML table first, Nuxt fallback)
     stats_html = fetch_url(team_cfg["stats_url"])
-    stats_players = []
+    stats_players: List[Dict[str, Any]] = []
 
     if stats_html:
         stats_players = parse_html_table_stats(stats_html)
         if not stats_players:
-            stats_players = parse_nuxt_json_stats(stats_html)
+            stats_players = parse_nuxt_data_stats(stats_html)
 
     logger.info(f"  Parsed {len(stats_players)} season player stat entries for {team_name}")
 
+    # 3. Merge stats with roster info (only keep players with stats; no coaches)
     merged_players = []
     seen_names = set()
 
     for sp in stats_players:
         name = sp.get("name", "")
-        if not name or name.lower() in seen_names or not is_valid_player_row(name):
+        if not name or name.lower() in seen_names or not is_valid_player_name(name):
             continue
 
         seen_names.add(name.lower())
 
-        # Cross-reference with roster for validated Pos and Year
         r_info = roster_lookup.get(name.lower())
         if not r_info and sp.get("number"):
             r_info = roster_lookup.get(f"#{sp['number']}")
@@ -586,33 +584,8 @@ def scrape_team(team_cfg: Dict[str, str]) -> Dict[str, Any]:
             "ast": sp.get("ast", ""),
             "to": sp.get("to", ""),
             "stl": sp.get("stl", ""),
-            "blk": sp.get("blk", ""),
-            "min": sp.get("min", "")
+            "blk": sp.get("blk", "")
         })
-
-    # Include remaining roster players (who have not accumulated stats yet)
-    for key, r_info in roster_lookup.items():
-        if key.startswith("#"):
-            continue
-        pname = r_info["name"]
-        if pname.lower() not in seen_names and is_valid_player_row(pname):
-            seen_names.add(pname.lower())
-            merged_players.append({
-                "name": pname,
-                "number": r_info.get("number", ""),
-                "position": r_info.get("position", ""),
-                "year": r_info.get("year", ""),
-                "avg": "",
-                "fg_pct": "",
-                "three_pt_pct": "",
-                "ft_pct": "",
-                "tot_reb": "",
-                "ast": "",
-                "to": "",
-                "stl": "",
-                "blk": "",
-                "min": ""
-            })
 
     return {
         "team": team_name,
