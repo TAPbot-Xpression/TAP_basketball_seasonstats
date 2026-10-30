@@ -2,17 +2,17 @@ name: Scrape Basketball Stats
 
 on:
   schedule:
-    # Runs every 6 hours (4x per day) — ensures away team is scraped within 24h of URL update
-    - cron: "0 */6 * * *"
+    # Daily 9am UTC scan
+    - cron: "0 9 * * *"
+
   push:
     branches:
       - main
-    paths:
-      - "away_team_config.json"  # Also triggers when away team URL is updated
-  workflow_dispatch:             # Allows manual trigger from GitHub Actions UI
+
+  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
 
 permissions:
-  contents: write   # Required to commit stats.json back to the repo
+  contents: write   # Required to commit JSON files back to the repo
   pages: write      # Required to deploy to GitHub Pages
   id-token: write   # Required for Pages OIDC authentication
 
@@ -44,24 +44,44 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # ── 5. Run the scraper ─────────────────────────────────────────────────
+      # ── 5. Run the basketball scraper ──────────────────────────────────────
       - name: Run scraper
-        run: python scraper.py
+        run: python scrape_basketball.py
 
-      # ── 6. Commit updated stats.json back to repo ──────────────────────────
+      # ── 6. Move JSON output files into docs/ for Pages serving ─────────────
+      - name: Move JSON files to docs/
+        run: |
+          mkdir -p docs
+          mv all_teams.json docs/all_teams.json
+          # Move each individual team JSON into docs/
+          for f in kansas_city.json north_dakota.json north_dakota_state.json \
+                   omaha.json oral_roberts.json south_dakota.json \
+                   south_dakota_state.json st_thomas.json; do
+            [ -f "$f" ] && mv "$f" "docs/$f" || echo "Warning: $f not found, skipping"
+          done
+
+      # ── 7. Commit updated JSON files back to repo ──────────────────────────
       - name: Commit and push updated stats
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/stats.json away_team_config.json
-          git diff --cached --quiet || git commit -m "chore: update stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+          git add docs/all_teams.json \
+                  docs/kansas_city.json \
+                  docs/north_dakota.json \
+                  docs/north_dakota_state.json \
+                  docs/omaha.json \
+                  docs/oral_roberts.json \
+                  docs/south_dakota.json \
+                  docs/south_dakota_state.json \
+                  docs/st_thomas.json
+          git diff --cached --quiet || git commit -m "chore: update basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
 
-      # ── 7. Upload docs/ folder as Pages artifact ───────────────────────────
+      # ── 8. Upload docs/ folder as Pages artifact ───────────────────────────
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/   # Uploads everything in docs/ (index.html + stats.json)
+          path: docs/   # Uploads everything in docs/ (index.html + all JSON files)
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,7 +92,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # ── 8. Deploy to GitHub Pages ──────────────────────────────────────────
+      # ── 9. Deploy to GitHub Pages ──────────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
