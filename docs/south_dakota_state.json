@@ -1,7 +1,7 @@
 {
   "team": "South Dakota State",
   "slug": "south_dakota_state",
-  "generated_at": "2026-10-30T15:59:55Z",
+  "generated_at": "2026-10-30T16:23:20Z",
   "players": [
     {
       "name": "Player name",
@@ -16,8 +16,7 @@
       "ast": "",
       "to": "",
       "stl": "",
-      "blk": "",
-      "min": "MINUTES"
+      "blk": ""
     },
     {
       "name": "Joe Sayler",
@@ -32,8 +31,7 @@
       "ast": "76",
       "to": "56",
       "stl": "15",
-      "blk": "4",
-      "min": "32.4"
+      "blk": "4"
     },
     {
       "name": "Damon Wilkinson",
@@ -48,8 +46,7 @@
       "ast": "40",
       "to": "54",
       "stl": "12",
-      "blk": "27",
-      "min": "23.8"
+      "blk": "27"
     },
     {
       "name": "Jaden Jackson",
@@ -64,8 +61,7 @@
       "ast": "81",
       "to": "41",
       "stl": "49",
-      "blk": "4",
-      "min": "32.0"
+      "blk": "4"
     },
     {
       "name": "Kalen Garry",
@@ -80,8 +76,7 @@
       "ast": "102",
       "to": "48",
       "stl": "20",
-      "blk": "4",
-      "min": "28.9"
+      "blk": "4"
     },
     {
       "name": "Cam Swearengen",
@@ -96,8 +91,7 @@
       "ast": "39",
       "to": "30",
       "stl": "32",
-      "blk": "16",
-      "min": "27.8"
+      "blk": "16"
     },
     {
       "name": "Trey Buchanan",
@@ -112,8 +106,7 @@
       "ast": "8",
       "to": "14",
       "stl": "6",
-      "blk": "0",
-      "min": "14.8"
+      "blk": "0"
     },
     {
       "name": "Alec Squires",
@@ -128,8 +121,7 @@
       "ast": "24",
       "to": "35",
       "stl": "10",
-      "blk": "8",
-      "min": "15.0"
+      "blk": "8"
     },
     {
       "name": "Bubz Alvarez",
@@ -144,8 +136,7 @@
       "ast": "23",
       "to": "18",
       "stl": "15",
-      "blk": "1",
-      "min": "15.0"
+      "blk": "1"
     },
     {
       "name": "Luke Haertle",
@@ -160,8 +151,7 @@
       "ast": "43",
       "to": "33",
       "stl": "15",
-      "blk": "4",
-      "min": "15.1"
+      "blk": "4"
     },
     {
       "name": "Jaden Rogers",
@@ -176,8 +166,7 @@
       "ast": "2",
       "to": "3",
       "stl": "3",
-      "blk": "3",
-      "min": "9.2"
+      "blk": "3"
     },
     {
       "name": "Blake Ellwein",
@@ -192,8 +181,7 @@
       "ast": "1",
       "to": "3",
       "stl": "2",
-      "blk": "1",
-      "min": "3.2"
+      "blk": "1"
     },
     {
       "name": "Caleb Delzell",
@@ -208,8 +196,7 @@
       "ast": "17",
       "to": "9",
       "stl": "4",
-      "blk": "1",
-      "min": "9.0"
+      "blk": "1"
     },
     {
       "name": "Jadyn Cascio Jensen",
@@ -224,328 +211,7 @@
       "ast": "1",
       "to": "1",
       "stl": "1",
-      "blk": "0",
-      "min": "2.7"
-    },
-    {
-      "name": "Pos.",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Semaj Stampley",
-      "number": "1",
-      "position": "G",
-      "year": "FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Nanterre",
-      "number": "4",
-      "position": "F",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jon Mekonnen",
-      "number": "5",
-      "position": "F",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "EJ Ryans",
-      "number": "7",
-      "position": "G",
-      "year": "JR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Cam Swearengen",
-      "number": "11",
-      "position": "G",
-      "year": "FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "SIUE",
-      "number": "21",
-      "position": "F",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Davis Kern",
-      "number": "22",
-      "position": "F",
-      "year": "R-FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Blake Ellwein",
-      "number": "23",
-      "position": "F",
-      "year": "FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jesse Van Kalsbeek",
-      "number": "42",
-      "position": "F",
-      "year": "JR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Title",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Bryan Petersen",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Ryan Kirsch",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Nick Smith",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jahenns Manigat",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jamal Nixon",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Tucker Wookey",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Eric Adolph",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Woody Dahl",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Katie LeMair",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
+      "blk": "0"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "team": "North Dakota State",
   "slug": "north_dakota_state",
-  "generated_at": "2026-10-30T15:59:38Z",
+  "generated_at": "2026-10-30T16:23:00Z",
   "players": [
     {
       "name": "Player name",
@@ -16,8 +16,7 @@
       "ast": "",
       "to": "",
       "stl": "",
-      "blk": "",
-      "min": "MINUTES"
+      "blk": ""
     },
     {
       "name": "Damari Wheeler-thomas",
@@ -32,8 +31,7 @@
       "ast": "89",
       "to": "47",
       "stl": "37",
-      "blk": "0",
-      "min": "30.5"
+      "blk": "0"
     },
     {
       "name": "Trevian Carson",
@@ -48,8 +46,7 @@
       "ast": "100",
       "to": "56",
       "stl": "63",
-      "blk": "14",
-      "min": "31.7"
+      "blk": "14"
     },
     {
       "name": "Santiago Paz Vazquez",
@@ -64,8 +61,7 @@
       "ast": "45",
       "to": "45",
       "stl": "28",
-      "blk": "7",
-      "min": "24.3"
+      "blk": "7"
     },
     {
       "name": "Andrew Nagy",
@@ -80,8 +76,7 @@
       "ast": "28",
       "to": "49",
       "stl": "14",
-      "blk": "33",
-      "min": "18.1"
+      "blk": "33"
     },
     {
       "name": "Noah Feddersen",
@@ -96,8 +91,7 @@
       "ast": "35",
       "to": "44",
       "stl": "13",
-      "blk": "36",
-      "min": "21.1"
+      "blk": "36"
     },
     {
       "name": "Andy Stefonowicz",
@@ -112,8 +106,7 @@
       "ast": "167",
       "to": "72",
       "stl": "58",
-      "blk": "5",
-      "min": "32.4"
+      "blk": "5"
     },
     {
       "name": "Tay Smith",
@@ -128,8 +121,7 @@
       "ast": "29",
       "to": "19",
       "stl": "38",
-      "blk": "0",
-      "min": "19.9"
+      "blk": "0"
     },
     {
       "name": "Emil Skytt\u00e4",
@@ -144,8 +136,7 @@
       "ast": "17",
       "to": "9",
       "stl": "12",
-      "blk": "1",
-      "min": "12.0"
+      "blk": "1"
     },
     {
       "name": "Carson Smith",
@@ -160,8 +151,7 @@
       "ast": "4",
       "to": "7",
       "stl": "4",
-      "blk": "2",
-      "min": "10.0"
+      "blk": "2"
     },
     {
       "name": "Amir Danforth",
@@ -176,8 +166,7 @@
       "ast": "2",
       "to": "1",
       "stl": "0",
-      "blk": "0",
-      "min": "2.0"
+      "blk": "0"
     },
     {
       "name": "Riley Massey",
@@ -192,8 +181,7 @@
       "ast": "15",
       "to": "8",
       "stl": "19",
-      "blk": "0",
-      "min": "8.2"
+      "blk": "0"
     },
     {
       "name": "3rd",
@@ -208,8 +196,7 @@
       "ast": "9",
       "to": "7",
       "stl": "3",
-      "blk": "0",
-      "min": "5.6"
+      "blk": "0"
     },
     {
       "name": "Oliver Junker",
@@ -224,360 +211,7 @@
       "ast": "1",
       "to": "1",
       "stl": "0",
-      "blk": "0",
-      "min": "2.1"
-    },
-    {
-      "name": "Pos.",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Rob Diaz III",
-      "number": "0",
-      "position": "G",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "2nd",
-      "number": "1",
-      "position": "G",
-      "year": "JR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Kaden Tate",
-      "number": "3",
-      "position": "F",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Max Iversen",
-      "number": "4",
-      "position": "G",
-      "year": "GR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "3rd",
-      "number": "11",
-      "position": "G",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Chance Schoenfeld",
-      "number": "12",
-      "position": "F",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Amir Danforth",
-      "number": "13",
-      "position": "G",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jaziah Harper",
-      "number": "14",
-      "position": "G",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Oliver Junker",
-      "number": "22",
-      "position": "F",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Karl Poom",
-      "number": "23",
-      "position": "F",
-      "year": "R-SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Santiago Paz Vazquez",
-      "number": "30",
-      "position": "G",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Colin Stack",
-      "number": "35",
-      "position": "F",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Andrew Nagy",
-      "number": "44",
-      "position": "F",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Title",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": ") David Richman (",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Luke Strege",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Spencer Wilker ()",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Terrance McGee",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "James Buchanan",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Wes Offerman",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Logan Dosch",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
+      "blk": "0"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "team": "St. Thomas",
   "slug": "st_thomas",
-  "generated_at": "2026-10-30T15:59:59Z",
+  "generated_at": "2026-10-30T16:23:24Z",
   "players": [
     {
       "name": "Player name",
@@ -16,8 +16,7 @@
       "ast": "",
       "to": "",
       "stl": "",
-      "blk": "",
-      "min": "MINUTES"
+      "blk": ""
     },
     {
       "name": "Nolan Minessale",
@@ -32,8 +31,7 @@
       "ast": "145",
       "to": "76",
       "stl": "54",
-      "blk": "19",
-      "min": "31.1"
+      "blk": "19"
     },
     {
       "name": "Nick Janowski",
@@ -48,8 +46,7 @@
       "ast": "72",
       "to": "44",
       "stl": "25",
-      "blk": "7",
-      "min": "31.4"
+      "blk": "7"
     },
     {
       "name": "Isaiah Johnson-arigu",
@@ -64,8 +61,7 @@
       "ast": "37",
       "to": "42",
       "stl": "21",
-      "blk": "19",
-      "min": "21.3"
+      "blk": "19"
     },
     {
       "name": "Carter Bjerke",
@@ -80,8 +76,7 @@
       "ast": "41",
       "to": "25",
       "stl": "17",
-      "blk": "9",
-      "min": "24.8"
+      "blk": "9"
     },
     {
       "name": "Ben Oosterbaan",
@@ -96,8 +91,7 @@
       "ast": "54",
       "to": "28",
       "stl": "32",
-      "blk": "11",
-      "min": "24.1"
+      "blk": "11"
     },
     {
       "name": "Ryan Dufault",
@@ -112,8 +106,7 @@
       "ast": "58",
       "to": "23",
       "stl": "28",
-      "blk": "1",
-      "min": "17.7"
+      "blk": "1"
     },
     {
       "name": "Austin Herro",
@@ -128,8 +121,7 @@
       "ast": "94",
       "to": "36",
       "stl": "46",
-      "blk": "13",
-      "min": "23.8"
+      "blk": "13"
     },
     {
       "name": "Jermaine Coleman",
@@ -144,8 +136,7 @@
       "ast": "16",
       "to": "12",
       "stl": "5",
-      "blk": "4",
-      "min": "13.9"
+      "blk": "4"
     },
     {
       "name": "Hayden Tibbits",
@@ -160,8 +151,7 @@
       "ast": "29",
       "to": "9",
       "stl": "11",
-      "blk": "1",
-      "min": "10.8"
+      "blk": "1"
     },
     {
       "name": "Tim Franks",
@@ -176,8 +166,7 @@
       "ast": "6",
       "to": "2",
       "stl": "2",
-      "blk": "1",
-      "min": "4.1"
+      "blk": "1"
     },
     {
       "name": "Tommy Humphries Jr.",
@@ -192,8 +181,7 @@
       "ast": "2",
       "to": "0",
       "stl": "1",
-      "blk": "1",
-      "min": "4.4"
+      "blk": "1"
     },
     {
       "name": "Kyle Counts",
@@ -208,8 +196,7 @@
       "ast": "1",
       "to": "1",
       "stl": "0",
-      "blk": "1",
-      "min": "4.2"
+      "blk": "1"
     },
     {
       "name": "Ryan Lafferty",
@@ -224,8 +211,7 @@
       "ast": "14",
       "to": "12",
       "stl": "9",
-      "blk": "1",
-      "min": "13.4"
+      "blk": "1"
     },
     {
       "name": "Adam Tauer",
@@ -240,8 +226,7 @@
       "ast": "2",
       "to": "1",
       "stl": "2",
-      "blk": "0",
-      "min": "2.8"
+      "blk": "0"
     },
     {
       "name": "Jack Tauer",
@@ -256,376 +241,7 @@
       "ast": "1",
       "to": "0",
       "stl": "0",
-      "blk": "1",
-      "min": "1.9"
-    },
-    {
-      "name": "Yr.",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Minn. / Mankato East",
-      "number": "0",
-      "position": "G",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "JoJo Mitchell III",
-      "number": "3",
-      "position": "G",
-      "year": "FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Kendall Blue",
-      "number": "4",
-      "position": "G",
-      "year": "GR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Wis. / Homestead Mequon",
-      "number": "5",
-      "position": "G",
-      "year": "FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Julius Wade",
-      "number": "11",
-      "position": "G",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Luka Momcilovic",
-      "number": "13",
-      "position": "F",
-      "year": "R-FR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Caden Wilkins",
-      "number": "21",
-      "position": "F",
-      "year": "R-SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Iowa / Roland-Story Radcliffe",
-      "number": "22",
-      "position": "G",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Jeremy Lorenz",
-      "number": "33",
-      "position": "F",
-      "year": "R-JR",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Title",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Johnny Tauer",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Mike Maker",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Cameron Rundles",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Riley Miller",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Josh Rodenbiker",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Kevin Schield",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Andrew Haldeman",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "robi1287@stthomas.edu",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Alli Barthel",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Kathy Hawks",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Collin Boyles",
-      "number": "",
-      "position": "",
-      "year": "SO",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
-    },
-    {
-      "name": "Tom McGinnis",
-      "number": "",
-      "position": "",
-      "year": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": "",
-      "min": ""
+      "blk": "1"
     }
   ]
 }
