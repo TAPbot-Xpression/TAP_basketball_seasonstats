@@ -4,11 +4,9 @@ on:
   schedule:
     # Daily 9am UTC scan
     - cron: "0 9 * * *"
-
   push:
     branches:
       - main
-
   workflow_dispatch: # Allows manual trigger from GitHub Actions UI
 
 permissions:
@@ -44,23 +42,37 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # ── 5. Run the basketball scraper ──────────────────────────────────────
-      - name: Run scraper
+      # ── 5. Run the Men's basketball scraper ───────────────────────────────
+      - name: Run Men's scraper
         run: python scrape_basketball.py
 
-      # ── 6. Move JSON output files into docs/ for Pages serving ─────────────
-      - name: Move JSON files to docs/
+      # ── 6. Run the Women's basketball scraper ─────────────────────────────
+      - name: Run Women's scraper
+        run: python scrape_womens_basketball.py
+
+      # ── 7. Move Men's JSON output files into docs/ ────────────────────────
+      - name: Move Men's JSON files to docs/
         run: |
           mkdir -p docs
           mv all_teams.json docs/all_teams.json
-          # Move each individual team JSON into docs/
           for f in kansas_city.json north_dakota.json north_dakota_state.json \
                    omaha.json oral_roberts.json south_dakota.json \
                    south_dakota_state.json st_thomas.json; do
             [ -f "$f" ] && mv "$f" "docs/$f" || echo "Warning: $f not found, skipping"
           done
 
-      # ── 7. Commit updated JSON files back to repo ──────────────────────────
+      # ── 8. Move Women's JSON output files into docs/ ──────────────────────
+      - name: Move Women's JSON files to docs/
+        run: |
+          mkdir -p docs
+          mv women_teams.json docs/women_teams.json
+          for f in kansas_city_women.json north_dakota_women.json north_dakota_state_women.json \
+                   omaha_women.json oral_roberts_women.json south_dakota_women.json \
+                   south_dakota_state_women.json st_thomas_women.json; do
+            [ -f "$f" ] && mv "$f" "docs/$f" || echo "Warning: $f not found, skipping"
+          done
+
+      # ── 9. Commit all updated JSON files back to repo ─────────────────────
       - name: Commit and push updated stats
         run: |
           git config --global user.name "github-actions[bot]"
@@ -73,11 +85,20 @@ jobs:
                   docs/oral_roberts.json \
                   docs/south_dakota.json \
                   docs/south_dakota_state.json \
-                  docs/st_thomas.json
-          git diff --cached --quiet || git commit -m "chore: update basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+                  docs/st_thomas.json \
+                  docs/women_teams.json \
+                  docs/kansas_city_women.json \
+                  docs/north_dakota_women.json \
+                  docs/north_dakota_state_women.json \
+                  docs/omaha_women.json \
+                  docs/oral_roberts_women.json \
+                  docs/south_dakota_women.json \
+                  docs/south_dakota_state_women.json \
+                  docs/st_thomas_women.json
+          git diff --cached --quiet || git commit -m "chore: update Men's and Women's basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
 
-      # ── 8. Upload docs/ folder as Pages artifact ───────────────────────────
+      # ── 10. Upload docs/ folder as Pages artifact ─────────────────────────
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -92,7 +113,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # ── 9. Deploy to GitHub Pages ──────────────────────────────────────────
+      # ── 11. Deploy to GitHub Pages ────────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
