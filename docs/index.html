@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Summit League Men's Basketball Stats · TAPbot</title>
+  <title>Summit League Basketball Stats</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
@@ -20,10 +20,10 @@
 
       /* Dynamic Theme Variables (Defaults to Kansas City) */
       --team-primary:   #002b49;
-      --team-accent:    #004b87;
-      --team-glow:      rgba(0, 75, 135, 0.38);
-      --team-light:     #bae6fd;
-      --team-btn-text:  #ffffff;
+      --team-accent:    #eaaa00;
+      --team-glow:      rgba(234, 170, 0, 0.35);
+      --team-light:     #fef08a;
+      --team-btn-text:  #000000;
 
       /* Medal Tones */
       --gold:           #fbbf24;
@@ -45,7 +45,7 @@
     }
 
     [data-theme="kansas_city"] {
-      --team-primary:   #002b49;
+      --team-primary:   #002b49; /* Navy */
       --team-accent:    #eaaa00;
       --team-glow:      rgba(234, 170, 0, 0.35);
       --team-light:     #fef08a;
@@ -61,7 +61,7 @@
     }
 
     [data-theme="north_dakota_state"] {
-      --team-primary:   #005643;
+      --team-primary:   #005643; /* Green */
       --team-accent:    #ffc72c;
       --team-glow:      rgba(255, 199, 44, 0.35);
       --team-light:     #fef08a;
@@ -93,7 +93,7 @@
     }
 
     [data-theme="south_dakota_state"] {
-      --team-primary:   #0033a0;
+      --team-primary:   #0033a0; /* Blue */
       --team-accent:    #ffd100;
       --team-glow:      rgba(255, 209, 0, 0.35);
       --team-light:     #fef08a;
@@ -126,6 +126,11 @@
       padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--border);
       margin-bottom: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      flex-wrap: wrap;
     }
 
     .wordmark {
@@ -161,12 +166,43 @@
       line-height: 1.4;
     }
 
-    .meta a {
-      color: var(--team-accent);
-      text-decoration: none;
-      font-weight: 600;
+    /* ── Gender Switcher (Top Right Corner) ─────────────────────────────────── */
+    .gender-toggle-wrap {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
     }
-    .meta a:hover { text-decoration: underline; }
+
+    .gender-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .gender-btn:hover:not(.active) {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .gender-btn.active {
+      background: var(--surface-2);
+      border-color: var(--team-accent);
+      color: #ffffff;
+      box-shadow: 0 0 12px var(--team-glow);
+    }
 
     /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
     .selector-block {
@@ -451,6 +487,13 @@
       color: var(--text);
     }
 
+    .header-links-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
     .site-link-btn {
       display: inline-flex;
       align-items: center;
@@ -570,9 +613,33 @@
       color: var(--text-muted);
     }
 
+    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    footer a {
+      color: var(--team-accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 600px) {
       h1 { font-size: 1.6rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      header { flex-direction: column; }
+      .gender-toggle-wrap { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -583,13 +650,23 @@
   <!-- Header -->
   <header>
     <div class="wordmark">
-      <span class="wordmark-eyebrow" id="eyebrowText">TAPbot · 2025-26 Season</span>
+      <span class="wordmark-eyebrow" id="eyebrowText">2026-27 Season</span>
       <h1 id="pageTitle">Summit League Basketball Season Stats</h1>
       <div class="meta" id="metaBar">Loading data…</div>
     </div>
+
+    <!-- Men's / Women's Toggle Switch (Top Right Corner) -->
+    <div class="gender-toggle-wrap" role="tablist" aria-label="Basketball Division Switcher">
+      <button id="btnMens" class="gender-btn active" onclick="setGender('men')">
+        <span>🏀 Men's Stats</span>
+      </button>
+      <button id="btnWomens" class="gender-btn" onclick="setGender('women')">
+        <span>🏀 Women's Stats</span>
+      </button>
+    </div>
   </header>
 
-  <!-- Team Selector (Alphabetical Order) -->
+  <!-- Team Selector (Alphabetical Order - 8 Teams, Denver Excluded) -->
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
@@ -667,9 +744,14 @@
     <div class="table-card-header">
       <div class="table-card-title-wrap">
         <span class="table-card-title" id="tableTitle">Kansas City Season Stats — Full Roster</span>
-        <a id="teamStatsLink" href="https://kcroos.com/sports/mens-basketball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-          Official Stats Site ↗
-        </a>
+        <div class="header-links-group">
+          <a id="teamStatsLink" href="https://kcroos.com/sports/mens-basketball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+            Official Stats Site ↗
+          </a>
+          <a id="teamJsonLink" href="kansas_city.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+            kansas_city.json ↗
+          </a>
+        </div>
       </div>
       <div class="status-bar">
         <div class="status-dot" id="statusDot"></div>
@@ -686,66 +768,121 @@
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer>
+    <a href="https://github.com/TAPbot-Xpression/TAP_basketball_seasonstats" target="_blank" rel="noopener noreferrer">
+      TAPbot - Developed by St. Thomas Athletics - Hosted on GitHub
+    </a>
+  </footer>
+
 </div>
 
 <script>
-  // ── Team Registry & Config ──────────────────────────────────────────────────
+  // ── Team Registry & Config (Men's and Women's Endpoints) ────────────────────
   const TEAMS = {
     kansas_city: {
       id: 'kansas_city',
       name: 'Kansas City Roos',
       shortName: 'Kansas City',
-      file: 'kansas_city.json',
-      statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2025-26'
+      men: {
+        file: 'kansas_city.json',
+        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2025-26'
+      },
+      women: {
+        file: 'kansas_city_women.json',
+        statsSiteUrl: 'https://kcroos.com/sports/womens-basketball/stats'
+      }
     },
     north_dakota: {
       id: 'north_dakota',
       name: 'North Dakota Fighting Hawks',
       shortName: 'North Dakota',
-      file: 'north_dakota.json',
-      statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats'
+      men: {
+        file: 'north_dakota.json',
+        statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats'
+      },
+      women: {
+        file: 'north_dakota_women.json',
+        statsSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/stats'
+      }
     },
     north_dakota_state: {
       id: 'north_dakota_state',
       name: 'North Dakota State Bison',
       shortName: 'North Dakota State',
-      file: 'north_dakota_state.json',
-      statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2025-26'
+      men: {
+        file: 'north_dakota_state.json',
+        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2025-26'
+      },
+      women: {
+        file: 'north_dakota_state_women.json',
+        statsSiteUrl: 'https://gobison.com/sports/womens-basketball/stats'
+      }
     },
     omaha: {
       id: 'omaha',
       name: 'Omaha Mavericks',
       shortName: 'Omaha',
-      file: 'omaha.json',
-      statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2025-26'
+      men: {
+        file: 'omaha.json',
+        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2025-26'
+      },
+      women: {
+        file: 'omaha_women.json',
+        statsSiteUrl: 'https://omahamavs.com/sports/womens-basketball/stats'
+      }
     },
     oral_roberts: {
       id: 'oral_roberts',
       name: 'Oral Roberts Golden Eagles',
       shortName: 'Oral Roberts',
-      file: 'oral_roberts.json',
-      statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2025-26?path=mbball'
+      men: {
+        file: 'oral_roberts.json',
+        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2025-26?path=mbball'
+      },
+      women: {
+        file: 'oral_roberts_women.json',
+        statsSiteUrl: 'https://oruathletics.com/sports/womens-basketball/stats?path=wbball'
+      }
     },
     south_dakota: {
       id: 'south_dakota',
       name: 'South Dakota Coyotes',
       shortName: 'South Dakota',
-      file: 'south_dakota.json',
-      statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2025-26'
+      men: {
+        file: 'south_dakota.json',
+        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2025-26'
+      },
+      women: {
+        file: 'south_dakota_women.json',
+        statsSiteUrl: 'https://goyotes.com/sports/womens-basketball/stats'
+      }
     },
     south_dakota_state: {
       id: 'south_dakota_state',
       name: 'South Dakota State Jackrabbits',
       shortName: 'South Dakota State',
-      file: 'south_dakota_state.json',
-      statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2025-26'
+      men: {
+        file: 'south_dakota_state.json',
+        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2025-26'
+      },
+      women: {
+        file: 'south_dakota_state_women.json',
+        statsSiteUrl: 'https://gojacks.com/sports/womens-basketball/stats'
+      }
     },
     st_thomas: {
       id: 'st_thomas',
       name: 'St. Thomas Tommies',
       shortName: 'St. Thomas',
-      file: 'st_thomas.json',
-      statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2025-26'
+      men: {
+        file: 'st_thomas.json',
+        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2025-26'
+      },
+      women: {
+        file: 'st_thomas_women.json',
+        statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats'
+      }
     }
   };
 
@@ -762,6 +899,7 @@
     { key: 'blk',          label: 'BLK' }
   ];
 
+  let CURRENT_GENDER = 'men';
   let CURRENT_TEAM = 'kansas_city';
   let RAW_DATA = null;
   let PLAYERS = [];
@@ -769,6 +907,23 @@
   let sortDir = -1; // Default to descending order for stats
   let searchNum = '';
   let RANKS = {};
+
+  // ── Gender Toggle Switch ────────────────────────────────────────────────────
+  function setGender(gender) {
+    if (CURRENT_GENDER === gender) return;
+    CURRENT_GENDER = gender;
+
+    document.getElementById('btnMens').classList.toggle('active', gender === 'men');
+    document.getElementById('btnWomens').classList.toggle('active', gender === 'women');
+
+    // Reset spotlight & search
+    document.getElementById('playerSearch').value = '';
+    searchNum = '';
+    document.getElementById('spotlightCard').style.display = 'none';
+    document.getElementById('notFound').style.display = 'none';
+
+    loadTeamData(CURRENT_TEAM);
+  }
 
   // ── Team Switching ──────────────────────────────────────────────────────────
   function selectTeam(teamId, btn) {
@@ -823,20 +978,31 @@
   // ── Load Stats JSON ─────────────────────────────────────────────────────────
   async function loadTeamData(teamId) {
     const team = TEAMS[teamId];
+    const teamConfig = team[CURRENT_GENDER];
+    const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
+
     document.getElementById('statusDot').className = 'status-dot';
     document.getElementById('statusText').textContent = 'Loading…';
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="13" class="empty">Loading ${team.shortName} stats…</td></tr>`;
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="13" class="empty">Loading ${team.shortName} (${genderLabel}) stats…</td></tr>`;
 
-    // Update Title and Official Site Link
-    document.getElementById('tableTitle').textContent = `${team.shortName} Season Stats — Full Roster`;
+    // Update Title and Links
+    document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats — Full Roster`;
+    
     const linkEl = document.getElementById('teamStatsLink');
-    if (linkEl && team.statsSiteUrl) {
-      linkEl.href = team.statsSiteUrl;
+    if (linkEl && teamConfig.statsSiteUrl) {
+      linkEl.href = teamConfig.statsSiteUrl;
       linkEl.title = `View official ${team.shortName} stats on their athletics website`;
     }
 
+    const jsonLinkEl = document.getElementById('teamJsonLink');
+    if (jsonLinkEl && teamConfig.file) {
+      jsonLinkEl.href = teamConfig.file;
+      jsonLinkEl.textContent = `${teamConfig.file} ↗`;
+      jsonLinkEl.title = `Direct link to ${teamConfig.file}`;
+    }
+
     try {
-      const res = await fetch(`${team.file}?t=${Date.now()}`);
+      const res = await fetch(`${teamConfig.file}?t=${Date.now()}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       RAW_DATA = await res.json();
@@ -870,13 +1036,13 @@
       calculateRanks();
 
       const teamDisplayName = RAW_DATA.team || team.name;
-      document.getElementById('spotSub').textContent = `${teamDisplayName} · Men's Basketball`;
+      document.getElementById('spotSub').textContent = `${teamDisplayName} · ${genderLabel} Basketball`;
       document.getElementById('statusDot').className = 'status-dot';
       document.getElementById('statusText').textContent = `${PLAYERS.length} Players`;
 
       const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
       document.getElementById('metaBar').innerHTML =
-        `<strong>${team.name}</strong> · Updated: ${updatedTime} · <a href="${team.file}" target="_blank">${team.file} ↗</a>`;
+        `<strong>${team.name}</strong> · Updated: ${updatedTime}`;
 
       sortCol = null;
       renderTable();
@@ -885,10 +1051,10 @@
       document.getElementById('statusText').textContent = 'Error';
       document.getElementById('tableBody').innerHTML =
         `<tr><td colspan="13" class="empty" style="color:#f87171">
-          Failed to load stats for ${team.name} (${team.file}).<br>
+          Failed to load stats for ${team.name} (${teamConfig.file}).<br>
           <small style="color:var(--text-muted)">Ensure the scraper has run and generated this file.</small>
         </td></tr>`;
-      document.getElementById('metaBar').textContent = `Error loading ${team.file}`;
+      document.getElementById('metaBar').textContent = `Error loading ${teamConfig.file}`;
     }
   }
 
@@ -972,13 +1138,14 @@
     notFound.style.display = 'none';
     card.style.display     = 'block';
 
-    const playerName = player.name || '—';
-    const playerPos  = player.position ? ` · ${player.position}` : '';
-    const playerYr   = player.year ? ` · ${player.year}` : '';
+    const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
+    const playerName  = player.name || '—';
+    const playerPos   = player.position ? ` · ${player.position}` : '';
+    const playerYr    = player.year ? ` · ${player.year}` : '';
 
     document.getElementById('spotJersey').textContent = `#${player.number || searchNum}`;
     document.getElementById('spotName').textContent   = playerName;
-    document.getElementById('spotSub').textContent    = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name}${playerPos}${playerYr}`;
+    document.getElementById('spotSub').textContent    = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball${playerPos}${playerYr}`;
 
     const grid = document.getElementById('spotStatGrid');
     grid.innerHTML = STAT_COLUMNS.map(c => {
