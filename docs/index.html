@@ -20,10 +20,10 @@
 
       /* Dynamic Theme Variables (Defaults to Kansas City) */
       --team-primary:   #002b49;
-      --team-accent:    #eaaa00;
-      --team-glow:      rgba(234, 170, 0, 0.35);
-      --team-light:     #fef08a;
-      --team-btn-text:  #000000;
+      --team-accent:    #004b87;
+      --team-glow:      rgba(0, 75, 135, 0.45);
+      --team-light:     #bae6fd;
+      --team-btn-text:  #ffffff;
 
       /* Medal Tones */
       --gold:           #fbbf24;
@@ -46,10 +46,10 @@
 
     [data-theme="kansas_city"] {
       --team-primary:   #002b49; /* Navy */
-      --team-accent:    #eaaa00;
-      --team-glow:      rgba(234, 170, 0, 0.35);
-      --team-light:     #fef08a;
-      --team-btn-text:  #000000;
+      --team-accent:    #004b87;
+      --team-glow:      rgba(0, 75, 135, 0.45);
+      --team-light:     #bae6fd;
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="north_dakota"] {
@@ -62,10 +62,10 @@
 
     [data-theme="north_dakota_state"] {
       --team-primary:   #005643; /* Green */
-      --team-accent:    #ffc72c;
-      --team-glow:      rgba(255, 199, 44, 0.35);
-      --team-light:     #fef08a;
-      --team-btn-text:  #000000;
+      --team-accent:    #007a5e;
+      --team-glow:      rgba(0, 122, 94, 0.4);
+      --team-light:     #a7f3d0;
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="omaha"] {
@@ -94,10 +94,10 @@
 
     [data-theme="south_dakota_state"] {
       --team-primary:   #0033a0; /* Blue */
-      --team-accent:    #ffd100;
-      --team-glow:      rgba(255, 209, 0, 0.35);
-      --team-light:     #fef08a;
-      --team-btn-text:  #000000;
+      --team-accent:    #0056b3;
+      --team-glow:      rgba(0, 86, 179, 0.45);
+      --team-light:     #bfdbfe;
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="st_thomas"] {
@@ -254,10 +254,11 @@
     }
 
     .team-pill-dot {
-      width: 9px;
-      height: 9px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: currentColor;
+      display: inline-block;
     }
 
     /* ── Search Spotlight ────────────────────────────────────────────────────── */
@@ -671,13 +672,13 @@
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
       <button class="team-pill active" data-team="kansas_city" onclick="selectTeam('kansas_city', this)">
-        <span class="team-pill-dot" style="color:#eaaa00"></span> Kansas City
+        <span class="team-pill-dot" style="color:#004b87"></span> Kansas City
       </button>
       <button class="team-pill" data-team="north_dakota" onclick="selectTeam('north_dakota', this)">
         <span class="team-pill-dot" style="color:#009a44"></span> North Dakota
       </button>
       <button class="team-pill" data-team="north_dakota_state" onclick="selectTeam('north_dakota_state', this)">
-        <span class="team-pill-dot" style="color:#ffc72c"></span> North Dakota State
+        <span class="team-pill-dot" style="color:#005643"></span> North Dakota State
       </button>
       <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
         <span class="team-pill-dot" style="color:#d12631"></span> Omaha
@@ -689,7 +690,7 @@
         <span class="team-pill-dot" style="color:#c8102e"></span> South Dakota
       </button>
       <button class="team-pill" data-team="south_dakota_state" onclick="selectTeam('south_dakota_state', this)">
-        <span class="team-pill-dot" style="color:#ffd100"></span> South Dakota State
+        <span class="team-pill-dot" style="color:#0033a0"></span> South Dakota State
       </button>
       <button class="team-pill" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
