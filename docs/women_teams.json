@@ -3,7 +3,7 @@
     "team": "Denver",
     "slug": "denver_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:14Z",
+    "generated_at": "2026-11-02T19:42:28Z",
     "players": [
       {
         "name": "Coryn Watts",
@@ -221,14 +221,14 @@
     "team": "Kansas City",
     "slug": "kansas_city_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:19Z",
+    "generated_at": "2026-11-02T19:42:34Z",
     "players": []
   },
   {
     "team": "North Dakota",
     "slug": "north_dakota_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:23Z",
+    "generated_at": "2026-11-02T19:42:37Z",
     "players": [
       {
         "name": "Mackenzie Hughes",
@@ -461,7 +461,7 @@
     "team": "North Dakota State",
     "slug": "north_dakota_state_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:26Z",
+    "generated_at": "2026-11-02T19:42:40Z",
     "players": [
       {
         "name": "Avery Koenen",
@@ -649,7 +649,7 @@
     "team": "Omaha",
     "slug": "omaha_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:29Z",
+    "generated_at": "2026-11-02T19:42:44Z",
     "players": [
       {
         "name": "Cora Olsen",
@@ -852,7 +852,7 @@
     "team": "Oral Roberts",
     "slug": "oral_roberts_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:37Z",
+    "generated_at": "2026-11-02T19:42:49Z",
     "players": [
       {
         "name": "Jalei Oglesby",
@@ -1040,7 +1040,7 @@
     "team": "South Dakota",
     "slug": "south_dakota_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:43Z",
+    "generated_at": "2026-11-02T19:42:53Z",
     "players": [
       {
         "name": "Angelina Robles",
@@ -1258,7 +1258,7 @@
     "team": "South Dakota State",
     "slug": "south_dakota_state_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:47Z",
+    "generated_at": "2026-11-02T19:42:56Z",
     "players": [
       {
         "name": "Brooklyn Meyer",
@@ -1461,7 +1461,7 @@
     "team": "St. Thomas",
     "slug": "st_thomas_women",
     "gender": "women",
-    "generated_at": "2026-11-02T19:26:51Z",
+    "generated_at": "2026-11-02T19:42:59Z",
     "players": [
       {
         "name": "Alyssa Sand",
