@@ -18,11 +18,11 @@
       --border:         #1e2d47;
       --border-light:   #2a3d5c;
 
-      /* Dynamic Theme Variables (Defaults to Kansas City) */
-      --team-primary:   #002b49;
-      --team-accent:    #004b87;
-      --team-glow:      rgba(0, 75, 135, 0.45);
-      --team-light:     #bae6fd;
+      /* Dynamic Theme Variables (Defaults to St. Thomas) */
+      --team-primary:   #5b2d86;
+      --team-accent:    #8b5cf6;
+      --team-glow:      rgba(139, 92, 246, 0.32);
+      --team-light:     #ddd6fe;
       --team-btn-text:  #ffffff;
 
       /* Medal Tones */
@@ -674,7 +674,7 @@
     }
   </style>
 </head>
-<body data-theme="kansas_city">
+<body data-theme="st_thomas">
 
 <div class="container">
 
@@ -701,7 +701,7 @@
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
-      <button class="team-pill active" data-team="kansas_city" onclick="selectTeam('kansas_city', this)">
+      <button class="team-pill" data-team="kansas_city" onclick="selectTeam('kansas_city', this)">
         <span class="team-pill-dot" style="color:#004b87"></span> Kansas City
       </button>
       <button class="team-pill" data-team="north_dakota" onclick="selectTeam('north_dakota', this)">
@@ -722,7 +722,7 @@
       <button class="team-pill" data-team="south_dakota_state" onclick="selectTeam('south_dakota_state', this)">
         <span class="team-pill-dot" style="color:#0033a0"></span> South Dakota State
       </button>
-      <button class="team-pill" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
+      <button class="team-pill active" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
     </div>
@@ -782,13 +782,13 @@
   <div class="table-card">
     <div class="table-card-header">
       <div class="table-card-title-wrap">
-        <span class="table-card-title" id="tableTitle">Kansas City Season Stats — Full Roster</span>
+        <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
         <div class="header-links-group">
-          <a id="teamStatsLink" href="https://kcroos.com/sports/mens-basketball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+          <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
             Official Stats Site ↗
           </a>
-          <a id="teamJsonLink" href="kansas_city.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-            kansas_city.json ↗
+          <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+            st_thomas.json ↗
           </a>
         </div>
       </div>
@@ -939,7 +939,7 @@
   ];
 
   let CURRENT_GENDER = 'men';
-  let CURRENT_TEAM = 'kansas_city';
+  let CURRENT_TEAM = 'st_thomas';
   let RAW_DATA = null;
   let PLAYERS = [];
   let sortCol = null;
@@ -1237,8 +1237,8 @@
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  // Initial load
-  loadTeamData('kansas_city');
+  // Initial load: defaults to St. Thomas
+  loadTeamData('st_thomas');
 </script>
 
 </body>
