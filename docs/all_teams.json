@@ -3,7 +3,7 @@
     "team": "Kansas City",
     "slug": "kansas_city",
     "gender": "men",
-    "generated_at": "2026-11-03T03:00:59Z",
+    "generated_at": "2026-11-03T03:04:52Z",
     "players": [
       {
         "name": "Elliot Moskowitz",
@@ -191,7 +191,7 @@
     "team": "North Dakota",
     "slug": "north_dakota",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:03Z",
+    "generated_at": "2026-11-03T03:04:58Z",
     "players": [
       {
         "name": "DeAngelo Dungey",
@@ -424,21 +424,21 @@
     "team": "North Dakota State",
     "slug": "north_dakota_state",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:06Z",
+    "generated_at": "2026-11-03T03:05:01Z",
     "players": []
   },
   {
     "team": "Omaha",
     "slug": "omaha",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:09Z",
+    "generated_at": "2026-11-03T03:05:04Z",
     "players": []
   },
   {
     "team": "Oral Roberts",
     "slug": "oral_roberts",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:15Z",
+    "generated_at": "2026-11-03T03:05:07Z",
     "players": [
       {
         "name": "Ty Harper",
@@ -626,7 +626,7 @@
     "team": "South Dakota",
     "slug": "south_dakota",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:19Z",
+    "generated_at": "2026-11-03T03:05:09Z",
     "players": [
       {
         "name": "Jahni Summers",
@@ -844,7 +844,7 @@
     "team": "South Dakota State",
     "slug": "south_dakota_state",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:21Z",
+    "generated_at": "2026-11-03T03:05:12Z",
     "players": [
       {
         "name": "Joe Sayler",
@@ -1047,7 +1047,7 @@
     "team": "St. Thomas",
     "slug": "st_thomas",
     "gender": "men",
-    "generated_at": "2026-11-03T03:01:24Z",
+    "generated_at": "2026-11-03T03:05:15Z",
     "players": [
       {
         "name": "Tim Franks",
