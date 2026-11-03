@@ -1,231 +1,13 @@
 [
   {
-    "team": "Denver",
-    "slug": "denver_women",
-    "gender": "women",
-    "generated_at": "2026-11-03T02:49:12Z",
-    "players": [
-      {
-        "name": "Coryn Watts",
-        "number": "10",
-        "position": "",
-        "year": "",
-        "avg": "19.6",
-        "fg_pct": ".413",
-        "three_pt_pct": ".363",
-        "ft_pct": ".703",
-        "tot_reb": "86",
-        "ast": "84",
-        "to": "100",
-        "stl": "51",
-        "blk": "4"
-      },
-      {
-        "name": "Laia Monclova",
-        "number": "12",
-        "position": "G",
-        "year": "SR",
-        "avg": "9.4",
-        "fg_pct": ".372",
-        "three_pt_pct": ".288",
-        "ft_pct": ".588",
-        "tot_reb": "148",
-        "ast": "57",
-        "to": "82",
-        "stl": "63",
-        "blk": "7"
-      },
-      {
-        "name": "Tori Baker",
-        "number": "03",
-        "position": "G",
-        "year": "SO",
-        "avg": "7.3",
-        "fg_pct": ".324",
-        "three_pt_pct": ".239",
-        "ft_pct": ".779",
-        "tot_reb": "61",
-        "ast": "65",
-        "to": "51",
-        "stl": "34",
-        "blk": "3"
-      },
-      {
-        "name": "Jocelyn Medina",
-        "number": "15",
-        "position": "",
-        "year": "",
-        "avg": "6.4",
-        "fg_pct": ".410",
-        "three_pt_pct": ".203",
-        "ft_pct": ".921",
-        "tot_reb": "80",
-        "ast": "50",
-        "to": "44",
-        "stl": "31",
-        "blk": "5"
-      },
-      {
-        "name": "Brooke Murrell",
-        "number": "00",
-        "position": "F",
-        "year": "SR",
-        "avg": "5.8",
-        "fg_pct": ".437",
-        "three_pt_pct": ".150",
-        "ft_pct": ".600",
-        "tot_reb": "175",
-        "ast": "15",
-        "to": "29",
-        "stl": "21",
-        "blk": "20"
-      },
-      {
-        "name": "Ana Conde",
-        "number": "13",
-        "position": "F",
-        "year": "JR",
-        "avg": "4.4",
-        "fg_pct": ".410",
-        "three_pt_pct": ".370",
-        "ft_pct": ".724",
-        "tot_reb": "64",
-        "ast": "24",
-        "to": "38",
-        "stl": "9",
-        "blk": "2"
-      },
-      {
-        "name": "Laila McLeod",
-        "number": "01",
-        "position": "",
-        "year": "",
-        "avg": "3.4",
-        "fg_pct": ".292",
-        "three_pt_pct": ".270",
-        "ft_pct": ".591",
-        "tot_reb": "62",
-        "ast": "17",
-        "to": "25",
-        "stl": "12",
-        "blk": "5"
-      },
-      {
-        "name": "Karolina Padilla",
-        "number": "11",
-        "position": "G",
-        "year": "SR",
-        "avg": "2.7",
-        "fg_pct": ".313",
-        "three_pt_pct": ".154",
-        "ft_pct": ".565",
-        "tot_reb": "57",
-        "ast": "16",
-        "to": "29",
-        "stl": "13",
-        "blk": "2"
-      },
-      {
-        "name": "Lexi Pletschette",
-        "number": "02",
-        "position": "G",
-        "year": "SR",
-        "avg": "2.0",
-        "fg_pct": ".368",
-        "three_pt_pct": ".385",
-        "ft_pct": "1.000",
-        "tot_reb": "4",
-        "ast": "1",
-        "to": "4",
-        "stl": "0",
-        "blk": "0"
-      },
-      {
-        "name": "Lily Esparza",
-        "number": "32",
-        "position": "F",
-        "year": "JR",
-        "avg": "1.7",
-        "fg_pct": ".459",
-        "three_pt_pct": ".250",
-        "ft_pct": ".667",
-        "tot_reb": "42",
-        "ast": "13",
-        "to": "11",
-        "stl": "4",
-        "blk": "6"
-      },
-      {
-        "name": "Anna Rosenberger",
-        "number": "05",
-        "position": "F",
-        "year": "JR",
-        "avg": "0.8",
-        "fg_pct": ".250",
-        "three_pt_pct": ".000",
-        "ft_pct": ".400",
-        "tot_reb": "53",
-        "ast": "15",
-        "to": "9",
-        "stl": "7",
-        "blk": "27"
-      },
-      {
-        "name": "Teodora Simoncevic",
-        "number": "09",
-        "position": "",
-        "year": "",
-        "avg": "0.7",
-        "fg_pct": ".400",
-        "three_pt_pct": ".000",
-        "ft_pct": ".750",
-        "tot_reb": "18",
-        "ast": "1",
-        "to": "6",
-        "stl": "2",
-        "blk": "2"
-      },
-      {
-        "name": "Emma Hart",
-        "number": "22",
-        "position": "G",
-        "year": "FR",
-        "avg": "0.5",
-        "fg_pct": ".750",
-        "three_pt_pct": ".000",
-        "ft_pct": ".000",
-        "tot_reb": "4",
-        "ast": "0",
-        "to": "3",
-        "stl": "3",
-        "blk": "1"
-      },
-      {
-        "name": "Natalia Fanjul Mardones",
-        "number": "08",
-        "position": "",
-        "year": "",
-        "avg": "0.0",
-        "fg_pct": ".000",
-        "three_pt_pct": ".000",
-        "ft_pct": ".000",
-        "tot_reb": "1",
-        "ast": "0",
-        "to": "3",
-        "stl": "0",
-        "blk": "0"
-      }
-    ]
-  },
-  {
     "team": "Kansas City",
     "slug": "kansas_city_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:15Z",
+    "generated_at": "2026-11-03T02:52:44Z",
     "players": [
       {
         "name": "Elauni Bennett",
-        "number": "02",
+        "number": "2",
         "position": "G",
         "year": "SR",
         "avg": "18.0",
@@ -240,7 +22,7 @@
       },
       {
         "name": "Emani Bennett",
-        "number": "00",
+        "number": "0",
         "position": "G",
         "year": "SR",
         "avg": "16.0",
@@ -270,7 +52,7 @@
       },
       {
         "name": "Bella Edwards",
-        "number": "07",
+        "number": "7",
         "position": "G",
         "year": "SO",
         "avg": "12.0",
@@ -285,7 +67,7 @@
       },
       {
         "name": "Jayla Lewis",
-        "number": "01",
+        "number": "1",
         "position": "G",
         "year": "FR",
         "avg": "12.0",
@@ -375,7 +157,7 @@
       },
       {
         "name": "Shiloh Kalenga",
-        "number": "03",
+        "number": "3",
         "position": "F",
         "year": "FR",
         "avg": "6.0",
@@ -405,7 +187,7 @@
       },
       {
         "name": "Talasia Thomas",
-        "number": "04",
+        "number": "4",
         "position": "F",
         "year": "JR",
         "avg": "0.0",
@@ -424,13 +206,13 @@
     "team": "North Dakota",
     "slug": "north_dakota_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:18Z",
+    "generated_at": "2026-11-03T02:52:46Z",
     "players": [
       {
-        "name": "Mackenzie Hughes",
-        "number": "05",
-        "position": "",
-        "year": "",
+        "name": "Abby Duchscherer",
+        "number": "5",
+        "position": "F",
+        "year": "GR",
         "avg": "12.2",
         "fg_pct": ".364",
         "three_pt_pct": ".250",
@@ -472,10 +254,10 @@
         "blk": ""
       },
       {
-        "name": "Mikayla Aumer",
-        "number": "02",
-        "position": "",
-        "year": "",
+        "name": "Maggie Fricke",
+        "number": "2",
+        "position": "G",
+        "year": "FR",
         "avg": "6.4",
         "fg_pct": ".330",
         "three_pt_pct": ".270",
@@ -503,7 +285,7 @@
       },
       {
         "name": "Lauren Hillesheim",
-        "number": "04",
+        "number": "4",
         "position": "",
         "year": "",
         "avg": "5.2",
@@ -532,10 +314,10 @@
         "blk": ""
       },
       {
-        "name": "Skyler Volmer",
-        "number": "01",
-        "position": "",
-        "year": "",
+        "name": "Ciona Wells",
+        "number": "1",
+        "position": "G",
+        "year": "JR",
         "avg": "3.9",
         "fg_pct": ".407",
         "three_pt_pct": ".208",
@@ -563,7 +345,7 @@
       },
       {
         "name": "Kendra Harvey",
-        "number": "08",
+        "number": "8",
         "position": "",
         "year": "",
         "avg": "2.1",
@@ -577,10 +359,10 @@
         "blk": ""
       },
       {
-        "name": "Finley Ohnstad",
-        "number": "03",
-        "position": "",
-        "year": "",
+        "name": "Juliana Haddad",
+        "number": "3",
+        "position": "F",
+        "year": "JR",
         "avg": "2.9",
         "fg_pct": ".295",
         "three_pt_pct": ".271",
@@ -593,7 +375,7 @@
       },
       {
         "name": "Hanna Miller",
-        "number": "07",
+        "number": "7",
         "position": "",
         "year": "",
         "avg": "1.0",
@@ -638,7 +420,7 @@
       },
       {
         "name": "Anaiyah Fletcher",
-        "number": "06",
+        "number": "6",
         "position": "",
         "year": "",
         "avg": "0.9",
@@ -657,7 +439,7 @@
     "team": "North Dakota State",
     "slug": "north_dakota_state_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:20Z",
+    "generated_at": "2026-11-03T02:52:49Z",
     "players": [
       {
         "name": "Avery Koenen",
@@ -736,7 +518,7 @@
       },
       {
         "name": "Molly Lenz",
-        "number": "01",
+        "number": "1",
         "position": "",
         "year": "",
         "avg": "8.0",
@@ -766,7 +548,7 @@
       },
       {
         "name": "Amelia Hobson",
-        "number": "08",
+        "number": "8",
         "position": "",
         "year": "",
         "avg": "2.8",
@@ -825,9 +607,9 @@
         "blk": "5"
       },
       {
-        "name": "Audrey Martinez-stewart",
-        "number": "05",
-        "position": "",
+        "name": "Liza Trenbeath",
+        "number": "5",
+        "position": "G",
         "year": "",
         "avg": "0.6",
         "fg_pct": ".333",
@@ -845,7 +627,7 @@
     "team": "Omaha",
     "slug": "omaha_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:22Z",
+    "generated_at": "2026-11-03T02:52:53Z",
     "players": [
       {
         "name": "Cora Olsen",
@@ -863,10 +645,10 @@
         "blk": "0"
       },
       {
-        "name": "Sarai Estupi\u00f1an",
-        "number": "05",
-        "position": "",
-        "year": "",
+        "name": "Nyaluak Dak",
+        "number": "5",
+        "position": "F",
+        "year": "JR",
         "avg": "13.1",
         "fg_pct": ".350",
         "three_pt_pct": ".299",
@@ -909,7 +691,7 @@
       },
       {
         "name": "Leekaya Burke Perryman",
-        "number": "02",
+        "number": "2",
         "position": "G",
         "year": "SO",
         "avg": "6.1",
@@ -939,7 +721,7 @@
       },
       {
         "name": "Daria Shelby",
-        "number": "04",
+        "number": "4",
         "position": "",
         "year": "",
         "avg": "3.4",
@@ -984,7 +766,7 @@
       },
       {
         "name": "Esra Kurban",
-        "number": "07",
+        "number": "7",
         "position": "",
         "year": "",
         "avg": "0.7",
@@ -1048,7 +830,7 @@
     "team": "Oral Roberts",
     "slug": "oral_roberts_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:27Z",
+    "generated_at": "2026-11-03T02:52:55Z",
     "players": [
       {
         "name": "Jalei Oglesby",
@@ -1067,7 +849,7 @@
       },
       {
         "name": "Anna Trusty",
-        "number": "03",
+        "number": "3",
         "position": "",
         "year": "",
         "avg": "14.2",
@@ -1097,7 +879,7 @@
       },
       {
         "name": "Gentry Baldwin",
-        "number": "02",
+        "number": "2",
         "position": "",
         "year": "",
         "avg": "9.1",
@@ -1112,7 +894,7 @@
       },
       {
         "name": "Ari Gordon",
-        "number": "00",
+        "number": "0",
         "position": "",
         "year": "",
         "avg": "6.4",
@@ -1142,7 +924,7 @@
       },
       {
         "name": "Azailah Funches",
-        "number": "01",
+        "number": "1",
         "position": "",
         "year": "",
         "avg": "4.4",
@@ -1236,11 +1018,11 @@
     "team": "South Dakota",
     "slug": "south_dakota_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:29Z",
+    "generated_at": "2026-11-03T02:52:57Z",
     "players": [
       {
         "name": "Angelina Robles",
-        "number": "05",
+        "number": "5",
         "position": "",
         "year": "",
         "avg": "15.8",
@@ -1255,7 +1037,7 @@
       },
       {
         "name": "Molly Joyce",
-        "number": "01",
+        "number": "1",
         "position": "",
         "year": "",
         "avg": "12.9",
@@ -1315,7 +1097,7 @@
       },
       {
         "name": "Jenna Hopp",
-        "number": "02",
+        "number": "2",
         "position": "",
         "year": "",
         "avg": "6.5",
@@ -1389,10 +1171,10 @@
         "blk": ""
       },
       {
-        "name": "Olivia Kieffer",
-        "number": "00",
-        "position": "",
-        "year": "",
+        "name": "Bri Robinson",
+        "number": "0",
+        "position": "G",
+        "year": "SR",
         "avg": "1.7",
         "fg_pct": ".250",
         "three_pt_pct": ".270",
@@ -1434,10 +1216,10 @@
         "blk": ""
       },
       {
-        "name": "Coral Mason",
-        "number": "03",
-        "position": "",
-        "year": "",
+        "name": "Jenna Hopp",
+        "number": "3",
+        "position": "G",
+        "year": "R-SR",
         "avg": "0.8",
         "fg_pct": ".385",
         "three_pt_pct": ".333",
@@ -1454,7 +1236,7 @@
     "team": "South Dakota State",
     "slug": "south_dakota_state_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:32Z",
+    "generated_at": "2026-11-03T02:53:01Z",
     "players": [
       {
         "name": "Brooklyn Meyer",
@@ -1473,7 +1255,7 @@
       },
       {
         "name": "Madison Mathiowetz",
-        "number": "03",
+        "number": "3",
         "position": "",
         "year": "",
         "avg": "13.4",
@@ -1503,7 +1285,7 @@
       },
       {
         "name": "Emilee Fox",
-        "number": "04",
+        "number": "4",
         "position": "G",
         "year": "JR",
         "avg": "8.4",
@@ -1593,7 +1375,7 @@
       },
       {
         "name": "Ellie Colbeck",
-        "number": "05",
+        "number": "5",
         "position": "",
         "year": "",
         "avg": "3.1",
@@ -1657,7 +1439,7 @@
     "team": "St. Thomas",
     "slug": "st_thomas_women",
     "gender": "women",
-    "generated_at": "2026-11-03T02:49:34Z",
+    "generated_at": "2026-11-03T02:53:04Z",
     "players": [
       {
         "name": "Alyssa Sand",
@@ -1781,7 +1563,7 @@
       },
       {
         "name": "Maya Kovacic",
-        "number": "03",
+        "number": "3",
         "position": "G",
         "year": "FR",
         "avg": "0.0",

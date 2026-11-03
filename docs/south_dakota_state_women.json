@@ -2,7 +2,7 @@
   "team": "South Dakota State",
   "slug": "south_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-03T02:49:32Z",
+  "generated_at": "2026-11-03T02:53:01Z",
   "players": [
     {
       "name": "Brooklyn Meyer",
@@ -21,7 +21,7 @@
     },
     {
       "name": "Madison Mathiowetz",
-      "number": "03",
+      "number": "3",
       "position": "",
       "year": "",
       "avg": "13.4",
@@ -51,7 +51,7 @@
     },
     {
       "name": "Emilee Fox",
-      "number": "04",
+      "number": "4",
       "position": "G",
       "year": "JR",
       "avg": "8.4",
@@ -141,7 +141,7 @@
     },
     {
       "name": "Ellie Colbeck",
-      "number": "05",
+      "number": "5",
       "position": "",
       "year": "",
       "avg": "3.1",

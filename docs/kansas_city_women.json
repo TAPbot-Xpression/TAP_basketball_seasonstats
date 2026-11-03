@@ -2,11 +2,11 @@
   "team": "Kansas City",
   "slug": "kansas_city_women",
   "gender": "women",
-  "generated_at": "2026-11-03T02:49:15Z",
+  "generated_at": "2026-11-03T02:52:44Z",
   "players": [
     {
       "name": "Elauni Bennett",
-      "number": "02",
+      "number": "2",
       "position": "G",
       "year": "SR",
       "avg": "18.0",
@@ -21,7 +21,7 @@
     },
     {
       "name": "Emani Bennett",
-      "number": "00",
+      "number": "0",
       "position": "G",
       "year": "SR",
       "avg": "16.0",
@@ -51,7 +51,7 @@
     },
     {
       "name": "Bella Edwards",
-      "number": "07",
+      "number": "7",
       "position": "G",
       "year": "SO",
       "avg": "12.0",
@@ -66,7 +66,7 @@
     },
     {
       "name": "Jayla Lewis",
-      "number": "01",
+      "number": "1",
       "position": "G",
       "year": "FR",
       "avg": "12.0",
@@ -156,7 +156,7 @@
     },
     {
       "name": "Shiloh Kalenga",
-      "number": "03",
+      "number": "3",
       "position": "F",
       "year": "FR",
       "avg": "6.0",
@@ -186,7 +186,7 @@
     },
     {
       "name": "Talasia Thomas",
-      "number": "04",
+      "number": "4",
       "position": "F",
       "year": "JR",
       "avg": "0.0",

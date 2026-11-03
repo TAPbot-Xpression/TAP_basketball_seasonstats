@@ -2,7 +2,7 @@
   "team": "Omaha",
   "slug": "omaha_women",
   "gender": "women",
-  "generated_at": "2026-11-03T02:49:22Z",
+  "generated_at": "2026-11-03T02:52:53Z",
   "players": [
     {
       "name": "Cora Olsen",
@@ -20,10 +20,10 @@
       "blk": "0"
     },
     {
-      "name": "Sarai Estupi\u00f1an",
-      "number": "05",
-      "position": "",
-      "year": "",
+      "name": "Nyaluak Dak",
+      "number": "5",
+      "position": "F",
+      "year": "JR",
       "avg": "13.1",
       "fg_pct": ".350",
       "three_pt_pct": ".299",
@@ -66,7 +66,7 @@
     },
     {
       "name": "Leekaya Burke Perryman",
-      "number": "02",
+      "number": "2",
       "position": "G",
       "year": "SO",
       "avg": "6.1",
@@ -96,7 +96,7 @@
     },
     {
       "name": "Daria Shelby",
-      "number": "04",
+      "number": "4",
       "position": "",
       "year": "",
       "avg": "3.4",
@@ -141,7 +141,7 @@
     },
     {
       "name": "Esra Kurban",
-      "number": "07",
+      "number": "7",
       "position": "",
       "year": "",
       "avg": "0.7",

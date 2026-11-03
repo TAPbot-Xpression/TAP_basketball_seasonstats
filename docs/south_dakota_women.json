@@ -2,11 +2,11 @@
   "team": "South Dakota",
   "slug": "south_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-03T02:49:29Z",
+  "generated_at": "2026-11-03T02:52:57Z",
   "players": [
     {
       "name": "Angelina Robles",
-      "number": "05",
+      "number": "5",
       "position": "",
       "year": "",
       "avg": "15.8",
@@ -21,7 +21,7 @@
     },
     {
       "name": "Molly Joyce",
-      "number": "01",
+      "number": "1",
       "position": "",
       "year": "",
       "avg": "12.9",
@@ -81,7 +81,7 @@
     },
     {
       "name": "Jenna Hopp",
-      "number": "02",
+      "number": "2",
       "position": "",
       "year": "",
       "avg": "6.5",
@@ -155,10 +155,10 @@
       "blk": ""
     },
     {
-      "name": "Olivia Kieffer",
-      "number": "00",
-      "position": "",
-      "year": "",
+      "name": "Bri Robinson",
+      "number": "0",
+      "position": "G",
+      "year": "SR",
       "avg": "1.7",
       "fg_pct": ".250",
       "three_pt_pct": ".270",
@@ -200,10 +200,10 @@
       "blk": ""
     },
     {
-      "name": "Coral Mason",
-      "number": "03",
-      "position": "",
-      "year": "",
+      "name": "Jenna Hopp",
+      "number": "3",
+      "position": "G",
+      "year": "R-SR",
       "avg": "0.8",
       "fg_pct": ".385",
       "three_pt_pct": ".333",

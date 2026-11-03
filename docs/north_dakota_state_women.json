@@ -2,7 +2,7 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-03T02:49:20Z",
+  "generated_at": "2026-11-03T02:52:49Z",
   "players": [
     {
       "name": "Avery Koenen",
@@ -81,7 +81,7 @@
     },
     {
       "name": "Molly Lenz",
-      "number": "01",
+      "number": "1",
       "position": "",
       "year": "",
       "avg": "8.0",
@@ -111,7 +111,7 @@
     },
     {
       "name": "Amelia Hobson",
-      "number": "08",
+      "number": "8",
       "position": "",
       "year": "",
       "avg": "2.8",
@@ -170,9 +170,9 @@
       "blk": "5"
     },
     {
-      "name": "Audrey Martinez-stewart",
-      "number": "05",
-      "position": "",
+      "name": "Liza Trenbeath",
+      "number": "5",
+      "position": "G",
       "year": "",
       "avg": "0.6",
       "fg_pct": ".333",
