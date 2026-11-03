@@ -674,7 +674,7 @@
     }
   </style>
 </head>
-<body data-theme="st_thomas">
+<body data-theme="kansas_city">
 
 <div class="container">
 
@@ -701,8 +701,8 @@
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
-      <button class="team-pill active" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
-        <span class="team-pill-dot" style="color:#8b5cf6"></span> Kansas City
+      <button class="team-pill active" data-team="kansas_city" onclick="selectTeam('kansas_city', this)">
+        <span class="team-pill-dot" style="color:#004b87"></span> Kansas City
       </button>
       <button class="team-pill" data-team="north_dakota" onclick="selectTeam('north_dakota', this)">
         <span class="team-pill-dot" style="color:#009a44"></span> North Dakota
@@ -782,9 +782,9 @@
   <div class="table-card">
     <div class="table-card-header">
       <div class="table-card-title-wrap">
-        <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
+        <span class="table-card-title" id="tableTitle">Kansas City Season Stats — Full Roster</span>
         <div class="header-links-group">
-          <a id="teamStatsLink" href="https://kcroos.com/sports/mens-basketball/stats/" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+          <a id="teamStatsLink" href="https://kcroos.com/sports/mens-basketball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
             Official Stats Site ↗
           </a>
           <a id="teamJsonLink" href="kansas_city.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
@@ -825,7 +825,7 @@
       shortName: 'Kansas City',
       men: {
         file: 'kansas_city.json',
-        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2025-26'
       },
       women: {
         file: 'kansas_city_women.json',
@@ -851,7 +851,7 @@
       shortName: 'North Dakota State',
       men: {
         file: 'north_dakota_state.json',
-        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2025-26'
       },
       women: {
         file: 'north_dakota_state_women.json',
@@ -864,7 +864,7 @@
       shortName: 'Omaha',
       men: {
         file: 'omaha.json',
-        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2025-26'
       },
       women: {
         file: 'omaha_women.json',
@@ -877,7 +877,7 @@
       shortName: 'Oral Roberts',
       men: {
         file: 'oral_roberts.json',
-        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2025-26?path=mbball'
       },
       women: {
         file: 'oral_roberts_women.json',
@@ -890,7 +890,7 @@
       shortName: 'South Dakota',
       men: {
         file: 'south_dakota.json',
-        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2025-26'
       },
       women: {
         file: 'south_dakota_women.json',
@@ -903,7 +903,7 @@
       shortName: 'South Dakota State',
       men: {
         file: 'south_dakota_state.json',
-        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/'
+        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2025-26'
       },
       women: {
         file: 'south_dakota_state_women.json',
@@ -916,7 +916,7 @@
       shortName: 'St. Thomas',
       men: {
         file: 'st_thomas.json',
-        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/'
+        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2025-26'
       },
       women: {
         file: 'st_thomas_women.json',
@@ -939,7 +939,7 @@
   ];
 
   let CURRENT_GENDER = 'men';
-  let CURRENT_TEAM = 'st_thomas';
+  let CURRENT_TEAM = 'kansas_city';
   let RAW_DATA = null;
   let PLAYERS = [];
   let sortCol = null;
