@@ -1,11 +1,12 @@
 {
   "team": "Oral Roberts",
   "slug": "oral_roberts",
-  "generated_at": "2026-11-03T02:29:14Z",
+  "gender": "men",
+  "generated_at": "2026-11-03T02:37:50Z",
   "players": [
     {
       "name": "Ty Harper",
-      "number": "01",
+      "number": "1",
       "position": "",
       "year": "",
       "avg": "17.8",
@@ -20,7 +21,7 @@
     },
     {
       "name": "Connor Dow",
-      "number": "05",
+      "number": "5",
       "position": "",
       "year": "",
       "avg": "12.5",
@@ -35,7 +36,7 @@
     },
     {
       "name": "Ofri Naveh",
-      "number": "09",
+      "number": "9",
       "position": "",
       "year": "",
       "avg": "11.2",
@@ -79,10 +80,10 @@
       "blk": ""
     },
     {
-      "name": "Jack Turner",
-      "number": "00",
+      "name": "Boden Williams",
+      "number": "0",
       "position": "",
-      "year": "",
+      "year": "SO",
       "avg": "6.8",
       "fg_pct": ".392",
       "three_pt_pct": ".333",
@@ -110,7 +111,7 @@
     },
     {
       "name": "Cal Furnish",
-      "number": "06",
+      "number": "6",
       "position": "",
       "year": "",
       "avg": "4.0",
@@ -125,7 +126,7 @@
     },
     {
       "name": "Martins Kilups",
-      "number": "07",
+      "number": "7",
       "position": "",
       "year": "",
       "avg": "3.7",
@@ -140,7 +141,7 @@
     },
     {
       "name": "Chase Martin",
-      "number": "02",
+      "number": "2",
       "position": "",
       "year": "",
       "avg": "2.6",

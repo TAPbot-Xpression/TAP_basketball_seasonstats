@@ -1,13 +1,14 @@
 {
   "team": "Kansas City",
   "slug": "kansas_city",
-  "generated_at": "2026-11-03T02:29:04Z",
+  "gender": "men",
+  "generated_at": "2026-11-03T02:37:37Z",
   "players": [
     {
-      "name": "Karmello Branch",
-      "number": "00",
-      "position": "",
-      "year": "",
+      "name": "Elliot Moskowitz",
+      "number": "0",
+      "position": "G",
+      "year": "FR",
       "avg": "12.1",
       "fg_pct": ".362",
       "three_pt_pct": ".327",
@@ -19,10 +20,10 @@
       "blk": "4"
     },
     {
-      "name": "Cj Evans",
-      "number": "02",
-      "position": "",
-      "year": "",
+      "name": "Sebastian Hartmann",
+      "number": "2",
+      "position": "F",
+      "year": "SR",
       "avg": "11.6",
       "fg_pct": ".416",
       "three_pt_pct": ".224",
@@ -34,10 +35,10 @@
       "blk": "1"
     },
     {
-      "name": "Jayson Petty",
-      "number": "01",
-      "position": "",
-      "year": "",
+      "name": "Kan. / Piper HS Kansas City",
+      "number": "1",
+      "position": "G",
+      "year": "JR",
       "avg": "11.1",
       "fg_pct": ".395",
       "three_pt_pct": ".335",
@@ -49,10 +50,10 @@
       "blk": "13"
     },
     {
-      "name": "Kasheem Grady II",
-      "number": "07",
-      "position": "",
-      "year": "",
+      "name": "Josh Kori",
+      "number": "7",
+      "position": "G",
+      "year": "FR",
       "avg": "10.0",
       "fg_pct": ".398",
       "three_pt_pct": ".295",
@@ -79,10 +80,10 @@
       "blk": "29"
     },
     {
-      "name": "Chris Dockery",
-      "number": "04",
-      "position": "",
-      "year": "",
+      "name": "Jaylen Smith",
+      "number": "4",
+      "position": "G",
+      "year": "SR",
       "avg": "7.2",
       "fg_pct": ".517",
       "three_pt_pct": ".321",
@@ -94,10 +95,10 @@
       "blk": "8"
     },
     {
-      "name": "Trey Booker-lowery",
-      "number": "08",
-      "position": "",
-      "year": "",
+      "name": "null",
+      "number": "8",
+      "position": "G",
+      "year": "JR",
       "avg": "4.4",
       "fg_pct": ".398",
       "three_pt_pct": ".323",
@@ -140,7 +141,7 @@
     },
     {
       "name": "Jamaria Clark",
-      "number": "03",
+      "number": "3",
       "position": "",
       "year": "",
       "avg": "2.8",

@@ -1,13 +1,14 @@
 {
   "team": "North Dakota",
   "slug": "north_dakota",
-  "generated_at": "2026-11-03T02:29:06Z",
+  "gender": "men",
+  "generated_at": "2026-11-03T02:37:39Z",
   "players": [
     {
-      "name": "Greyson Uelmen",
-      "number": "03",
-      "position": "",
-      "year": "",
+      "name": "DeAngelo Dungey",
+      "number": "3",
+      "position": "G",
+      "year": "GR",
       "avg": "16.8",
       "fg_pct": ".497",
       "three_pt_pct": ".339",
@@ -19,10 +20,10 @@
       "blk": ""
     },
     {
-      "name": "Eli King",
-      "number": "02",
-      "position": "",
-      "year": "",
+      "name": "Jayden Moore",
+      "number": "2",
+      "position": "G",
+      "year": "FR",
       "avg": "11.9",
       "fg_pct": ".417",
       "three_pt_pct": ".305",
@@ -50,7 +51,7 @@
     },
     {
       "name": "Zach Kraft",
-      "number": "01",
+      "number": "1",
       "position": "",
       "year": "",
       "avg": "8.1",
@@ -95,7 +96,7 @@
     },
     {
       "name": "Anthony Smith III",
-      "number": "09",
+      "number": "9",
       "position": "",
       "year": "",
       "avg": "7.8",
@@ -109,10 +110,10 @@
       "blk": ""
     },
     {
-      "name": "Marley Curtis",
-      "number": "00",
-      "position": "",
-      "year": "",
+      "name": "Carter Evanson",
+      "number": "0",
+      "position": "G",
+      "year": "FR",
       "avg": "6.0",
       "fg_pct": ".354",
       "three_pt_pct": ".307",
@@ -169,10 +170,10 @@
       "blk": ""
     },
     {
-      "name": "Matthew Bothun",
-      "number": "05",
+      "name": "Tyler Wagner",
+      "number": "5",
       "position": "",
-      "year": "",
+      "year": "SO",
       "avg": "1.9",
       "fg_pct": ".375",
       "three_pt_pct": ".333",
@@ -215,7 +216,7 @@
     },
     {
       "name": "Karson Ouse",
-      "number": "04",
+      "number": "4",
       "position": "",
       "year": "",
       "avg": "0.7",

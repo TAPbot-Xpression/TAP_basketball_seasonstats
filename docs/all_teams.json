@@ -2,13 +2,14 @@
   {
     "team": "Kansas City",
     "slug": "kansas_city",
-    "generated_at": "2026-11-03T02:29:04Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:37Z",
     "players": [
       {
-        "name": "Karmello Branch",
-        "number": "00",
-        "position": "",
-        "year": "",
+        "name": "Elliot Moskowitz",
+        "number": "0",
+        "position": "G",
+        "year": "FR",
         "avg": "12.1",
         "fg_pct": ".362",
         "three_pt_pct": ".327",
@@ -20,10 +21,10 @@
         "blk": "4"
       },
       {
-        "name": "Cj Evans",
-        "number": "02",
-        "position": "",
-        "year": "",
+        "name": "Sebastian Hartmann",
+        "number": "2",
+        "position": "F",
+        "year": "SR",
         "avg": "11.6",
         "fg_pct": ".416",
         "three_pt_pct": ".224",
@@ -35,10 +36,10 @@
         "blk": "1"
       },
       {
-        "name": "Jayson Petty",
-        "number": "01",
-        "position": "",
-        "year": "",
+        "name": "Kan. / Piper HS Kansas City",
+        "number": "1",
+        "position": "G",
+        "year": "JR",
         "avg": "11.1",
         "fg_pct": ".395",
         "three_pt_pct": ".335",
@@ -50,10 +51,10 @@
         "blk": "13"
       },
       {
-        "name": "Kasheem Grady II",
-        "number": "07",
-        "position": "",
-        "year": "",
+        "name": "Josh Kori",
+        "number": "7",
+        "position": "G",
+        "year": "FR",
         "avg": "10.0",
         "fg_pct": ".398",
         "three_pt_pct": ".295",
@@ -80,10 +81,10 @@
         "blk": "29"
       },
       {
-        "name": "Chris Dockery",
-        "number": "04",
-        "position": "",
-        "year": "",
+        "name": "Jaylen Smith",
+        "number": "4",
+        "position": "G",
+        "year": "SR",
         "avg": "7.2",
         "fg_pct": ".517",
         "three_pt_pct": ".321",
@@ -95,10 +96,10 @@
         "blk": "8"
       },
       {
-        "name": "Trey Booker-lowery",
-        "number": "08",
-        "position": "",
-        "year": "",
+        "name": "null",
+        "number": "8",
+        "position": "G",
+        "year": "JR",
         "avg": "4.4",
         "fg_pct": ".398",
         "three_pt_pct": ".323",
@@ -141,7 +142,7 @@
       },
       {
         "name": "Jamaria Clark",
-        "number": "03",
+        "number": "3",
         "position": "",
         "year": "",
         "avg": "2.8",
@@ -189,13 +190,14 @@
   {
     "team": "North Dakota",
     "slug": "north_dakota",
-    "generated_at": "2026-11-03T02:29:06Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:39Z",
     "players": [
       {
-        "name": "Greyson Uelmen",
-        "number": "03",
-        "position": "",
-        "year": "",
+        "name": "DeAngelo Dungey",
+        "number": "3",
+        "position": "G",
+        "year": "GR",
         "avg": "16.8",
         "fg_pct": ".497",
         "three_pt_pct": ".339",
@@ -207,10 +209,10 @@
         "blk": ""
       },
       {
-        "name": "Eli King",
-        "number": "02",
-        "position": "",
-        "year": "",
+        "name": "Jayden Moore",
+        "number": "2",
+        "position": "G",
+        "year": "FR",
         "avg": "11.9",
         "fg_pct": ".417",
         "three_pt_pct": ".305",
@@ -238,7 +240,7 @@
       },
       {
         "name": "Zach Kraft",
-        "number": "01",
+        "number": "1",
         "position": "",
         "year": "",
         "avg": "8.1",
@@ -283,7 +285,7 @@
       },
       {
         "name": "Anthony Smith III",
-        "number": "09",
+        "number": "9",
         "position": "",
         "year": "",
         "avg": "7.8",
@@ -297,10 +299,10 @@
         "blk": ""
       },
       {
-        "name": "Marley Curtis",
-        "number": "00",
-        "position": "",
-        "year": "",
+        "name": "Carter Evanson",
+        "number": "0",
+        "position": "G",
+        "year": "FR",
         "avg": "6.0",
         "fg_pct": ".354",
         "three_pt_pct": ".307",
@@ -357,10 +359,10 @@
         "blk": ""
       },
       {
-        "name": "Matthew Bothun",
-        "number": "05",
+        "name": "Tyler Wagner",
+        "number": "5",
         "position": "",
-        "year": "",
+        "year": "SO",
         "avg": "1.9",
         "fg_pct": ".375",
         "three_pt_pct": ".333",
@@ -403,7 +405,7 @@
       },
       {
         "name": "Karson Ouse",
-        "number": "04",
+        "number": "4",
         "position": "",
         "year": "",
         "avg": "0.7",
@@ -421,23 +423,26 @@
   {
     "team": "North Dakota State",
     "slug": "north_dakota_state",
-    "generated_at": "2026-11-03T02:29:08Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:43Z",
     "players": []
   },
   {
     "team": "Omaha",
     "slug": "omaha",
-    "generated_at": "2026-11-03T02:29:11Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:45Z",
     "players": []
   },
   {
     "team": "Oral Roberts",
     "slug": "oral_roberts",
-    "generated_at": "2026-11-03T02:29:14Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:50Z",
     "players": [
       {
         "name": "Ty Harper",
-        "number": "01",
+        "number": "1",
         "position": "",
         "year": "",
         "avg": "17.8",
@@ -452,7 +457,7 @@
       },
       {
         "name": "Connor Dow",
-        "number": "05",
+        "number": "5",
         "position": "",
         "year": "",
         "avg": "12.5",
@@ -467,7 +472,7 @@
       },
       {
         "name": "Ofri Naveh",
-        "number": "09",
+        "number": "9",
         "position": "",
         "year": "",
         "avg": "11.2",
@@ -511,10 +516,10 @@
         "blk": ""
       },
       {
-        "name": "Jack Turner",
-        "number": "00",
+        "name": "Boden Williams",
+        "number": "0",
         "position": "",
-        "year": "",
+        "year": "SO",
         "avg": "6.8",
         "fg_pct": ".392",
         "three_pt_pct": ".333",
@@ -542,7 +547,7 @@
       },
       {
         "name": "Cal Furnish",
-        "number": "06",
+        "number": "6",
         "position": "",
         "year": "",
         "avg": "4.0",
@@ -557,7 +562,7 @@
       },
       {
         "name": "Martins Kilups",
-        "number": "07",
+        "number": "7",
         "position": "",
         "year": "",
         "avg": "3.7",
@@ -572,7 +577,7 @@
       },
       {
         "name": "Chase Martin",
-        "number": "02",
+        "number": "2",
         "position": "",
         "year": "",
         "avg": "2.6",
@@ -620,7 +625,8 @@
   {
     "team": "South Dakota",
     "slug": "south_dakota",
-    "generated_at": "2026-11-03T02:29:17Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:52Z",
     "players": [
       {
         "name": "Jahni Summers",
@@ -639,7 +645,7 @@
       },
       {
         "name": "Vince Buzelis",
-        "number": "04",
+        "number": "4",
         "position": "",
         "year": "",
         "avg": "14.0",
@@ -654,7 +660,7 @@
       },
       {
         "name": "Kajus Kublickas",
-        "number": "09",
+        "number": "9",
         "position": "",
         "year": "",
         "avg": "14.0",
@@ -714,7 +720,7 @@
       },
       {
         "name": "Marvin Richard III",
-        "number": "00",
+        "number": "0",
         "position": "",
         "year": "",
         "avg": "5.0",
@@ -729,7 +735,7 @@
       },
       {
         "name": "Melo Sanchez",
-        "number": "06",
+        "number": "6",
         "position": "",
         "year": "",
         "avg": "5.0",
@@ -744,7 +750,7 @@
       },
       {
         "name": "Josh Townley-Thomas",
-        "number": "08",
+        "number": "8",
         "position": "",
         "year": "",
         "avg": "5.0",
@@ -789,7 +795,7 @@
       },
       {
         "name": "Cade Kelderman",
-        "number": "02",
+        "number": "2",
         "position": "",
         "year": "",
         "avg": "1.0",
@@ -819,7 +825,7 @@
       },
       {
         "name": "Michael Nee",
-        "number": "03",
+        "number": "3",
         "position": "",
         "year": "",
         "avg": "0.0",
@@ -837,11 +843,12 @@
   {
     "team": "South Dakota State",
     "slug": "south_dakota_state",
-    "generated_at": "2026-11-03T02:29:20Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:55Z",
     "players": [
       {
         "name": "Joe Sayler",
-        "number": "03",
+        "number": "3",
         "position": "G",
         "year": "JR",
         "avg": "14.5",
@@ -916,7 +923,7 @@
       },
       {
         "name": "Trey Buchanan",
-        "number": "00",
+        "number": "0",
         "position": "G",
         "year": "SO",
         "avg": "7.3",
@@ -961,7 +968,7 @@
       },
       {
         "name": "Luke Haertle",
-        "number": "02",
+        "number": "2",
         "position": "",
         "year": "",
         "avg": "3.8",
@@ -976,7 +983,7 @@
       },
       {
         "name": "Jaden Rogers",
-        "number": "06",
+        "number": "6",
         "position": "G",
         "year": "SO",
         "avg": "2.2",
@@ -1005,10 +1012,10 @@
         "blk": "1"
       },
       {
-        "name": "Caleb Delzell",
-        "number": "05",
-        "position": "",
-        "year": "",
+        "name": "Jon Mekonnen",
+        "number": "5",
+        "position": "F",
+        "year": "SO",
         "avg": "1.4",
         "fg_pct": ".357",
         "three_pt_pct": ".333",
@@ -1039,11 +1046,12 @@
   {
     "team": "St. Thomas",
     "slug": "st_thomas",
-    "generated_at": "2026-11-03T02:29:24Z",
+    "gender": "men",
+    "generated_at": "2026-11-03T02:37:58Z",
     "players": [
       {
         "name": "Tim Franks",
-        "number": "05",
+        "number": "5",
         "position": "",
         "year": "",
         "avg": "24.0",
@@ -1073,7 +1081,7 @@
       },
       {
         "name": "Hayden Tibbits",
-        "number": "01",
+        "number": "1",
         "position": "G",
         "year": "R-JR",
         "avg": "16.0",
@@ -1088,7 +1096,7 @@
       },
       {
         "name": "Austin Herro",
-        "number": "02",
+        "number": "2",
         "position": "G",
         "year": "R-JR",
         "avg": "8.0",
@@ -1148,7 +1156,7 @@
       },
       {
         "name": "Brogan Madson",
-        "number": "00",
+        "number": "0",
         "position": "",
         "year": "",
         "avg": "2.0",

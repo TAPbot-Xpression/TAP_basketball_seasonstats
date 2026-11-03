@@ -1,11 +1,12 @@
 {
   "team": "South Dakota State",
   "slug": "south_dakota_state",
-  "generated_at": "2026-11-03T02:29:20Z",
+  "gender": "men",
+  "generated_at": "2026-11-03T02:37:55Z",
   "players": [
     {
       "name": "Joe Sayler",
-      "number": "03",
+      "number": "3",
       "position": "G",
       "year": "JR",
       "avg": "14.5",
@@ -80,7 +81,7 @@
     },
     {
       "name": "Trey Buchanan",
-      "number": "00",
+      "number": "0",
       "position": "G",
       "year": "SO",
       "avg": "7.3",
@@ -125,7 +126,7 @@
     },
     {
       "name": "Luke Haertle",
-      "number": "02",
+      "number": "2",
       "position": "",
       "year": "",
       "avg": "3.8",
@@ -140,7 +141,7 @@
     },
     {
       "name": "Jaden Rogers",
-      "number": "06",
+      "number": "6",
       "position": "G",
       "year": "SO",
       "avg": "2.2",
@@ -169,10 +170,10 @@
       "blk": "1"
     },
     {
-      "name": "Caleb Delzell",
-      "number": "05",
-      "position": "",
-      "year": "",
+      "name": "Jon Mekonnen",
+      "number": "5",
+      "position": "F",
+      "year": "SO",
       "avg": "1.4",
       "fg_pct": ".357",
       "three_pt_pct": ".333",

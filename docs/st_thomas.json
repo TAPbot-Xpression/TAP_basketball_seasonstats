@@ -1,11 +1,12 @@
 {
   "team": "St. Thomas",
   "slug": "st_thomas",
-  "generated_at": "2026-11-03T02:29:24Z",
+  "gender": "men",
+  "generated_at": "2026-11-03T02:37:58Z",
   "players": [
     {
       "name": "Tim Franks",
-      "number": "05",
+      "number": "5",
       "position": "",
       "year": "",
       "avg": "24.0",
@@ -35,7 +36,7 @@
     },
     {
       "name": "Hayden Tibbits",
-      "number": "01",
+      "number": "1",
       "position": "G",
       "year": "R-JR",
       "avg": "16.0",
@@ -50,7 +51,7 @@
     },
     {
       "name": "Austin Herro",
-      "number": "02",
+      "number": "2",
       "position": "G",
       "year": "R-JR",
       "avg": "8.0",
@@ -110,7 +111,7 @@
     },
     {
       "name": "Brogan Madson",
-      "number": "00",
+      "number": "0",
       "position": "",
       "year": "",
       "avg": "2.0",
