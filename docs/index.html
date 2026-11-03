@@ -27,15 +27,15 @@
 
       /* Medal Tones */
       --gold:           #fbbf24;
-      --gold-bg:        rgba(251, 191, 36, 0.12);
+      --gold-bg:        rgba(251, 191, 36, 0.14);
       --silver:         #e2e8f0;
-      --silver-bg:      rgba(226, 232, 240, 0.12);
+      --silver-bg:      rgba(226, 232, 240, 0.14);
       --bronze:         #f97316;
-      --bronze-bg:      rgba(249, 115, 22, 0.12);
+      --bronze-bg:      rgba(249, 115, 22, 0.14);
 
       --text:           #e8edf5;
-      --text-muted:     #7a8fa8;
-      --text-faint:     #3d5068;
+      --text-muted:     #8a9fb8;
+      --text-faint:     #4d627d;
 
       --green:          #10b981;
       --red:            #ef4444;
@@ -114,18 +114,19 @@
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', sans-serif;
+      font-size: 16px;
       min-height: 100vh;
-      padding: 2.25rem 1.25rem 4rem;
+      padding: 2.5rem 1.5rem 4.5rem;
       transition: background-color 0.3s;
     }
 
-    .container { max-width: 1240px; margin: 0 auto; }
+    .container { max-width: 1280px; margin: 0 auto; }
 
     /* ── Header ─────────────────────────────────────────────────────────────── */
     header {
-      padding-bottom: 1.5rem;
+      padding-bottom: 1.75rem;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 1.75rem;
+      margin-bottom: 2rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -136,11 +137,11 @@
     .wordmark {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
 
     .wordmark-eyebrow {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -150,19 +151,19 @@
     }
 
     h1 {
-      font-size: 2.3rem;
+      font-size: 2.5rem;
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.15;
-      color: #e2e8f0;
+      color: #f1f5f9;
     }
 
     .meta {
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       text-align: left;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
       line-height: 1.4;
     }
 
@@ -171,24 +172,24 @@
       display: inline-flex;
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: 4px;
-      border-radius: 10px;
-      gap: 4px;
+      padding: 5px;
+      border-radius: 11px;
+      gap: 5px;
     }
 
     .gender-btn {
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 0.55rem 1rem;
-      border-radius: 7px;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.5rem;
       transition: all 0.2s ease;
     }
 
@@ -201,27 +202,27 @@
       background: var(--surface-2);
       border-color: var(--team-accent);
       color: #ffffff;
-      box-shadow: 0 0 12px var(--team-glow);
+      box-shadow: 0 0 14px var(--team-glow);
     }
 
     /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
     .selector-block {
-      margin-bottom: 1.75rem;
+      margin-bottom: 2rem;
     }
 
     .section-caption {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 0.55rem;
+      margin-bottom: 0.65rem;
       display: block;
     }
 
     .team-pills {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
     }
 
@@ -229,14 +230,14 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 0.6rem 1.05rem;
+      padding: 0.65rem 1.15rem;
       border-radius: 9999px;
-      font-size: 0.84rem;
+      font-size: 0.92rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
       transition: all 0.15s ease;
     }
 
@@ -254,8 +255,8 @@
     }
 
     .team-pill-dot {
-      width: 10px;
-      height: 10px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
       background: currentColor;
       display: inline-block;
@@ -263,12 +264,12 @@
 
     /* ── Search Spotlight ────────────────────────────────────────────────────── */
     .search-section {
-      margin-bottom: 1.75rem;
+      margin-bottom: 2rem;
     }
 
     .search-row {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.85rem;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -280,11 +281,11 @@
 
     .search-icon {
       position: absolute;
-      left: 0.85rem;
+      left: 0.95rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-faint);
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-family: 'JetBrains Mono', monospace;
       pointer-events: none;
     }
@@ -295,10 +296,10 @@
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.35rem;
+      font-size: 1.45rem;
       font-weight: 700;
-      width: 120px;
-      padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+      width: 130px;
+      padding: 0.5rem 0.85rem 0.5rem 2.35rem;
       text-align: center;
       transition: all 0.2s;
       outline: none;
@@ -310,7 +311,7 @@
     }
 
     .search-hint {
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       color: var(--text-muted);
     }
 
@@ -319,8 +320,8 @@
       background: rgba(239, 68, 68, 0.08);
       border: 1px solid rgba(239, 68, 68, 0.25);
       border-radius: var(--radius-sm);
-      padding: 0.65rem 1rem;
-      font-size: 0.85rem;
+      padding: 0.75rem 1.15rem;
+      font-size: 0.95rem;
       color: #f87171;
       margin-bottom: 1.5rem;
     }
@@ -333,7 +334,7 @@
       border-radius: var(--radius);
       box-shadow: 0 0 35px var(--team-glow), 0 8px 32px rgba(0,0,0,0.5);
       overflow: hidden;
-      margin-bottom: 2rem;
+      margin-bottom: 2.25rem;
       animation: fadeIn 0.2s ease;
     }
 
@@ -344,21 +345,22 @@
 
     .spotlight-header {
       background: linear-gradient(135deg, var(--team-primary) 0%, var(--surface-2) 100%);
-      padding: 1.15rem 1.5rem;
+      padding: 1.25rem 1.65rem;
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1.35rem;
       border-bottom: 1px solid var(--border);
     }
 
+    /* Number circle without '#' */
     .jersey-badge {
       background: var(--team-accent);
       color: var(--team-btn-text, #ffffff);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.7rem;
+      font-size: 1.85rem;
       font-weight: 800;
-      width: 58px;
-      height: 58px;
+      width: 62px;
+      height: 62px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -367,42 +369,61 @@
       box-shadow: 0 0 20px var(--team-glow);
     }
 
+    /* Stacked Year & Position to the left of the player name */
+    .spotlight-meta-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .spot-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-light);
+      color: var(--team-light);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      min-width: 44px;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    .spotlight-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
     .spotlight-name {
-      font-size: 1.45rem;
+      font-size: 1.65rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     .spotlight-sub {
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       color: var(--team-light);
-      margin-top: 0.15rem;
       font-family: 'JetBrains Mono', monospace;
-    }
-
-    .stat-section-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 0.75rem 1.25rem 0.4rem;
-      border-bottom: 1px solid var(--border);
     }
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
       gap: 1px;
       background: var(--border);
     }
 
     .stat-cell {
       background: var(--surface);
-      padding: 0.8rem 0.95rem;
+      padding: 0.95rem 1.05rem;
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.25rem;
       position: relative;
       transition: background 0.15s;
     }
@@ -410,7 +431,7 @@
     .stat-cell:hover { background: var(--surface-2); }
 
     .stat-key {
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -422,7 +443,7 @@
 
     .stat-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -430,25 +451,25 @@
     /* ── Top 3 Medal Styling ─────────────────────────────────────────────────── */
     .stat-cell.rank-1 {
       background: var(--gold-bg);
-      border-bottom: 2px solid var(--gold);
+      border-bottom: 2.5px solid var(--gold);
     }
     .stat-cell.rank-1 .stat-val { color: var(--gold); }
 
     .stat-cell.rank-2 {
       background: var(--silver-bg);
-      border-bottom: 2px solid var(--silver);
+      border-bottom: 2.5px solid var(--silver);
     }
     .stat-cell.rank-2 .stat-val { color: var(--silver); }
 
     .stat-cell.rank-3 {
       background: var(--bronze-bg);
-      border-bottom: 2px solid var(--bronze);
+      border-bottom: 2.5px solid var(--bronze);
     }
     .stat-cell.rank-3 .stat-val { color: var(--bronze); }
 
     .rank-tag {
-      font-size: 0.65rem;
-      padding: 1px 4px;
+      font-size: 0.7rem;
+      padding: 1px 5px;
       border-radius: 4px;
       font-weight: 800;
     }
@@ -466,24 +487,24 @@
 
     .table-card-header {
       background: var(--surface-2);
-      padding: 0.9rem 1.25rem;
+      padding: 1rem 1.35rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .table-card-title-wrap {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
     }
 
     .table-card-title {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -491,21 +512,21 @@
     .header-links-group {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
     }
 
     .site-link-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
+      gap: 0.4rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 7px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-light);
       color: var(--team-accent);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.84rem;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.15s ease;
@@ -523,16 +544,16 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.82rem;
+      font-size: 0.92rem;
     }
 
     thead th {
       background: rgba(0,0,0,0.3);
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 0.7rem 0.85rem;
+      padding: 0.8rem 0.95rem;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       text-align: center;
@@ -551,26 +572,34 @@
     thead th.sorted { color: var(--team-accent); }
 
     tbody td {
-      padding: 0.65rem 0.85rem;
+      padding: 0.75rem 0.95rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--text);
       white-space: nowrap;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.92rem;
     }
 
     tbody td.col-player {
       text-align: left;
       font-family: 'Inter', sans-serif;
       font-weight: 600;
+      cursor: pointer;
+      color: #ffffff;
+      transition: color 0.15s ease;
+    }
+
+    tbody td.col-player:hover {
+      color: var(--team-accent);
+      text-decoration: underline;
     }
 
     tbody td.col-jersey {
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      width: 48px;
+      width: 52px;
       text-align: left;
     }
 
@@ -578,9 +607,9 @@
     tbody td.col-yr {
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.86rem;
       font-weight: 600;
-      width: 54px;
+      width: 58px;
     }
 
     tbody tr:last-child td { border-bottom: none; }
@@ -595,32 +624,33 @@
     .status-bar {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.78rem;
+      gap: 0.55rem;
+      font-size: 0.88rem;
       font-family: 'JetBrains Mono', monospace;
       color: var(--text-muted);
     }
 
     .status-dot {
-      width: 8px; height: 8px;
+      width: 9px; height: 9px;
       border-radius: 50%;
       background: var(--green);
     }
     .status-dot.error { background: var(--red); }
 
     .empty {
-      padding: 3rem;
+      padding: 3.5rem;
       text-align: center;
       color: var(--text-muted);
+      font-size: 1rem;
     }
 
     /* ── Footer ─────────────────────────────────────────────────────────────── */
     footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
+      margin-top: 3.5rem;
+      padding-top: 1.75rem;
       border-top: 1px solid var(--border);
       text-align: center;
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
     }
@@ -637,7 +667,7 @@
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.6rem; }
+      h1 { font-size: 1.8rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
       header { flex-direction: column; }
       .gender-toggle-wrap { width: 100%; justify-content: center; }
@@ -714,7 +744,7 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Enter a jersey number to spotlight a specific player's stats</span>
+      <span class="search-hint">Enter a jersey number or click any player's name in the table to view their stat card</span>
     </div>
   </section>
 
@@ -726,16 +756,24 @@
   <!-- Spotlight Card -->
   <div id="spotlightCard">
     <div class="spotlight-header">
+      <!-- Player Number (No #) -->
       <div class="jersey-badge" id="spotJersey">—</div>
-      <div>
+      
+      <!-- Stacked Year & Position to the left of Name -->
+      <div class="spotlight-meta-stack">
+        <span class="spot-tag" id="spotYr">—</span>
+        <span class="spot-tag" id="spotPos">—</span>
+      </div>
+
+      <!-- Player Name and Team Details -->
+      <div class="spotlight-details">
         <div class="spotlight-name" id="spotName">—</div>
-        <div class="spotlight-sub" id="spotSub">Summit League Men's Basketball</div>
+        <div class="spotlight-sub" id="spotSub">Summit League Basketball</div>
       </div>
     </div>
 
-    <!-- Basketball Stat Grid (9 Stats - No Minutes) -->
+    <!-- Basketball Stat Grid (9 Key Stats) -->
     <div>
-      <div class="stat-section-title">🏀 Season Per Game & Percentage Stats</div>
       <div class="stat-grid" id="spotStatGrid"></div>
     </div>
   </div>
@@ -1021,8 +1059,8 @@
       PLAYERS = PLAYERS.map(p => ({
         name:         p.name || p.player || p.player_name || '—',
         number:       p.number !== undefined && p.number !== null ? String(p.number) : (p.jersey ? String(p.jersey) : ''),
-        position:     p.position || p.pos || '',
-        year:         p.year || p.class || '',
+        position:     p.position || p.pos || '—',
+        year:         p.year || p.class || '—',
         avg:          p.avg || p.ppg || '',
         fg_pct:       p.fg_pct || p['fg%'] || '',
         three_pt_pct: p.three_pt_pct || p['3pt%'] || p['3p%'] || '',
@@ -1036,8 +1074,6 @@
 
       calculateRanks();
 
-      const teamDisplayName = RAW_DATA.team || team.name;
-      document.getElementById('spotSub').textContent = `${teamDisplayName} · ${genderLabel} Basketball`;
       document.getElementById('statusDot').className = 'status-dot';
       document.getElementById('statusText').textContent = `${PLAYERS.length} Players`;
 
@@ -1090,13 +1126,13 @@
       });
     }
 
-    body.innerHTML = sorted.map(r => {
+    body.innerHTML = sorted.map((r, idx) => {
       const isHL = searchNum && String(r.number) === String(searchNum);
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
         <td class="col-jersey">${r.number || '—'}</td>
         <td class="col-pos">${r.position || '—'}</td>
         <td class="col-yr">${r.year || '—'}</td>
-        <td class="col-player">${esc(r.name)}</td>
+        <td class="col-player" title="Click to view stat card" onclick="displayPlayerCard(${idx})">${esc(r.name)}</td>
         ${STAT_COLUMNS.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
@@ -1114,20 +1150,10 @@
     if (searchNum) highlightRow(searchNum);
   }
 
-  // ── Spotlight Search ───────────────────────────────────────────────────────
-  document.getElementById('playerSearch').addEventListener('input', function () {
-    searchNum = this.value.trim();
+  // ── Render Spotlight Card ──────────────────────────────────────────────────
+  function renderPlayerSpotlight(player) {
     const notFound = document.getElementById('notFound');
     const card     = document.getElementById('spotlightCard');
-
-    if (!searchNum) {
-      card.style.display = 'none';
-      notFound.style.display = 'none';
-      highlightRow('');
-      return;
-    }
-
-    const player = PLAYERS.find(p => String(p.number) === searchNum);
 
     if (!player) {
       card.style.display = 'none';
@@ -1141,13 +1167,19 @@
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
     const playerName  = player.name || '—';
-    const playerPos   = player.position ? ` · ${player.position}` : '';
-    const playerYr    = player.year ? ` · ${player.year}` : '';
 
-    document.getElementById('spotJersey').textContent = `#${player.number || searchNum}`;
-    document.getElementById('spotName').textContent   = playerName;
-    document.getElementById('spotSub').textContent    = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball${playerPos}${playerYr}`;
+    // 1. Number badge (no #)
+    document.getElementById('spotJersey').textContent = player.number || '—';
+    
+    // 2. Stacked Year and Position
+    document.getElementById('spotYr').textContent  = player.year || '—';
+    document.getElementById('spotPos').textContent = player.position || '—';
 
+    // 3. Name & Subtitle
+    document.getElementById('spotName').textContent = playerName;
+    document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball`;
+
+    // 4. Stat Grid
     const grid = document.getElementById('spotStatGrid');
     grid.innerHTML = STAT_COLUMNS.map(c => {
       const val = player[c.key] || '—';
@@ -1161,7 +1193,38 @@
       </div>`;
     }).join('');
 
-    highlightRow(searchNum);
+    highlightRow(player.number);
+  }
+
+  // ── Click on Player Name ───────────────────────────────────────────────────
+  function displayPlayerCard(playerIdx) {
+    const player = PLAYERS[playerIdx];
+    if (!player) return;
+
+    searchNum = player.number || '';
+    document.getElementById('playerSearch').value = player.number || '';
+    renderPlayerSpotlight(player);
+
+    // Scroll smoothly to spotlight card
+    const card = document.getElementById('spotlightCard');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ── Spotlight Search By Number Input ───────────────────────────────────────
+  document.getElementById('playerSearch').addEventListener('input', function () {
+    searchNum = this.value.trim();
+    const notFound = document.getElementById('notFound');
+    const card     = document.getElementById('spotlightCard');
+
+    if (!searchNum) {
+      card.style.display = 'none';
+      notFound.style.display = 'none';
+      highlightRow('');
+      return;
+    }
+
+    const player = PLAYERS.find(p => String(p.number) === searchNum);
+    renderPlayerSpotlight(player);
   });
 
   function highlightRow(num) {
