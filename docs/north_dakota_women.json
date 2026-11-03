@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-03T03:20:21Z",
+  "generated_at": "2026-11-03T03:27:37Z",
   "players": [
     {
       "name": "//",
@@ -11,8 +11,8 @@
       "year": "",
       "avg": "47.0",
       "fg_pct": ".792",
-      "three_pt_pct": "36.0",
-      "ft_pct": "21",
+      "three_pt_pct": "36",
+      "ft_pct": "7",
       "tot_reb": "36",
       "ast": "7",
       "to": "21",

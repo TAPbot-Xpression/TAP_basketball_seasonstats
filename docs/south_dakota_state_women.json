@@ -2,7 +2,7 @@
   "team": "South Dakota State",
   "slug": "south_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-03T03:20:37Z",
+  "generated_at": "2026-11-03T03:27:53Z",
   "players": [
     {
       "name": "//",
@@ -10,9 +10,9 @@
       "position": "",
       "year": "",
       "avg": "39.0",
-      "fg_pct": "8-9",
-      "three_pt_pct": "35",
-      "ft_pct": "13",
+      "fg_pct": ".462",
+      "three_pt_pct": "4",
+      "ft_pct": "39.0",
       "tot_reb": "39",
       "ast": "13",
       "to": "9",

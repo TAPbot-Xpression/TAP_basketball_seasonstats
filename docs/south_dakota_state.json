@@ -2,7 +2,7 @@
   "team": "South Dakota State",
   "slug": "south_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-03T03:20:12Z",
+  "generated_at": "2026-11-03T03:27:29Z",
   "players": [
     {
       "name": "//",
@@ -10,9 +10,9 @@
       "position": "",
       "year": "",
       "avg": "44.0",
-      "fg_pct": "20-26",
-      "three_pt_pct": "30",
-      "ft_pct": "18",
+      "fg_pct": ".389",
+      "three_pt_pct": "14",
+      "ft_pct": "44.0",
       "tot_reb": "44",
       "ast": "17",
       "to": "14",

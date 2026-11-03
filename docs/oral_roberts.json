@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts",
   "gender": "men",
-  "generated_at": "2026-11-03T03:20:06Z",
+  "generated_at": "2026-11-03T03:27:22Z",
   "players": [
     {
       "name": "//",
@@ -11,8 +11,8 @@
       "year": "",
       "avg": "71.0",
       "fg_pct": ".682",
-      "three_pt_pct": "37.0",
-      "ft_pct": "16",
+      "three_pt_pct": "37",
+      "ft_pct": "14",
       "tot_reb": "37",
       "ast": "14",
       "to": "16",

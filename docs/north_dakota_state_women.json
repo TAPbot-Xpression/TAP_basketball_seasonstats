@@ -2,7 +2,7 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-03T03:20:25Z",
+  "generated_at": "2026-11-03T03:27:39Z",
   "players": [
     {
       "name": "//",
@@ -10,9 +10,9 @@
       "position": "",
       "year": "",
       "avg": "45.0",
-      "fg_pct": "16-22",
-      "three_pt_pct": "32",
-      "ft_pct": "23",
+      "fg_pct": ".250",
+      "three_pt_pct": "13",
+      "ft_pct": "45.0",
       "tot_reb": "45",
       "ast": "8",
       "to": "11",

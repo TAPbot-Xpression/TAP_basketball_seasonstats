@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-03T03:19:57Z",
+  "generated_at": "2026-11-03T03:27:14Z",
   "players": [
     {
       "name": "//",
@@ -11,8 +11,8 @@
       "year": "",
       "avg": "62.0",
       "fg_pct": ".529",
-      "three_pt_pct": "26.0",
-      "ft_pct": "10",
+      "three_pt_pct": "26",
+      "ft_pct": "13",
       "tot_reb": "26",
       "ast": "13",
       "to": "10",
