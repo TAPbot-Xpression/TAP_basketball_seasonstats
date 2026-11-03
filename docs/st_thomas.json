@@ -2,7 +2,7 @@
   "team": "St. Thomas",
   "slug": "st_thomas",
   "gender": "men",
-  "generated_at": "2026-11-03T09:45:19Z",
+  "generated_at": "2026-11-03T18:59:42Z",
   "players": [
     {
       "name": "Tim Franks",
@@ -22,8 +22,8 @@
     {
       "name": "Jeremy Lorenz",
       "number": "33",
-      "position": "F",
-      "year": "R-JR",
+      "position": "",
+      "year": "",
       "avg": "16.0",
       "fg_pct": ".500",
       "three_pt_pct": ".333",
@@ -37,8 +37,8 @@
     {
       "name": "Hayden Tibbits",
       "number": "1",
-      "position": "G",
-      "year": "R-JR",
+      "position": "",
+      "year": "",
       "avg": "16.0",
       "fg_pct": ".750",
       "three_pt_pct": ".667",
@@ -52,8 +52,8 @@
     {
       "name": "Austin Herro",
       "number": "2",
-      "position": "G",
-      "year": "R-JR",
+      "position": "",
+      "year": "",
       "avg": "8.0",
       "fg_pct": ".667",
       "three_pt_pct": ".000",
@@ -67,8 +67,8 @@
     {
       "name": "Carter Bjerke",
       "number": "32",
-      "position": "F",
-      "year": "GR",
+      "position": "",
+      "year": "",
       "avg": "7.0",
       "fg_pct": ".429",
       "three_pt_pct": ".333",
@@ -97,8 +97,8 @@
     {
       "name": "Julius Wade",
       "number": "11",
-      "position": "G",
-      "year": "SO",
+      "position": "",
+      "year": "",
       "avg": "5.0",
       "fg_pct": ".400",
       "three_pt_pct": ".333",
@@ -127,8 +127,8 @@
     {
       "name": "Caden Wilkins",
       "number": "21",
-      "position": "F",
-      "year": "R-SO",
+      "position": "",
+      "year": "",
       "avg": "2.0",
       "fg_pct": ".500",
       "three_pt_pct": ".000",
@@ -142,8 +142,8 @@
     {
       "name": "Kyle Counts",
       "number": "24",
-      "position": "F",
-      "year": "R-SO",
+      "position": "",
+      "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
       "three_pt_pct": ".000",

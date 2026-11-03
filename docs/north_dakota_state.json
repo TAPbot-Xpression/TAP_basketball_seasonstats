@@ -2,12 +2,12 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-03T09:45:04Z",
+  "generated_at": "2026-11-03T18:59:24Z",
   "players": [
     {
       "name": "Andy Stefonowicz",
       "number": "5",
-      "position": "G",
+      "position": "",
       "year": "",
       "avg": "18.0",
       "fg_pct": ".625",
@@ -20,10 +20,10 @@
       "blk": "0"
     },
     {
-      "name": "2nd",
+      "name": "Melvin Bell Jr.",
       "number": "1",
-      "position": "G",
-      "year": "JR",
+      "position": "",
+      "year": "",
       "avg": "16.0",
       "fg_pct": ".500",
       "three_pt_pct": ".000",
@@ -37,7 +37,7 @@
     {
       "name": "Rob Diaz III",
       "number": "0",
-      "position": "G",
+      "position": "",
       "year": "",
       "avg": "12.0",
       "fg_pct": ".385",
@@ -52,8 +52,8 @@
     {
       "name": "Max Iversen",
       "number": "4",
-      "position": "G",
-      "year": "GR",
+      "position": "",
+      "year": "",
       "avg": "11.0",
       "fg_pct": "1.000",
       "three_pt_pct": "1.000",
@@ -67,7 +67,7 @@
     {
       "name": "Andrew Nagy",
       "number": "44",
-      "position": "F",
+      "position": "",
       "year": "",
       "avg": "10.0",
       "fg_pct": ".500",
@@ -82,7 +82,7 @@
     {
       "name": "Riley Massey",
       "number": "2",
-      "position": "G",
+      "position": "",
       "year": "",
       "avg": "8.0",
       "fg_pct": ".667",
@@ -95,10 +95,10 @@
       "blk": "0"
     },
     {
-      "name": "3rd",
+      "name": "Carson Smith",
       "number": "7",
-      "position": "G",
-      "year": "R-SO",
+      "position": "",
+      "year": "",
       "avg": "6.0",
       "fg_pct": ".500",
       "three_pt_pct": ".000",
@@ -112,7 +112,7 @@
     {
       "name": "Amir Danforth",
       "number": "13",
-      "position": "G",
+      "position": "",
       "year": "",
       "avg": "3.0",
       "fg_pct": "1.000",
@@ -127,7 +127,7 @@
     {
       "name": "Kaden Tate",
       "number": "3",
-      "position": "F",
+      "position": "",
       "year": "",
       "avg": "2.0",
       "fg_pct": "1.000",
@@ -142,7 +142,7 @@
     {
       "name": "Jaziah Harper",
       "number": "14",
-      "position": "G",
+      "position": "",
       "year": "",
       "avg": "2.0",
       "fg_pct": ".500",
@@ -157,8 +157,8 @@
     {
       "name": "Karl Poom",
       "number": "23",
-      "position": "F",
-      "year": "R-SO",
+      "position": "",
+      "year": "",
       "avg": "2.0",
       "fg_pct": ".333",
       "three_pt_pct": ".000",
@@ -172,7 +172,7 @@
     {
       "name": "Oliver Junker",
       "number": "22",
-      "position": "F",
+      "position": "",
       "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
@@ -185,10 +185,10 @@
       "blk": "0"
     },
     {
-      "name": "3rd",
+      "name": "Jack Robison",
       "number": "11",
-      "position": "G",
-      "year": "SO",
+      "position": "",
+      "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
       "three_pt_pct": ".000",
@@ -202,7 +202,7 @@
     {
       "name": "Chance Schoenfeld",
       "number": "12",
-      "position": "F",
+      "position": "",
       "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
@@ -217,7 +217,7 @@
     {
       "name": "Colin Stack",
       "number": "35",
-      "position": "F",
+      "position": "",
       "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
