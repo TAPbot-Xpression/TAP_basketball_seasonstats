@@ -6,7 +6,9 @@ Features:
   - Generates individual team JSON files (<slug>.json and <slug>_women.json in root & docs/).
   - Old Sidearm HTML tables: Targets <section id="individual-overall"> to extract ALL 9 stats
     (AVG, FG%, 3PT%, FT%, TOT, AST, TO, STL, BLK) using exact data-label matching.
-  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions.
+  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
+  - Roster Nuxt JSON & Composite Text Parsing: Extracts positions and academic years from Nuxt
+    payloads and structured card blocks (e.g., 'Position G Academic Year So.').
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Extracts Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
   - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
@@ -356,13 +358,78 @@ def find_roster_entry(
     return None
 
 
+def parse_nuxt_roster(html: str) -> Dict[str, Dict[str, str]]:
+    """Extracts roster info (number, position, year) from Nuxt JSON payload if available."""
+    roster_lookup: Dict[str, Dict[str, str]] = {}
+    m = re.search(r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>', html, re.DOTALL)
+    if not m:
+        return roster_lookup
+
+    try:
+        data = json.loads(m.group(1))
+        if not isinstance(data, list):
+            return roster_lookup
+
+        def resolve(val: Any) -> str:
+            if isinstance(val, int) and 0 <= val < len(data):
+                target = data[val]
+                if isinstance(target, (str, int, float)):
+                    return str(target)
+            return str(val) if val is not None else ""
+
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+
+            raw_name = (
+                item.get("playerName") or item.get("name") or item.get("fullName") or item.get("displayName")
+            )
+            if not raw_name:
+                continue
+
+            c_name = clean_name(resolve(raw_name))
+            if not is_valid_player_name(c_name):
+                continue
+
+            num_raw = (
+                item.get("jersey") or item.get("playerUniform") or item.get("uniform") or item.get("number")
+            )
+            c_num = clean_number(resolve(num_raw))
+
+            pos_raw = (
+                item.get("position") or item.get("playerPosition") or item.get("pos") or item.get("posShort")
+            )
+            c_pos = normalize_position(resolve(pos_raw))
+
+            yr_raw = (
+                item.get("academicYear") or item.get("classYear") or item.get("year") or item.get("class") or item.get("yr")
+            )
+            c_yr = normalize_year(resolve(yr_raw))
+
+            if c_pos or c_yr or c_num:
+                info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
+                roster_lookup[c_name.lower()] = info
+                if c_num != "":
+                    roster_lookup[f"#{c_num}"] = info
+    except Exception as e:
+        logger.debug(f"Nuxt roster parsing encountered an error: {e}")
+
+    return roster_lookup
+
+
 def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
-    """Scrapes team roster for Position (G/F) and Academic Year."""
+    """Scrapes team roster for Position (G/F) and Academic Year using Nuxt JSON & expanded DOM parsing."""
     html = fetch_url(roster_url)
     roster_lookup: Dict[str, Dict[str, str]] = {}
     if not html:
         return roster_lookup
 
+    # 1. Attempt Nuxt JSON roster extraction first
+    nuxt_lookup = parse_nuxt_roster(html)
+    if nuxt_lookup and len(nuxt_lookup) >= 5:
+        return nuxt_lookup
+
+    # 2. HTML DOM parsing with composite label support
     soup = BeautifulSoup(html, "html.parser")
 
     for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
@@ -373,29 +440,47 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
             parent.decompose()
 
     player_items = soup.find_all(class_=re.compile(
-        r"roster-player|roster__item|sidearm-roster-player|s-person-details", re.I))
+        r"roster-player|roster__item|sidearm-roster-player|s-person-details|s-stamp-card|s-person-card", re.I))
 
     for p in player_items:
-        name_el = p.find(class_=re.compile(r"name|player-name", re.I))
+        text_block = p.get_text(separator=" ", strip=True)
+
+        name_el = p.find(class_=re.compile(r"name|player-name", re.I)) or p.find(["h2", "h3", "h4"])
         raw_name = name_el.get_text(separator=" ", strip=True) if name_el else ""
         c_name = clean_name(raw_name)
         if not is_valid_player_name(c_name):
             continue
 
         num_el = p.find(class_=re.compile(r"jersey|number|player-number", re.I))
-        c_num = clean_number(num_el.get_text(strip=True) if num_el else "")
+        raw_num = num_el.get_text(strip=True) if num_el else ""
+        if not raw_num:
+            m_num = re.search(r"Jersey\s*(?:Number|#)?\s*(\d{1,2})", text_block, re.I)
+            if m_num:
+                raw_num = m_num.group(1)
+        c_num = clean_number(raw_num)
 
         pos_el = p.find(class_=re.compile(r"position|pos", re.I))
-        c_pos = normalize_position(pos_el.get_text(strip=True) if pos_el else "")
+        raw_pos = pos_el.get_text(strip=True) if pos_el else ""
+        if not raw_pos:
+            m_pos = re.search(r"Position\s*([A-Za-z/]+)", text_block, re.I)
+            if m_pos:
+                raw_pos = m_pos.group(1)
+        c_pos = normalize_position(raw_pos)
 
         yr_el = p.find(class_=re.compile(r"academic-year|year|class", re.I))
-        c_yr = normalize_year(yr_el.get_text(strip=True) if yr_el else "")
+        raw_yr = yr_el.get_text(strip=True) if yr_el else ""
+        if not raw_yr:
+            m_yr = re.search(r"Academic\s*Year\s*([A-Za-z\.\-]+)", text_block, re.I)
+            if m_yr:
+                raw_yr = m_yr.group(1)
+        c_yr = normalize_year(raw_yr)
 
         info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
         roster_lookup[c_name.lower()] = info
         if c_num != "":
             roster_lookup[f"#{c_num}"] = info
 
+    # 3. Table-based Fallback
     if not roster_lookup:
         for row in soup.find_all("tr"):
             cols = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
