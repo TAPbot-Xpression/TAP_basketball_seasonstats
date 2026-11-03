@@ -2,7 +2,7 @@
   "team": "South Dakota",
   "slug": "south_dakota",
   "gender": "men",
-  "generated_at": "2026-11-03T03:33:00Z",
+  "generated_at": "2026-11-03T03:41:01Z",
   "players": [
     {
       "name": "Jahni Summers",
@@ -13,11 +13,11 @@
       "fg_pct": ".625",
       "three_pt_pct": ".500",
       "ft_pct": "1.000",
-      "tot_reb": "3.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "1.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Vince Buzelis",
@@ -28,11 +28,11 @@
       "fg_pct": ".800",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "7.0",
-      "ast": "6.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "2.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Kajus Kublickas",
@@ -43,11 +43,11 @@
       "fg_pct": ".667",
       "three_pt_pct": ".667",
       "ft_pct": ".667",
-      "tot_reb": "1.0",
-      "ast": "2.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Josiah Dotzler",
@@ -58,11 +58,11 @@
       "fg_pct": ".444",
       "three_pt_pct": ".500",
       "ft_pct": ".750",
-      "tot_reb": "5.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "3.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Stef van Bussel",
@@ -73,11 +73,11 @@
       "fg_pct": "1.000",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "6.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "1.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Ethan Kizer",
@@ -88,11 +88,11 @@
       "fg_pct": ".250",
       "three_pt_pct": ".250",
       "ft_pct": "1.000",
-      "tot_reb": "1.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "1.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Marvin Richard III",
@@ -103,11 +103,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".500",
       "ft_pct": "1.000",
-      "tot_reb": "0.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "2.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Melo Sanchez",
@@ -118,11 +118,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".333",
       "ft_pct": ".000",
-      "tot_reb": "2.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Josh Townley-Thomas",
@@ -133,11 +133,11 @@
       "fg_pct": "1.000",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "3.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "1.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Jake Brack",
@@ -148,11 +148,11 @@
       "fg_pct": "1.000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "2.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Iliam Fevry",
@@ -163,11 +163,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "2.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Cade Kelderman",
@@ -178,11 +178,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".500",
-      "tot_reb": "2.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "1.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Brandon Domsch",
@@ -193,11 +193,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "0.0",
-      "ast": "1.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     },
     {
       "name": "Michael Nee",
@@ -208,11 +208,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "6.0",
-      "ast": "0.0",
+      "tot_reb": "",
+      "ast": "",
       "to": "",
-      "stl": "0.0",
-      "blk": "0.0"
+      "stl": "",
+      "blk": ""
     }
   ]
 }
