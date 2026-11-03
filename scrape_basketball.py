@@ -9,8 +9,11 @@ Features:
   - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions.
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Extracts Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
+  - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
+    Last-name + number correlation -> Fuzzy string distance matching (difflib).
 """
 
+import difflib
 import json
 import logging
 import os
@@ -292,6 +295,67 @@ def is_valid_player_name(name: str) -> bool:
     return True
 
 
+def strip_suffixes(name: str) -> str:
+    """Removes common suffixes (Jr., III, etc.) and punctuation for comparison."""
+    cleaned = re.sub(r"\b(jr\.?|sr\.?|iii|iv|ii)\b", "", name.lower()).strip()
+    return re.sub(r"\s+", " ", cleaned)
+
+
+def find_roster_entry(
+    name: str,
+    number: str,
+    roster_lookup: Dict[str, Dict[str, str]]
+) -> Optional[Dict[str, str]]:
+    """
+    Robust multi-tier lookup to match a stats player against roster entries:
+      1. Exact normalized name match
+      2. Jersey number fallback (#number)
+      3. Suffix-agnostic exact match
+      4. Matching last name + matching jersey number
+      5. Fuzzy matching via difflib sequence similarity
+    """
+    if not roster_lookup:
+        return None
+
+    raw_low = name.lower().strip()
+
+    # Tier 1: Exact name match
+    if raw_low in roster_lookup:
+        return roster_lookup[raw_low]
+
+    # Tier 2: Exact jersey number match
+    if number and f"#{number}" in roster_lookup:
+        return roster_lookup[f"#{number}"]
+
+    # Tier 3: Suffix-agnostic match
+    base_name = strip_suffixes(raw_low)
+    for r_key, r_info in roster_lookup.items():
+        if r_key.startswith("#"):
+            continue
+        if strip_suffixes(r_key) == base_name:
+            return r_info
+
+    # Tier 4: Last name + Number correlation
+    name_parts = raw_low.split()
+    if name_parts:
+        last_name = name_parts[-1]
+        for r_key, r_info in roster_lookup.items():
+            if r_key.startswith("#"):
+                continue
+            r_parts = r_key.split()
+            if r_parts and r_parts[-1] == last_name:
+                if not number or r_info.get("number") == number:
+                    return r_info
+
+    # Tier 5: Fuzzy name matching
+    roster_player_names = [k for k in roster_lookup.keys() if not k.startswith("#")]
+    close_matches = difflib.get_close_matches(raw_low, roster_player_names, n=1, cutoff=0.72)
+    if close_matches:
+        return roster_lookup[close_matches[0]]
+
+    return None
+
+
 def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
     """Scrapes team roster for Position (G/F) and Academic Year."""
     html = fetch_url(roster_url)
@@ -329,7 +393,7 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
 
         info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
         roster_lookup[c_name.lower()] = info
-        if c_num:
+        if c_num != "":
             roster_lookup[f"#{c_num}"] = info
 
     if not roster_lookup:
@@ -352,7 +416,7 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
             if name_cand and is_valid_player_name(name_cand):
                 info = {"name": name_cand, "number": num, "position": pos, "year": yr}
                 roster_lookup[name_cand.lower()] = info
-                if num:
+                if num != "":
                     roster_lookup[f"#{num}"] = info
 
     return roster_lookup
@@ -369,7 +433,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
     players: List[Dict[str, Any]] = []
 
-    # Priority 1: Target <section id="individual-overall"> (contains all scoring + defensive stats)
     target_sections = soup.find_all("section", id=re.compile(r"individual-overall|individual-scoring|individual-averages", re.I))
     candidate_tables = []
     if target_sections:
@@ -548,7 +611,6 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 c_num = clean_number(resolve(
                     item.get("playerUniform") or item.get("jersey") or item.get("number") or item.get("uniform")))
 
-                # Comprehensive alias checking for modern Sidearm Nuxt stat objects
                 ppg = find_stat(item, [
                     "pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame",
                     "points_per_game", "ptsAvg", "scoring_avg", "pts"
@@ -630,7 +692,7 @@ def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]
 
     logger.info(f"  Parsed {len(stats_players)} player stat lines for {team_name}")
 
-    # 3. Merge stats with roster info
+    # 3. Merge stats with roster info using multi-tier matcher
     merged_players = []
     seen_names: set = set()
 
@@ -640,9 +702,7 @@ def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]
             continue
         seen_names.add(name.lower())
 
-        r_info = roster_lookup.get(name.lower())
-        if not r_info and sp.get("number"):
-            r_info = roster_lookup.get(f"#{sp['number']}")
+        r_info = find_roster_entry(name, sp.get("number", ""), roster_lookup)
 
         final_name   = r_info["name"] if (r_info and r_info.get("name")) else name
         final_number = sp.get("number") or (r_info.get("number") if r_info else "")
