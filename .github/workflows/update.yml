@@ -46,11 +46,7 @@ jobs:
       - name: Run Men's scraper
         run: python scrape_basketball.py
 
-      # ── 6. Run the Women's basketball scraper ─────────────────────────────
-      - name: Run Women's scraper
-        run: python scrape_womens_basketball.py
-
-      # ── 7. Move Men's JSON output files into docs/ ────────────────────────
+      # ── 6. Move Men's JSON output files into docs/ ────────────────────────
       - name: Move Men's JSON files to docs/
         run: |
           mkdir -p docs
@@ -61,7 +57,7 @@ jobs:
             [ -f "$f" ] && mv "$f" "docs/$f" || echo "Warning: $f not found, skipping"
           done
 
-      # ── 8. Move Women's JSON output files into docs/ ──────────────────────
+      # ── 7. Move Women's JSON output files into docs/ ──────────────────────
       - name: Move Women's JSON files to docs/
         run: |
           mkdir -p docs
@@ -72,7 +68,7 @@ jobs:
             [ -f "$f" ] && mv "$f" "docs/$f" || echo "Warning: $f not found, skipping"
           done
 
-      # ── 9. Commit all updated JSON files back to repo ─────────────────────
+      # ── 8. Commit all updated JSON files back to repo ─────────────────────
       - name: Commit and push updated stats
         run: |
           git config --global user.name "github-actions[bot]"
@@ -98,7 +94,7 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: update Men's and Women's basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
 
-      # ── 10. Upload docs/ folder as Pages artifact ─────────────────────────
+      # ── 9. Upload docs/ folder as Pages artifact ─────────────────────────
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -113,7 +109,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # ── 11. Deploy to GitHub Pages ────────────────────────────────────────
+      # ── 10. Deploy to GitHub Pages ────────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
