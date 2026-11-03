@@ -3,25 +3,12 @@ scrape_basketball.py
 Unified Summit League Basketball player season stats and roster scraper (Men's & Women's).
 
 Features:
-  - Supports both Men's and Women's Summit League basketball programs (Denver excluded).
-  - Explicitly targets individual player statistics sections (<section id="individual-averages">,
-    <section id="individual-overall">, or player tables) and skips team/game comparison tables.
-  - Multi-source stat extraction: parses both old Sidearm HTML tables and Nuxt JSON payloads.
-  - Clean roster extraction for jersey numbers, player names, position (G/F), and class year.
-  - Removes leading zeros from jersey numbers ('05' -> '5', '00' -> '0').
   - Generates individual team JSON files (<slug>.json and <slug>_women.json in root & docs/).
-  - Generates aggregate JSON files (all_teams.json and women_teams.json in root & docs/).
-
-Output stats per player:
-- AVG (Scoring PPG)
-- FG%
-- 3PT%
-- FT%
-- TOT (Total Rebounds)
-- AST (Assists)
-- TO (Turnovers)
-- STL (Steals)
-- BLK (Blocks)
+  - Old Sidearm HTML tables: Targets <section id="individual-overall"> to extract ALL 9 stats
+    (AVG, FG%, 3PT%, FT%, TOT, AST, TO, STL, BLK) using exact data-label matching.
+  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions.
+  - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
+  - Extracts Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
 """
 
 import json
@@ -299,7 +286,7 @@ def is_valid_player_name(name: str) -> bool:
         return False
     if "/" in raw_low and any(st in raw_low for st in ["minn", "wis", "iowa", "neb", "calif", "tex"]):
         return False
-    if raw_low.startswith("//") or raw_low == "/":
+    if raw_low.startswith("//") or raw_low == "/" or raw_low == "null":
         return False
 
     return True
@@ -314,7 +301,6 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # Clean out coaching staff
     for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
         staff.decompose()
     for hdr in soup.find_all(["h2", "h3", "h4"], string=re.compile(r"coaching staff|coaches", re.I)):
@@ -322,7 +308,6 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
         if parent:
             parent.decompose()
 
-    # 1. Roster card elements (Sidearm modern/standard)
     player_items = soup.find_all(class_=re.compile(
         r"roster-player|roster__item|sidearm-roster-player|s-person-details", re.I))
 
@@ -347,7 +332,6 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
         if c_num:
             roster_lookup[f"#{c_num}"] = info
 
-    # 2. Roster table rows fallback
     if not roster_lookup:
         for row in soup.find_all("tr"):
             cols = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
@@ -374,51 +358,19 @@ def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
     return roster_lookup
 
 
-def _build_col_map_from_headers(header_cols: List[str]) -> Dict[str, int]:
-    col_map: Dict[str, int] = {}
-    avg_count = 0
-
-    for idx, col in enumerate(header_cols):
-        c = col.strip().upper()
-        if c in ("#", "NO", "NO.", "UNIFORM"):
-            col_map.setdefault("number", idx)
-        elif c in ("PLAYER", "NAME", "PLAYER NAME"):
-            col_map.setdefault("name", idx)
-        elif c in ("AVG", "PPG", "PTS/G", "PTS_AVG"):
-            avg_count += 1
-            if avg_count == 2:
-                col_map["avg"] = idx
-            else:
-                col_map.setdefault("avg", idx)
-        elif c in ("FG%", "FGPCT", "FG PCT"):
-            col_map.setdefault("fg_pct", idx)
-        elif c in ("3PT%", "3P%", "3FG%", "3FG PCT", "3PT PCT"):
-            col_map.setdefault("three_pt_pct", idx)
-        elif c in ("FT%", "FTPCT", "FT PCT"):
-            col_map.setdefault("ft_pct", idx)
-        elif c in ("TOT", "TOTAL", "REB", "REBOUNDS", "TOT REB", "REB/G") and "tot_reb" not in col_map:
-            col_map["tot_reb"] = idx
-        elif c in ("AST", "APG", "ASSISTS", "AST/G"):
-            col_map.setdefault("ast", idx)
-        elif c in ("TO", "TOPG", "TURNOVERS", "TO/G"):
-            col_map.setdefault("to", idx)
-        elif c in ("STL", "SPG", "STEALS", "STL/G"):
-            col_map.setdefault("stl", idx)
-        elif c in ("BLK", "BPG", "BLOCKS", "BLK/G"):
-            col_map.setdefault("blk", idx)
-
-    return col_map
-
-
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
-    Parses Sidearm HTML tables specifically for Individual Player Cumulative Stats.
-    Excludes team comparison, game-by-game, schedule, and game highs tables.
+    Parses Sidearm HTML tables specifically from <section id="individual-overall"> (or full cumulative table).
+    Extracts all 9 stats via exact data-label attributes:
+      - FG%, 3PT%, FT%
+      - PTS or AVG (Scoring PPG)
+      - REB or TOT (Total Rebounds)
+      - AST, TO, STL, BLK
     """
     players: List[Dict[str, Any]] = []
 
-    # Priority 1: Check targeted sections first
-    target_sections = soup.find_all("section", id=re.compile(r"individual-averages|individual-overall|individual-scoring", re.I))
+    # Priority 1: Target <section id="individual-overall"> (contains all scoring + defensive stats)
+    target_sections = soup.find_all("section", id=re.compile(r"individual-overall|individual-scoring|individual-averages", re.I))
     candidate_tables = []
     if target_sections:
         for sec in target_sections:
@@ -427,7 +379,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         candidate_tables = soup.find_all("table")
 
     for table in candidate_tables:
-        # Check parent hierarchy to skip game-by-game / comparison sections
         parent_tags = [p for p in table.parents if p.name in ["div", "section"]]
         parent_ids = " ".join(p.get("id", "") for p in parent_tags).lower()
         parent_classes = " ".join(" ".join(p.get("class", [])) for p in parent_tags).lower()
@@ -455,15 +406,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             if any(bad in thead_text for bad in ["OPPONENT", "DATE", "RESULT", "SCORE", "MAR"]):
                 continue
 
-        flat_headers: List[str] = []
-        if thead:
-            for hr in thead.find_all("tr"):
-                for cell in hr.find_all(["th", "td"]):
-                    colspan = int(cell.get("colspan", 1))
-                    label = cell.get_text(strip=True).upper()
-                    flat_headers.extend([label] * colspan)
-
-        col_map = _build_col_map_from_headers(flat_headers)
         table_players: List[Dict[str, Any]] = []
 
         for row in rows:
@@ -492,8 +434,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
                 raw_name = label_map["NAME"]
             elif "PLAYER" in label_map:
                 raw_name = label_map["PLAYER"]
-            elif "name" in col_map and col_map["name"] < len(cell_texts):
-                raw_name = cell_texts[col_map["name"]]
             elif len(cell_texts) > 1:
                 raw_name = cell_texts[1]
 
@@ -505,35 +445,27 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             jersey_el = row.find(class_=re.compile(r"jersey|number", re.I)) or row.find("td", class_=re.compile(r"hide-on-medium-down", re.I))
             if jersey_el and re.match(r"^\d{1,2}$", jersey_el.get_text(strip=True)):
                 raw_num = jersey_el.get_text(strip=True)
-            elif "number" in col_map and col_map["number"] < len(cell_texts):
-                raw_num = cell_texts[col_map["number"]]
             elif cell_texts[0].isdigit() or cell_texts[0] in ("00", "0"):
                 raw_num = cell_texts[0]
             c_num = clean_number(raw_num)
 
-            def get_stat(key: str, data_labels: List[str]) -> str:
+            def get_stat(data_labels: List[str]) -> str:
                 for lbl in data_labels:
                     if lbl in label_map:
                         v = label_map[lbl].strip()
                         if v and v.lower() not in DISCARD_EXACT_TOKENS and "view bio" not in v.lower():
                             return v
-
-                if key in col_map and col_map[key] < len(cell_texts):
-                    v = cell_texts[col_map[key]].strip()
-                    if v and v.lower() not in DISCARD_EXACT_TOKENS and "view bio" not in v.lower():
-                        return v
-
                 return ""
 
-            scoring_avg  = get_stat("avg", ["PTS/G", "PPG", "AVG", "PTS_AVG", "POINTS/G", "PTS"])
-            fg_pct       = get_stat("fg_pct", ["FG%", "FG PCT", "PCT"])
-            three_pt_pct = get_stat("three_pt_pct", ["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
-            ft_pct       = get_stat("ft_pct", ["FT%", "FT PCT", "FTPCT"])
-            tot_reb      = get_stat("tot_reb", ["TOT", "REB", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS", "REB/G", "AVG"])
-            ast          = get_stat("ast", ["AST", "APG", "ASSISTS", "AST/G"])
-            to           = get_stat("to", ["TO", "TOPG", "TURNOVERS", "TO/G"])
-            stl          = get_stat("stl", ["STL", "SPG", "STEALS", "STL/G"])
-            blk          = get_stat("blk", ["BLK", "BPG", "BLOCKS", "BLK/G"])
+            scoring_avg  = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G", "PTS"])
+            fg_pct       = get_stat(["FG%", "FG PCT", "PCT"])
+            three_pt_pct = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
+            ft_pct       = get_stat(["FT%", "FT PCT", "FTPCT"])
+            tot_reb      = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS", "REB/G"])
+            ast          = get_stat(["AST", "APG", "ASSISTS", "AST/G"])
+            to           = get_stat(["TO", "TOPG", "TURNOVERS", "TO/G"])
+            stl          = get_stat(["STL", "SPG", "STEALS", "STL/G"])
+            blk          = get_stat(["BLK", "BPG", "BLOCKS", "BLK/G"])
 
             if not any([scoring_avg, fg_pct, ft_pct, tot_reb]):
                 continue
@@ -560,7 +492,10 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
 
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
-    """Parses Sidearm Nuxt JSON payloads for modern websites."""
+    """
+    Parses Sidearm Nuxt JSON payloads for modern websites.
+    Supports all stat field alias variations across Sidearm Nuxt versions.
+    """
     players = []
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -584,6 +519,15 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                         return str(target)
                 return str(val) if val is not None else ""
 
+            def find_stat(item: dict, keys: List[str]) -> str:
+                for k in keys:
+                    v = item.get(k)
+                    if v is not None:
+                        res = resolve(v).strip()
+                        if res and res != "None" and res.lower() not in DISCARD_EXACT_TOKENS:
+                            return res
+                return ""
+
             for item in data:
                 if not isinstance(item, dict):
                     continue
@@ -592,7 +536,8 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 if item.get("isAFooterStat") is True:
                     continue
 
-                raw_name = item.get("playerName") or item.get("nameFromStats") or item.get("name")
+                raw_name = (item.get("playerName") or item.get("nameFromStats") or
+                            item.get("name") or item.get("fullName") or item.get("displayName"))
                 if raw_name is None:
                     continue
 
@@ -601,17 +546,41 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                     continue
 
                 c_num = clean_number(resolve(
-                    item.get("playerUniform") or item.get("jersey") or item.get("number")))
+                    item.get("playerUniform") or item.get("jersey") or item.get("number") or item.get("uniform")))
 
-                ppg       = resolve(item.get("pointsPerGame") or item.get("pts_avg") or item.get("ppg"))
-                fg_pct    = resolve(item.get("fieldGoalsPercentage") or item.get("fg_pct") or item.get("fgPct"))
-                three_pct = resolve(item.get("threePointFieldGoalsPercentage") or item.get("three_pt_pct") or item.get("threePtPct"))
-                ft_pct    = resolve(item.get("freeThrowsPercentage") or item.get("ft_pct") or item.get("ftPct"))
-                tot_reb   = resolve(item.get("rebounds") or item.get("totalRebounds") or item.get("tot_reb"))
-                ast       = resolve(item.get("assists") or item.get("ast"))
-                to        = resolve(item.get("turnovers") or item.get("to"))
-                stl       = resolve(item.get("steals") or item.get("stl"))
-                blk       = resolve(item.get("blocks") or item.get("blk"))
+                # Comprehensive alias checking for modern Sidearm Nuxt stat objects
+                ppg = find_stat(item, [
+                    "pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame",
+                    "points_per_game", "ptsAvg", "scoring_avg", "pts"
+                ])
+                fg_pct = find_stat(item, [
+                    "fieldGoalsPercentage", "fg_pct", "fgPct", "fieldGoalPct",
+                    "field_goal_percentage", "fgPercentage"
+                ])
+                three_pct = find_stat(item, [
+                    "threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct",
+                    "threePointPercentage", "three_point_percentage", "threePct"
+                ])
+                ft_pct = find_stat(item, [
+                    "freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct",
+                    "free_throw_percentage", "ftPercentage"
+                ])
+                tot_reb = find_stat(item, [
+                    "rebounds", "totalRebounds", "tot_reb", "reb_avg",
+                    "reboundsPerGame", "rebPerGame", "rebounds_per_game"
+                ])
+                ast = find_stat(item, [
+                    "assists", "ast", "ast_avg", "assistsPerGame", "astPerGame"
+                ])
+                to = find_stat(item, [
+                    "turnovers", "to", "to_avg", "turnoversPerGame", "toPerGame"
+                ])
+                stl = find_stat(item, [
+                    "steals", "stl", "stl_avg", "stealsPerGame", "stlPerGame"
+                ])
+                blk = find_stat(item, [
+                    "blocks", "blk", "blk_avg", "blocksPerGame", "blkPerGame"
+                ])
 
                 if not any([ppg, fg_pct, ft_pct, tot_reb, ast]):
                     continue
@@ -632,7 +601,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
         except Exception:
             continue
 
-        if players:
+        if len(players) >= 5:
             break
 
     return players
@@ -705,24 +674,17 @@ def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]
     }
 
 
-def process_league(teams_config: List[Dict[str, str]], aggregate_filename: str, gender: str):
-    """Processes all teams and writes individual + aggregate JSON files."""
-    all_teams_data = []
-
+def process_league(teams_config: List[Dict[str, str]], gender: str):
+    """Processes all teams in a conference division and writes individual JSON files."""
     for team_cfg in teams_config:
         team_data = scrape_team(team_cfg, gender=gender)
-        all_teams_data.append(team_data)
-
         slug = team_data["slug"]
+
         for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
             with open(dest, "w", encoding="utf-8") as f:
                 json.dump(team_data, f, indent=2)
 
         time.sleep(1.5)
-
-    for dest in [aggregate_filename, os.path.join("docs", aggregate_filename)]:
-        with open(dest, "w", encoding="utf-8") as f:
-            json.dump(all_teams_data, f, indent=2)
 
 
 def main():
@@ -730,13 +692,13 @@ def main():
 
     # 1. Process Men's Basketball
     logger.info("=== Starting Men's Basketball Scraping ===")
-    process_league(MENS_TEAMS_CONFIG, "all_teams.json", gender="men")
+    process_league(MENS_TEAMS_CONFIG, gender="men")
 
     # 2. Process Women's Basketball
     logger.info("=== Starting Women's Basketball Scraping ===")
-    process_league(WOMENS_TEAMS_CONFIG, "women_teams.json", gender="women")
+    process_league(WOMENS_TEAMS_CONFIG, gender="women")
 
-    logger.info("Done — Both Men's and Women's Summit League basketball stats updated!")
+    logger.info("Done — Individual Summit League basketball stats JSONs updated!")
 
 
 if __name__ == "__main__":
