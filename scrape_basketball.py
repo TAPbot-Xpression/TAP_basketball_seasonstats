@@ -1,9 +1,17 @@
 """
 scrape_basketball.py
-Scrapes Summit League Men's Basketball player season stats and rosters.
-Supports both:
-  - Old Sidearm HTML tables (e.g. North Dakota, Oral Roberts, South Dakota) with multi-tiered headers
-  - New Sidearm Nuxt JSON / NextGen structures (e.g. Kansas City, NDSU, Omaha, South Dakota State, St. Thomas)
+Unified Summit League Basketball player season stats and roster scraper (Men's & Women's).
+
+Features:
+  - Scrapes both Men's and Women's Summit League basketball teams.
+  - Generates individual team JSON files:
+      * Men's: <slug>.json and docs/<slug>.json
+      * Women's: <slug>_women.json and docs/<slug>_women.json
+  - Generates aggregate JSON files:
+      * Men's: all_teams.json and docs/all_teams.json
+      * Women's: women_teams.json and docs/women_teams.json
+  - Normalizes jersey numbers: strips leading zeros (e.g., '05' -> '5', '00' -> '0').
+  - Supports both legacy Sidearm HTML table parsers and modern Sidearm Nuxt JSON payloads.
 
 Output stats per player:
 - AVG (Scoring PPG)
@@ -18,7 +26,7 @@ Output stats per player:
 
 Roster info:
 - Name ("Firstname Lastname")
-- Jersey Number
+- Jersey Number (normalized without leading zero)
 - Position (G or F)
 - Year (FR, SO, JR, SR, GR, R-*)
 """
@@ -48,54 +56,107 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.5",
 }
 
-TEAMS_CONFIG = [
+# ── Summit League Men's Basketball Configuration ──────────────────────────────
+MENS_TEAMS_CONFIG = [
     {
         "name": "Kansas City",
         "slug": "kansas_city",
-        "stats_url": "https://kcroos.com/sports/mens-basketball/stats/",
+        "stats_url": "https://kcroos.com/sports/mens-basketball/stats",
         "roster_url": "https://kcroos.com/sports/mens-basketball/roster",
     },
     {
         "name": "North Dakota",
         "slug": "north_dakota",
-        "stats_url": "https://fightinghawks.com/sports/mens-basketball/stats/",
+        "stats_url": "https://fightinghawks.com/sports/mens-basketball/stats",
         "roster_url": "https://fightinghawks.com/sports/mens-basketball/roster",
     },
     {
         "name": "North Dakota State",
         "slug": "north_dakota_state",
-        "stats_url": "https://gobison.com/sports/mens-basketball/stats/",
+        "stats_url": "https://gobison.com/sports/mens-basketball/stats",
         "roster_url": "https://gobison.com/sports/mens-basketball/roster",
     },
     {
         "name": "Omaha",
         "slug": "omaha",
-        "stats_url": "https://omahamavs.com/sports/mens-basketball/stats/",
+        "stats_url": "https://omahamavs.com/sports/mens-basketball/stats",
         "roster_url": "https://omahamavs.com/sports/mens-basketball/roster",
     },
     {
         "name": "Oral Roberts",
         "slug": "oral_roberts",
-        "stats_url": "https://oruathletics.com/sports/mens-basketball/stats/",
+        "stats_url": "https://oruathletics.com/sports/mens-basketball/stats?path=mbball",
         "roster_url": "https://oruathletics.com/sports/mens-basketball/roster",
     },
     {
         "name": "South Dakota",
         "slug": "south_dakota",
-        "stats_url": "https://goyotes.com/sports/mens-basketball/stats/",
+        "stats_url": "https://goyotes.com/sports/mens-basketball/stats",
         "roster_url": "https://goyotes.com/sports/mens-basketball/roster",
     },
     {
         "name": "South Dakota State",
         "slug": "south_dakota_state",
-        "stats_url": "https://gojacks.com/sports/mens-basketball/stats/",
+        "stats_url": "https://gojacks.com/sports/mens-basketball/stats",
         "roster_url": "https://gojacks.com/sports/mens-basketball/roster",
     },
     {
         "name": "St. Thomas",
         "slug": "st_thomas",
-        "stats_url": "https://tommiesports.com/sports/mbball/stats/",
+        "stats_url": "https://tommiesports.com/sports/mbball/stats",
         "roster_url": "https://tommiesports.com/sports/mbball/roster",
+    },
+]
+
+# ── Summit League Women's Basketball Configuration ────────────────────────────
+WOMENS_TEAMS_CONFIG = [
+    {
+        "name": "Kansas City",
+        "slug": "kansas_city_women",
+        "stats_url": "https://kcroos.com/sports/womens-basketball/stats",
+        "roster_url": "https://kcroos.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "North Dakota",
+        "slug": "north_dakota_women",
+        "stats_url": "https://fightinghawks.com/sports/womens-basketball/stats",
+        "roster_url": "https://fightinghawks.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "North Dakota State",
+        "slug": "north_dakota_state_women",
+        "stats_url": "https://gobison.com/sports/womens-basketball/stats",
+        "roster_url": "https://gobison.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "Omaha",
+        "slug": "omaha_women",
+        "stats_url": "https://omahamavs.com/sports/womens-basketball/stats",
+        "roster_url": "https://omahamavs.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "Oral Roberts",
+        "slug": "oral_roberts_women",
+        "stats_url": "https://oruathletics.com/sports/womens-basketball/stats?path=wbball",
+        "roster_url": "https://oruathletics.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "South Dakota",
+        "slug": "south_dakota_women",
+        "stats_url": "https://goyotes.com/sports/womens-basketball/stats",
+        "roster_url": "https://goyotes.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "South Dakota State",
+        "slug": "south_dakota_state_women",
+        "stats_url": "https://gojacks.com/sports/womens-basketball/stats",
+        "roster_url": "https://gojacks.com/sports/womens-basketball/roster",
+    },
+    {
+        "name": "St. Thomas",
+        "slug": "st_thomas_women",
+        "stats_url": "https://tommiesports.com/sports/wbball/stats",
+        "roster_url": "https://tommiesports.com/sports/wbball/roster",
     },
 ]
 
@@ -115,11 +176,6 @@ STAFF_KEYWORDS = [
     "communications", "compliance", "academic", "marketing"
 ]
 
-# Standard Sidearm 26-column HTML table offsets (0-indexed):
-# 0:#  1:PLAYER  2:GP  3:GS  4:MIN  5:MIN_AVG  6:PTS  7:PTS_AVG
-# 8:FGM  9:FGA  10:FG%  11:3PT  12:3PTA  13:3PT%
-# 14:FTM  15:FTA  16:FT%  17:OFF  18:DEF  19:TOT  20:REB_AVG
-# 21:PF  22:AST  23:TO  24:STL  25:BLK
 OLD_STYLE_COL_OFFSETS = {
     "avg": 7,            # Points per game (PTS_AVG)
     "fg_pct": 10,
@@ -145,18 +201,7 @@ def fetch_url(url: str) -> Optional[str]:
 
 
 def clean_name(raw_name: str) -> str:
-    """
-    Normalizes player names to standard 'Firstname Lastname'.
-
-    Handles:
-      "Greyson Uelmen, Greyson"        -> "Greyson Uelmen"
-      "Anthony Smith III, Anthony"     -> "Anthony Smith III"
-      "Branch, Karmello"               -> "Karmello Branch"
-      "Branch, Karmello Branch"        -> "Karmello Branch"
-      "Hudgens, Trent02Hudgens, Trent" -> "Trent Hudgens"
-      "Greyson 03 Uelmen, Greyson Uelmen" -> "Greyson Uelmen"
-      "Jordan Crawford"                -> "Jordan Crawford"
-    """
+    """Normalizes player names to standard 'Firstname Lastname'."""
     if not raw_name:
         return ""
 
@@ -212,12 +257,17 @@ def clean_name(raw_name: str) -> str:
 
 
 def clean_number(raw_num: Any) -> str:
-    """Extracts jersey number cleanly (e.g. '00', '03', '11', '0')."""
+    """
+    Extracts jersey number cleanly and removes leading zeros (e.g. '05' -> '5', '00' -> '0').
+    """
     if raw_num is None:
         return ""
     text = str(raw_num).strip().replace("#", "")
     m = re.match(r"^(\d{1,2})$", text)
-    return m.group(1) if m else ""
+    if not m:
+        return ""
+    val = m.group(1)
+    return str(int(val))
 
 
 def normalize_position(pos_str: str) -> str:
@@ -415,7 +465,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     players = []
 
     for table in soup.find_all("table"):
-        # Ignore schedules, game logs, or leaders tables
         parent_text = " ".join(
             p.get_text() for p in table.parents if p.name in ["div", "section"]
         )[:400].lower()
@@ -461,7 +510,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
             cell_texts = [c.get_text(strip=True) for c in cells]
 
-            # Build data-label map for this row
             label_map: Dict[str, str] = {}
             for cell in cells:
                 lbl = cell.get("data-label", "").strip().upper()
@@ -635,11 +683,12 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
     return players
 
 
-def scrape_team(team_cfg: Dict[str, str]) -> Dict[str, Any]:
+def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]:
     """Scrapes season cumulative stats & roster for a single Summit League team."""
     team_name = team_cfg["name"]
     slug = team_cfg["slug"]
-    logger.info(f"Processing {team_name}...")
+    gender_label = "Women's" if gender == "women" else "Men's"
+    logger.info(f"Processing {team_name} ({gender_label})...")
 
     # 1. Fetch Roster
     roster_lookup = scrape_roster(team_cfg["roster_url"])
@@ -695,17 +744,18 @@ def scrape_team(team_cfg: Dict[str, str]) -> Dict[str, Any]:
     return {
         "team": team_name,
         "slug": slug,
+        "gender": gender,
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "players": merged_players,
     }
 
 
-def main():
-    os.makedirs("docs", exist_ok=True)
+def process_league(teams_config: List[Dict[str, str]], aggregate_filename: str, gender: str):
+    """Processes all teams in a conference division and writes individual and aggregate JSONs."""
     all_teams_data = []
 
-    for team_cfg in TEAMS_CONFIG:
-        team_data = scrape_team(team_cfg)
+    for team_cfg in teams_config:
+        team_data = scrape_team(team_cfg, gender=gender)
         all_teams_data.append(team_data)
 
         slug = team_data["slug"]
@@ -715,11 +765,23 @@ def main():
 
         time.sleep(1.5)
 
-    for dest in ["all_teams.json", os.path.join("docs", "all_teams.json")]:
+    for dest in [aggregate_filename, os.path.join("docs", aggregate_filename)]:
         with open(dest, "w", encoding="utf-8") as f:
             json.dump(all_teams_data, f, indent=2)
 
-    logger.info("Done — Summit League basketball stats updated!")
+
+def main():
+    os.makedirs("docs", exist_ok=True)
+
+    # 1. Process Men's Basketball
+    logger.info("=== Starting Men's Basketball Scraping ===")
+    process_league(MENS_TEAMS_CONFIG, "all_teams.json", gender="men")
+
+    # 2. Process Women's Basketball
+    logger.info("=== Starting Women's Basketball Scraping ===")
+    process_league(WOMENS_TEAMS_CONFIG, "women_teams.json", gender="women")
+
+    logger.info("Done — Both Men's and Women's Summit League basketball stats updated!")
 
 
 if __name__ == "__main__":
