@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T02:45:09Z",
+  "generated_at": "2026-11-10T03:03:12Z",
   "players": [
     {
       "name": "Samuel Hincapie",
@@ -13,11 +13,11 @@
       "fg_pct": ".545",
       "three_pt_pct": ".313",
       "ft_pct": ".769",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.3",
+      "ast": "0.7",
+      "to": "3",
+      "stl": "0.3",
+      "blk": "1.0"
     },
     {
       "name": "Luke Winkel",
@@ -28,11 +28,11 @@
       "fg_pct": ".346",
       "three_pt_pct": ".333",
       "ft_pct": ".882",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.7",
+      "ast": "3.3",
+      "to": "5",
+      "stl": "0.7",
+      "blk": "0.0"
     },
     {
       "name": "Andrija Radojevic",
@@ -43,11 +43,11 @@
       "fg_pct": ".526",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.0",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "0.3",
+      "blk": "0.3"
     },
     {
       "name": "Zach Kraft",
@@ -58,11 +58,11 @@
       "fg_pct": ".318",
       "three_pt_pct": ".263",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.3",
+      "ast": "0.3",
+      "to": "3",
+      "stl": "1.3",
+      "blk": "0.0"
     },
     {
       "name": "Carter Evanson",
@@ -73,11 +73,11 @@
       "fg_pct": ".389",
       "three_pt_pct": ".400",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "3.3",
+      "ast": "1.7",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "2.7",
+      "blk": "0.3"
     },
     {
       "name": "Jayden Moore",
@@ -88,11 +88,11 @@
       "fg_pct": ".346",
       "three_pt_pct": ".000",
       "ft_pct": ".333",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.3",
+      "ast": "2.3",
+      "to": "6",
+      "stl": "0.7",
+      "blk": "0.0"
     },
     {
       "name": "Zack Parks",
@@ -103,11 +103,11 @@
       "fg_pct": ".375",
       "three_pt_pct": ".167",
       "ft_pct": ".600",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.3",
+      "ast": "1.0",
+      "to": "2",
+      "stl": "1.3",
+      "blk": "0.0"
     },
     {
       "name": "Jayden Thomas",
@@ -118,11 +118,11 @@
       "fg_pct": ".444",
       "three_pt_pct": ".000",
       "ft_pct": ".667",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.7",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "0.0",
+      "blk": "0.3"
     },
     {
       "name": "Tyler Wagner",
@@ -133,11 +133,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "0.0",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Sage Hanson",
@@ -148,11 +148,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".500",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "2.0",
+      "ast": "0.0",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Josh Jones",
@@ -163,11 +163,11 @@
       "fg_pct": ".400",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.0",
+      "ast": "0.3",
+      "to": "5",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "DeAngelo Dungey",
@@ -178,11 +178,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "1.0",
+      "ast": "0.0",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Daemon Ely",
@@ -193,9 +193,24 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
+      "tot_reb": "1.3",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "0.3",
+      "blk": "0.0"
+    },
+    {
+      "name": "#TM Team",
+      "number": "",
+      "position": "",
+      "year": "",
+      "avg": "",
+      "fg_pct": "",
+      "three_pt_pct": "",
+      "ft_pct": "",
+      "tot_reb": "16",
       "ast": "",
-      "to": "",
+      "to": "1",
       "stl": "",
       "blk": ""
     }

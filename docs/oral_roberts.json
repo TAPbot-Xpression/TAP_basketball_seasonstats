@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts",
   "gender": "men",
-  "generated_at": "2026-11-10T02:45:50Z",
+  "generated_at": "2026-11-10T03:03:54Z",
   "players": [
     {
       "name": "Luke Gray",
@@ -13,11 +13,11 @@
       "fg_pct": ".607",
       "three_pt_pct": ".200",
       "ft_pct": ".643",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "6.0",
+      "ast": "1.5",
+      "to": "3",
+      "stl": "1.0",
+      "blk": "0.5"
     },
     {
       "name": "Cal Furnish",
@@ -28,11 +28,11 @@
       "fg_pct": ".462",
       "three_pt_pct": ".444",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.0",
+      "ast": "5.5",
+      "to": "2",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Boden Williams",
@@ -43,11 +43,11 @@
       "fg_pct": ".269",
       "three_pt_pct": ".176",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "2.5",
+      "to": "3",
+      "stl": "3.0",
+      "blk": "0.5"
     },
     {
       "name": "Thomas Zorbas",
@@ -58,11 +58,11 @@
       "fg_pct": ".778",
       "three_pt_pct": ".000",
       "ft_pct": ".800",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.0",
+      "ast": "0.5",
+      "to": "1",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Chase Martin",
@@ -73,11 +73,11 @@
       "fg_pct": ".667",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.5",
+      "ast": "2.5",
+      "to": "4",
+      "stl": "1.5",
+      "blk": "0.5"
     },
     {
       "name": "Martins Kilups",
@@ -88,11 +88,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".167",
       "ft_pct": ".667",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.5",
+      "ast": "1.0",
+      "to": "4",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Alex Couto",
@@ -103,11 +103,11 @@
       "fg_pct": ".125",
       "three_pt_pct": ".143",
       "ft_pct": ".667",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.5",
+      "ast": "1.5",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Amire Robinson",
@@ -118,11 +118,11 @@
       "fg_pct": ".286",
       "three_pt_pct": ".333",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "5.0",
+      "ast": "1.5",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Jamal George",
@@ -133,11 +133,11 @@
       "fg_pct": ".600",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.5",
+      "ast": "1.5",
+      "to": "2",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Alberto Blanco",
@@ -148,11 +148,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".500",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.5",
+      "ast": "0.0",
+      "to": "4",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Blake Smith",
@@ -163,11 +163,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "1.0",
+      "ast": "0.5",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Mihail Gavazov",
@@ -178,11 +178,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.0",
+      "ast": "0.0",
+      "to": "2",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Cam Haffner",
@@ -193,11 +193,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "0.0",
+      "ast": "0.0",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Marko Pavlovic",
@@ -208,7 +208,22 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
+      "tot_reb": "1.5",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "0.5",
+      "blk": "0.0"
+    },
+    {
+      "name": "#TM Team",
+      "number": "",
+      "position": "",
+      "year": "",
+      "avg": "",
+      "fg_pct": "",
+      "three_pt_pct": "",
+      "ft_pct": "",
+      "tot_reb": "14",
       "ast": "",
       "to": "",
       "stl": "",

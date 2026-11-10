@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts_women",
   "gender": "women",
-  "generated_at": "2026-11-10T02:47:32Z",
+  "generated_at": "2026-11-10T03:05:32Z",
   "players": [
     {
       "name": "Kayten Donley",
@@ -13,11 +13,11 @@
       "fg_pct": ".414",
       "three_pt_pct": ".111",
       "ft_pct": ".632",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "6.3",
+      "ast": "2.0",
+      "to": "4",
+      "stl": "2.0",
+      "blk": "0.3"
     },
     {
       "name": "Aubrey Hishaw",
@@ -28,11 +28,11 @@
       "fg_pct": ".438",
       "three_pt_pct": ".167",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "7.0",
+      "ast": "1.7",
+      "to": "4",
+      "stl": "1.3",
+      "blk": "0.0"
     },
     {
       "name": "Keelie Kronberger",
@@ -43,11 +43,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".238",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.7",
+      "ast": "1.3",
+      "to": "7",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Gentry Baldwin",
@@ -58,11 +58,11 @@
       "fg_pct": ".435",
       "three_pt_pct": ".353",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "0.7",
+      "to": "4",
+      "stl": "1.3",
+      "blk": "0.0"
     },
     {
       "name": "Aliyah Duval",
@@ -73,11 +73,11 @@
       "fg_pct": ".474",
       "three_pt_pct": ".500",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.7",
+      "ast": "2.7",
+      "to": "7",
+      "stl": "2.3",
+      "blk": "0.0"
     },
     {
       "name": "Kaylee Ward",
@@ -88,11 +88,11 @@
       "fg_pct": ".208",
       "three_pt_pct": ".273",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "1.7",
+      "to": "1",
+      "stl": "0.3",
+      "blk": "1.0"
     },
     {
       "name": "Hannah Coons",
@@ -103,11 +103,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".333",
       "ft_pct": ".625",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.0",
+      "ast": "0.0",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Preslee Hartsock",
@@ -118,11 +118,11 @@
       "fg_pct": ".444",
       "three_pt_pct": ".250",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.0",
+      "ast": "0.0",
+      "to": "2",
+      "stl": "1.7",
+      "blk": "0.0"
     },
     {
       "name": "Haven Joseph",
@@ -133,11 +133,11 @@
       "fg_pct": "1.000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "1.0",
+      "ast": "0.0",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Azailah Funches",
@@ -148,11 +148,11 @@
       "fg_pct": ".200",
       "three_pt_pct": "1.000",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.3",
+      "ast": "0.0",
+      "to": "3",
+      "stl": "0.7",
+      "blk": "0.0"
     },
     {
       "name": "Alana Shetlar",
@@ -163,11 +163,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".333",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.3",
+      "ast": "0.3",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.3"
     },
     {
       "name": "Majesty Cade",
@@ -178,9 +178,24 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
+      "tot_reb": "1.5",
+      "ast": "0.5",
+      "to": "1",
+      "stl": "0.0",
+      "blk": "0.0"
+    },
+    {
+      "name": "#TM Team",
+      "number": "",
+      "position": "",
+      "year": "",
+      "avg": "",
+      "fg_pct": "",
+      "three_pt_pct": "",
+      "ft_pct": "",
+      "tot_reb": "8",
       "ast": "",
-      "to": "",
+      "to": "2",
       "stl": "",
       "blk": ""
     }

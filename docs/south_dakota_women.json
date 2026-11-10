@@ -2,7 +2,7 @@
   "team": "South Dakota",
   "slug": "south_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T02:47:46Z",
+  "generated_at": "2026-11-10T03:05:43Z",
   "players": [
     {
       "name": "Molly Joyce",
@@ -13,11 +13,11 @@
       "fg_pct": ".381",
       "three_pt_pct": ".375",
       "ft_pct": ".800",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.5",
+      "ast": "1.0",
+      "to": "4",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Bri Robinson",
@@ -28,11 +28,11 @@
       "fg_pct": ".667",
       "three_pt_pct": ".667",
       "ft_pct": ".545",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.5",
+      "ast": "3.5",
+      "to": "1",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Latazia Williamson",
@@ -43,11 +43,11 @@
       "fg_pct": ".471",
       "three_pt_pct": ".000",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "8.0",
+      "ast": "1.0",
+      "to": "6",
+      "stl": "1.5",
+      "blk": "1.0"
     },
     {
       "name": "Tori Schlagel",
@@ -58,11 +58,11 @@
       "fg_pct": ".455",
       "three_pt_pct": ".333",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "2.5",
+      "to": "2",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Ava Miller",
@@ -73,11 +73,11 @@
       "fg_pct": ".556",
       "three_pt_pct": ".400",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "6.0",
+      "ast": "0.5",
+      "to": "5",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Livi Downs",
@@ -88,11 +88,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".333",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "5.0",
+      "ast": "2.5",
+      "to": "2",
+      "stl": "1.5",
+      "blk": "0.5"
     },
     {
       "name": "Ashlan Carlow",
@@ -103,11 +103,11 @@
       "fg_pct": ".600",
       "three_pt_pct": ".500",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.0",
+      "ast": "1.0",
+      "to": "1",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Jenna Hopp",
@@ -118,11 +118,11 @@
       "fg_pct": ".400",
       "three_pt_pct": ".333",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.5",
+      "ast": "1.0",
+      "to": "2",
+      "stl": "0.5",
+      "blk": "1.0"
     },
     {
       "name": "Gabby Jackson",
@@ -133,11 +133,11 @@
       "fg_pct": ".667",
       "three_pt_pct": ".500",
       "ft_pct": ".333",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.5",
+      "ast": "0.5",
+      "to": "3",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Alyssa Bartlett",
@@ -148,11 +148,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.5",
+      "ast": "2.0",
+      "to": "2",
+      "stl": "2.0",
+      "blk": "0.0"
     },
     {
       "name": "Natalie Ramsey",
@@ -163,11 +163,11 @@
       "fg_pct": ".250",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.0",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "1.0",
+      "blk": "0.0"
     },
     {
       "name": "Katy Reyerson",
@@ -178,9 +178,24 @@
       "fg_pct": ".400",
       "three_pt_pct": ".000",
       "ft_pct": ".500",
-      "tot_reb": "",
+      "tot_reb": "2.5",
+      "ast": "0.5",
+      "to": "1",
+      "stl": "1.0",
+      "blk": "0.5"
+    },
+    {
+      "name": "#TM Team",
+      "number": "",
+      "position": "",
+      "year": "",
+      "avg": "",
+      "fg_pct": "",
+      "three_pt_pct": "",
+      "ft_pct": "",
+      "tot_reb": "4",
       "ast": "",
-      "to": "",
+      "to": "1",
       "stl": "",
       "blk": ""
     }

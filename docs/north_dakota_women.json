@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T02:46:56Z",
+  "generated_at": "2026-11-10T03:04:56Z",
   "players": [
     {
       "name": "London Harris",
@@ -13,11 +13,11 @@
       "fg_pct": ".529",
       "three_pt_pct": ".400",
       "ft_pct": ".733",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "7.0",
+      "ast": "0.5",
+      "to": "7",
+      "stl": "1.5",
+      "blk": "0.0"
     },
     {
       "name": "Jayda Maves",
@@ -28,11 +28,11 @@
       "fg_pct": ".313",
       "three_pt_pct": ".077",
       "ft_pct": ".800",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.0",
+      "ast": "2.0",
+      "to": "3",
+      "stl": "1.0",
+      "blk": "0.5"
     },
     {
       "name": "Sydney Piekny",
@@ -43,11 +43,11 @@
       "fg_pct": ".417",
       "three_pt_pct": ".500",
       "ft_pct": ".600",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.5",
+      "ast": "1.0",
+      "to": "3",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Ciona Wells",
@@ -58,11 +58,11 @@
       "fg_pct": ".261",
       "three_pt_pct": ".167",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "4.5",
+      "ast": "4.5",
+      "to": "2",
+      "stl": "0.5",
+      "blk": "0.0"
     },
     {
       "name": "Aliyah Green",
@@ -73,11 +73,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".000",
       "ft_pct": ".800",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "8.0",
+      "ast": "2.0",
+      "to": "3",
+      "stl": "2.0",
+      "blk": "0.0"
     },
     {
       "name": "Jayden Sonnenberg",
@@ -88,11 +88,11 @@
       "fg_pct": ".556",
       "three_pt_pct": ".200",
       "ft_pct": ".667",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.0",
+      "ast": "0.5",
+      "to": "1",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Kendra Harvey",
@@ -103,11 +103,11 @@
       "fg_pct": ".250",
       "three_pt_pct": ".200",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "3.0",
+      "ast": "1.0",
+      "to": "4",
+      "stl": "0.5",
+      "blk": "0.5"
     },
     {
       "name": "Addison Klosterbuer",
@@ -118,11 +118,11 @@
       "fg_pct": ".500",
       "three_pt_pct": ".500",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.0",
+      "ast": "0.0",
+      "to": "1",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Lauren Hillesheim",
@@ -133,11 +133,11 @@
       "fg_pct": ".286",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "1.5",
+      "ast": "0.5",
+      "to": "3",
+      "stl": "2.5",
+      "blk": "0.5"
     },
     {
       "name": "Mia Jacobson",
@@ -148,11 +148,11 @@
       "fg_pct": ".333",
       "three_pt_pct": ".000",
       "ft_pct": "1.000",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "2.5",
+      "ast": "1.0",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Maggie Fricke",
@@ -163,11 +163,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".750",
-      "tot_reb": "",
-      "ast": "",
-      "to": "",
-      "stl": "",
-      "blk": ""
+      "tot_reb": "0.0",
+      "ast": "0.0",
+      "to": "2",
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Lauren Reardon",
@@ -178,11 +178,11 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".500",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "0.0",
+      "ast": "0.0",
       "to": "",
-      "stl": "",
-      "blk": ""
+      "stl": "0.0",
+      "blk": "0.0"
     },
     {
       "name": "Kinley Smith",
@@ -193,9 +193,24 @@
       "fg_pct": ".000",
       "three_pt_pct": ".000",
       "ft_pct": ".000",
-      "tot_reb": "",
-      "ast": "",
+      "tot_reb": "0.0",
+      "ast": "0.0",
       "to": "",
+      "stl": "0.0",
+      "blk": "0.0"
+    },
+    {
+      "name": "#TM Team",
+      "number": "",
+      "position": "",
+      "year": "",
+      "avg": "",
+      "fg_pct": "",
+      "three_pt_pct": "",
+      "ft_pct": "",
+      "tot_reb": "1",
+      "ast": "",
+      "to": "1",
       "stl": "",
       "blk": ""
     }
