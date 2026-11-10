@@ -2,11 +2,12 @@
   "team": "St. Thomas",
   "slug": "st_thomas",
   "gender": "men",
-  "generated_at": "2026-11-10T18:37:17Z",
+  "generated_at": "2026-11-10T21:39:39Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
     "ppg": "72.0",
+    "opp_ppg": "76.7",
     "scoring_margin": "-4.7",
     "fg_pct": ".423",
     "fg_per_game": "22.0",
@@ -23,9 +24,10 @@
     "stl_per_game": "4.3",
     "blk_per_game": "2.7"
   },
-  "conference_team_stats_status": "no_games",
+  "conference_team_stats_status": "selector_not_found",
   "conference_team_stats_missing": [
     "ppg",
+    "opp_ppg",
     "scoring_margin",
     "fg_pct",
     "fg_per_game",
@@ -44,6 +46,7 @@
   ],
   "conference_team_stats": {
     "ppg": "0.0",
+    "opp_ppg": "0.0",
     "scoring_margin": "0.0",
     "fg_pct": ".000",
     "fg_per_game": "0.0",

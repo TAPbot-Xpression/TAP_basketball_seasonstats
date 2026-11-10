@@ -2,11 +2,12 @@
   "team": "South Dakota",
   "slug": "south_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T18:37:24Z",
+  "generated_at": "2026-11-10T21:39:47Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
     "ppg": "81.5",
+    "opp_ppg": "47.0",
     "scoring_margin": "34.5",
     "fg_pct": ".458",
     "fg_per_game": "27.0",
@@ -26,6 +27,7 @@
   "conference_team_stats_status": "not_available_old_style",
   "conference_team_stats_missing": [
     "ppg",
+    "opp_ppg",
     "scoring_margin",
     "fg_pct",
     "fg_per_game",
@@ -44,6 +46,7 @@
   ],
   "conference_team_stats": {
     "ppg": "0.0",
+    "opp_ppg": "0.0",
     "scoring_margin": "0.0",
     "fg_pct": ".000",
     "fg_per_game": "0.0",

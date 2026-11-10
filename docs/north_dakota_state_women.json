@@ -2,11 +2,12 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-10T18:37:21Z",
+  "generated_at": "2026-11-10T21:39:43Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
     "ppg": "67.3",
+    "opp_ppg": "62.7",
     "scoring_margin": "4.7",
     "fg_pct": ".453",
     "fg_per_game": "24.0",
@@ -26,6 +27,7 @@
   "conference_team_stats_status": "no_games",
   "conference_team_stats_missing": [
     "ppg",
+    "opp_ppg",
     "scoring_margin",
     "fg_pct",
     "fg_per_game",
@@ -44,6 +46,7 @@
   ],
   "conference_team_stats": {
     "ppg": "0.0",
+    "opp_ppg": "0.0",
     "scoring_margin": "0.0",
     "fg_pct": ".000",
     "fg_per_game": "0.0",

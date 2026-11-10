@@ -2,11 +2,12 @@
   "team": "South Dakota",
   "slug": "south_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T18:36:56Z",
+  "generated_at": "2026-11-10T21:39:15Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
     "ppg": "91.3",
+    "opp_ppg": "82.0",
     "scoring_margin": "9.3",
     "fg_pct": ".503",
     "fg_per_game": "29.3",
@@ -26,6 +27,7 @@
   "conference_team_stats_status": "not_available_old_style",
   "conference_team_stats_missing": [
     "ppg",
+    "opp_ppg",
     "scoring_margin",
     "fg_pct",
     "fg_per_game",
@@ -44,6 +46,7 @@
   ],
   "conference_team_stats": {
     "ppg": "0.0",
+    "opp_ppg": "0.0",
     "scoring_margin": "0.0",
     "fg_pct": ".000",
     "fg_per_game": "0.0",

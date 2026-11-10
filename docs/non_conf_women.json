@@ -2,7 +2,7 @@
   "team": "St. Kate's",
   "slug": "non_conf_women",
   "gender": "women",
-  "generated_at": "2026-11-10T18:37:31Z",
+  "generated_at": "2026-11-10T21:39:53Z",
   "display_name": "Non-Conf",
   "is_non_conf": true,
   "status": "ok",
@@ -13,6 +13,7 @@
   "team_stats_missing": [],
   "team_stats": {
     "ppg": "61.5",
+    "opp_ppg": "46.0",
     "scoring_margin": "15.5",
     "fg_pct": ".449",
     "fg_per_game": "22.0",
@@ -32,6 +33,7 @@
   "conference_team_stats_status": "not_available_old_style",
   "conference_team_stats_missing": [
     "ppg",
+    "opp_ppg",
     "scoring_margin",
     "fg_pct",
     "fg_per_game",
@@ -50,6 +52,7 @@
   ],
   "conference_team_stats": {
     "ppg": "0.0",
+    "opp_ppg": "0.0",
     "scoring_margin": "0.0",
     "fg_pct": ".000",
     "fg_per_game": "0.0",
