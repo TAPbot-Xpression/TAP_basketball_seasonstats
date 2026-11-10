@@ -11,24 +11,25 @@ JSON layout (identical for every team file, so Datalinq graphics can use one pat
       "generated_at": "...",
       "team_stats_status": "ok" | "partial" | "kept_previous" | "not_found" | "empty",
       "team_stats_missing": [],
-      "team_stats": { ... 16 keys ... },               <- OVERALL team stats
+      "team_stats": { ... 17 keys ... },               <- OVERALL team stats (including opp_ppg)
       "conference_team_stats_status": "ok" | "partial" | "no_games" | "kept_previous" |
                                       "not_available_old_style" | "selector_not_found" |
                                       "not_confirmed" | "unverified_same_as_overall" |
                                       "error" | "not_found" | "empty",
       "conference_team_stats_missing": [],
-      "conference_team_stats": { ... same 16 keys ... },   <- CONFERENCE-ONLY team stats
+      "conference_team_stats": { ... same 17 keys ... },   <- CONFERENCE-ONLY team stats
       "players": [                                      <- PLAYER group
           { "number": "13", "name": "...", ... },       (every row starts with number)
       ]
     }
 
 Team stat keys (same order in both team_stats and conference_team_stats):
-    ppg, scoring_margin, fg_pct, fg_per_game, three_pt_pct, three_pt_per_game,
+    ppg, opp_ppg, scoring_margin, fg_pct, fg_per_game, three_pt_pct, three_pt_per_game,
     ft_pct, ft_per_game, reb_per_game, reb_margin, ast_per_game, to_per_game,
     ast_to_ratio, pts_off_to, stl_per_game, blk_per_game
 
 Features:
+  - Pulls Opponent Points Per Game (opp_ppg) to track scoring defense across all teams.
   - Section/Colgroup-Aware Team Stats Parser (Scoring, Shooting, Rebounding, Assists,
     Turnovers, Steals, Blocks) for New Style (Nuxt 3) and Old Style (Sidearm classic) tables.
   - Conference-only team stats:
@@ -207,6 +208,9 @@ STAFF_KEYWORDS = [
 TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
     ("ppg", "avg", [
         "Points Per Game", "Pts Per Game", "Points/Game", "PPG", "Scoring Offense", "Points per game"]),
+    ("opp_ppg", "avg", [
+        "Opponent Points Per Game", "Opp Points Per Game", "Opponent PPG", "Opp PPG", "Scoring Defense",
+        "Opponent Scoring", "Opp Points/Game", "OPP PPG", "Opponent PTS/G"]),
     ("scoring_margin", "margin", [
         "Scoring Margin", "Score Margin", "Scoring Mgn"]),
     ("fg_pct", "pct", [
@@ -377,16 +381,6 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
     New Style (Nuxt) stats pages only.
     Opens the stats page, switches the split dropdown to "Conference", and VERIFIES the
     dropdown now reads "Conference" before returning the page HTML.
-
-    The dropdown button looks like:
-        <button role="combobox" data-test-id="s-select__box" aria-label="First Menu Options">
-            <span class="s-select__selected-option__text">Conference</span> ...
-
-    Returns (html, status). status is one of:
-        "selected"            -> dropdown confirmed on Conference; html is the page after selecting it
-        "selector_not_found"  -> no dropdown (or no "Conference" option) found
-        "not_confirmed"       -> clicked an option but the dropdown does not read "Conference"
-        "error"               -> navigation / browser error
     """
     page: Optional[Page] = None
     try:
@@ -414,7 +408,6 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
         for _, i in order:
             box = combos.nth(i)
             try:
-                # Already on Conference?
                 if CONF_OPTION_RE.match(await _combo_text(box)):
                     return await page.content(), "selected"
 
@@ -430,7 +423,7 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
                         break
 
                 if target is None:
-                    await page.keyboard.press("Escape")   # this dropdown has no Conference option
+                    await page.keyboard.press("Escape")
                     continue
 
                 await target.click(timeout=3000)
@@ -441,7 +434,6 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
                 except Exception:
                     pass
 
-                # Verification: the dropdown must now read "Conference"
                 if CONF_OPTION_RE.match(await _combo_text(box)):
                     return await page.content(), "selected"
             except Exception as e:
@@ -515,8 +507,6 @@ def clean_stat_margin(val: Any) -> str:
         return "0.0"
     try:
         num = round(float(t.replace("%", "")), 1)
-        # No '+' flag in the format, so positives print plain and negatives keep '-'.
-        # Rounding first means a tiny negative like -0.04 becomes "0.0", not "-0.0".
         return "0.0" if num == 0 else f"{num:.1f}"
     except Exception:
         return "0.0"
@@ -751,10 +741,7 @@ def parse_team_stats(html: str) -> Dict[str, str]:
     """
     Parses team stats using section/colgroup context (Scoring, Shooting, Rebounding,
     Assists, Turnovers, Steals, Blocks) as well as direct label aliases.
-    Works for both New Style (Nuxt 3) and Old Style (Sidearm classic) team summary tables.
-
-    The same parser is used for the Overall page and for the page after the dropdown has been
-    switched to Conference, because the table structure is identical.
+    Pulls both team values and Opponent Points Per Game (opp_ppg).
     """
     found: Dict[str, str] = {}
     soup = BeautifulSoup(html, "html.parser")
@@ -780,20 +767,23 @@ def parse_team_stats(html: str) -> Dict[str, str]:
     for table in soup.find_all("table"):
         current_section = ""
         overall_idx: Optional[int] = None
+        opp_idx: Optional[int] = None
 
         # Check for header row that names columns (e.g. St. Thomas (MN), Opponents)
         for tr in table.find_all("tr"):
-            th_cells = tr.find_all("th")
-            if th_cells and not tr.find("td"):
+            th_cells = tr.find_all(["th", "td"])
+            if th_cells:
                 headers = [_label_key(c.get_text(" ", strip=True)) for c in th_cells]
-                if "overall" in headers:
-                    overall_idx = headers.index("overall")
+                for idx, h in enumerate(headers):
+                    if "overall" in h or "team" in h:
+                        overall_idx = idx
+                    elif "opponent" in h or "opp" in h:
+                        opp_idx = idx
+                if overall_idx is not None:
                     break
 
         for tr in table.find_all("tr"):
             # Section divider / colgroup header row
-            # New Style: <th colspan="3" scope="colgroup"><div> Rebounding </div></th>
-            # Old Style: <td scope="colgroup" colspan="3" id="team-rebounding">Rebounding</td>
             section_cell = tr.find(["th", "td"], attrs={"scope": re.compile(r"colgroup", re.I)}) or \
                            tr.find(["th", "td"], attrs={"id": re.compile(r"^team-(scoring|shooting|rebounding|assists|turnovers|steals|blocks)", re.I)})
 
@@ -814,7 +804,7 @@ def parse_team_stats(html: str) -> Dict[str, str]:
             first_cell_text = cell_texts[0].strip()
             label_norm = _label_key(first_cell_text)
 
-            # Team value: 'Overall' column if a header names one, else first numeric cell after the label
+            # Team value: 'Overall' column if header identified, else first numeric cell after label
             val: Optional[str] = None
             if overall_idx is not None and overall_idx < len(cell_texts):
                 val = _num_text(cell_texts[overall_idx])
@@ -827,10 +817,25 @@ def parse_team_stats(html: str) -> Dict[str, str]:
             if val is None:
                 continue
 
+            # Opponent value (if available in row)
+            opp_val: Optional[str] = None
+            if opp_idx is not None and opp_idx < len(cell_texts):
+                opp_val = _num_text(cell_texts[opp_idx])
+            elif len(cell_texts) >= 3:
+                opp_val = _num_text(cell_texts[2])
+
             matched_key: Optional[str] = None
 
             # 1. Section-aware contextual matching
-            if current_section == "rebounding":
+            if current_section == "scoring":
+                if "pointspergame" in label_norm or "ppg" in label_norm or label_norm == "pergame":
+                    matched_key = "ppg"
+                    if opp_val and "opp_ppg" not in found:
+                        found["opp_ppg"] = opp_val
+                elif "margin" in label_norm:
+                    matched_key = "scoring_margin"
+
+            elif current_section == "rebounding":
                 if label_norm in ("pergame", "rpg", "pergame:rpg", "pergame/rpg") or "pergame" in label_norm or "rpg" in label_norm:
                     matched_key = "reb_per_game"
                 elif label_norm in ("margin", "reboundingmargin", "reboundmargin") or "margin" in label_norm:
@@ -873,12 +878,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
                     elif "pergame" in label_norm or "/g" in label_norm:
                         matched_key = "ft_per_game"
 
-            elif current_section == "scoring":
-                if "pointspergame" in label_norm or "ppg" in label_norm or label_norm == "pergame":
-                    matched_key = "ppg"
-                elif "margin" in label_norm:
-                    matched_key = "scoring_margin"
-
             # 2. Global direct alias lookup fallback
             if not matched_key:
                 matched_key = _LABEL_LOOKUP.get(label_norm)
@@ -900,11 +899,7 @@ def empty_team_stats() -> Dict[str, str]:
 
 def classify_conference_stats(conf: Dict[str, str], overall: Dict[str, str]) -> str:
     """
-    Decides whether parsed Conference stats can be trusted. Call only after the dropdown has been
-    confirmed on "Conference".
-        "no_games"                    -> empty table or every value is zero (conference play not started)
-        "unverified_same_as_overall"  -> numbers identical to Overall (page probably did not switch)
-        "partial" / "ok"              -> real conference numbers (partial = some of the 16 missing)
+    Decides whether parsed Conference stats can be trusted.
     """
     if not conf:
         return "no_games"
@@ -1201,8 +1196,8 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                     continue
 
                 players.append({
-                    "name": c_name,
                     "number": c_num,
+                    "name": c_name,
                     "position": c_pos,
                     "year": c_yr,
                     "gp": clean_stat_int(gp),
@@ -1422,8 +1417,8 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             if key not in players_by_key:
                 player_order.append(key)
                 players_by_key[key] = {
-                    "name": c_name,
                     "number": c_num,
+                    "name": c_name,
                     "position": "",
                     "year": "",
                     "gp": s_gp,
@@ -1632,7 +1627,6 @@ async def scrape_single_team(
         )
 
         # ── Conference-only team stats
-        #    New Style: switch the dropdown to "Conference" and verify it. Old Style: not available yet.
         conf_found: Dict[str, str] = {}
         if style.startswith("New Style"):
             conf_html, sel_status = await fetch_conference_html(context, team_cfg["stats_url"])
@@ -1694,8 +1688,7 @@ async def scrape_single_team(
         existing = read_existing_json(slug)
         same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
 
-        # Keep the previous Overall team stats if this run could not read any.
-        # Values are re-run through the formatters so any old "+5.5" margins become "5.5".
+        # Keep the previous Overall team stats if this run could not read any
         if ts_status == "not_found" and same_source and existing.get("team_stats") \
                 and existing.get("team_stats_status") in ("ok", "partial", "kept_previous"):
             old_ts = existing["team_stats"]
@@ -1725,7 +1718,7 @@ async def scrape_single_team(
             f"({len(conf_found)}/{len(TEAM_STAT_KEYS)} found)"
         )
 
-        # ── Assemble JSON: header info, OVERALL group, CONFERENCE group, then PLAYER group
+        # ── Assemble JSON: header metadata, OVERALL group, CONFERENCE group, then PLAYER group
         team_data: Dict[str, Any] = {
             "team": team_name,
             "slug": slug,
@@ -1787,7 +1780,7 @@ def build_non_conf_tasks(
         candidates += [c for c in derive_roster_candidates(stats_url) if c not in candidates]
 
         team_cfg = {
-            "name": slot["name"],        # blank -> auto-detected from the stats page
+            "name": slot["name"],
             "slug": NON_CONF_SLUGS[gender],
             "stats_url": stats_url,
             "roster_candidates": candidates,
