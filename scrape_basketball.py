@@ -3,21 +3,22 @@ scrape_basketball.py
 Unified Summit League Basketball player season stats and roster scraper (Men's & Women's).
 
 Features:
+  - Generates individual team JSON files (<slug>.json and <slug>_women.json in root & docs/).
+  - Dual Output (Totals & Per-Game Averages):
+      * Games Played: gp, gs, min, min_avg
+      * Scoring: pts (total points), avg (PPG), fg_pct, three_pt_pct, ft_pct
+      * Rebounding: tot_reb (season total), reb_avg (per game), off_reb, def_reb
+      * Playmaking: ast (season total), ast_avg (per game), to (season total), to_avg (per game)
+      * Defense: stl (season total), stl_avg (per game), blk (season total), blk_avg (per game)
   - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
     Sidearm bot challenges and wait for full DOM hydration.
-  - Print Roster URLs: Uses the exact print-view URLs supplied for each team (men's and women's).
-  - Multi-Table Old Sidearm Parser:
-      * Scans all candidate tables on the stats page instead of prematurely breaking on the first
-        partial table (which was previously locking into the 'Scoring Only' table).
-      * Merges player stats across multiple tables (e.g., scoring table + rebounding/assists/defense tables).
-      * Inspects both cell `data-label` attributes and column headers (`thead`/`th`) for robust mapping.
-      * Extracts ALL 9 core statistics: AVG, FG%, 3PT%, FT%, TOT (Rebounds), AST, TO, STL, BLK.
+  - Print Roster URLs: Uses the exact print-view URLs supplied for each team.
+  - Rebuilt Sidearm HTML Table Parser: Accurately maps columns for both total and per-game numbers.
   - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Normalizes Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
   - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
     Last-name + number correlation -> Fuzzy string distance matching (difflib).
-  - Generates individual team JSON files (<slug>.json in root & docs/).
 """
 
 import difflib
@@ -457,14 +458,12 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
 
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
-    Rebuilt multi-table parser for Sidearm HTML stats pages.
-    Instead of stopping after the first partial table (e.g., scoring-only),
-    this aggregates and merges player statistics across all valid overall/cumulative tables.
+    Parses Sidearm HTML stats pages into both Totals and Per-Game Averages.
+    Merges stats across multiple tables (Scoring, Rebounding, Defense, Averages).
     """
     players_by_key: Dict[str, Dict[str, Any]] = {}
     player_order: List[str] = []
 
-    # Find candidate tables
     all_tables = soup.find_all("table")
 
     for table in all_tables:
@@ -496,7 +495,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         if not rows:
             continue
 
-        # Extract column header index map as backup for tables without data-labels
         header_map: Dict[int, str] = {}
         if thead:
             header_row = thead.find_all("tr")[-1] if thead.find_all("tr") else thead
@@ -515,7 +513,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
             cell_texts = [c.get_text(strip=True) for c in cells]
 
-            # Build label map for this row using data-label OR header index
             label_map: Dict[str, str] = {}
             for idx, cell in enumerate(cells):
                 lbl = cell.get("data-label", "").strip().upper()
@@ -524,7 +521,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
                 if lbl:
                     label_map[lbl] = cell.get_text(strip=True)
 
-            # Player Name
             raw_name = ""
             name_a = row.find("a", href=re.compile(r"roster", re.I)) or row.find("a", attrs={"data-player-id": True})
             if name_a:
@@ -540,7 +536,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             if not is_valid_player_name(c_name):
                 continue
 
-            # Jersey Number
             raw_num = ""
             jersey_el = row.find(class_=re.compile(r"jersey|number", re.I)) or row.find("td", class_=re.compile(r"hide-on-medium-down", re.I))
             if jersey_el and re.match(r"^\d{1,2}$", jersey_el.get_text(strip=True)):
@@ -557,62 +552,82 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
                             return v
                 return ""
 
-            s_avg   = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G", "PTS"])
-            s_fg    = get_stat(["FG%", "FG PCT", "PCT"])
-            s_3pt   = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
-            s_ft    = get_stat(["FT%", "FT PCT", "FTPCT"])
-            s_reb   = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS", "REB/G"])
-            s_ast   = get_stat(["AST", "APG", "ASSISTS", "AST/G"])
-            s_to    = get_stat(["TO", "TOPG", "TURNOVERS", "TO/G"])
-            s_stl   = get_stat(["STL", "SPG", "STEALS", "STL/G"])
-            s_blk   = get_stat(["BLK", "BPG", "BLOCKS", "BLK/G"])
+            # Extract distinct categories: Totals vs Averages
+            s_gp      = get_stat(["GP", "GAMES", "GP-GS"])
+            s_gs      = get_stat(["GS", "STARTS"])
+            s_min     = get_stat(["MIN", "TOTAL MIN", "MINUTES"])
+            s_min_avg = get_stat(["MIN/G", "MIN/GAME", "MPG", "AVG MIN"])
 
-            # Use name as composite key to merge stats across tables
+            s_pts     = get_stat(["PTS", "TOTAL POINTS", "POINTS"])
+            s_avg     = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G"])
+
+            s_fg      = get_stat(["FG%", "FG PCT", "PCT"])
+            s_3pt     = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
+            s_ft      = get_stat(["FT%", "FT PCT", "FTPCT"])
+
+            s_off_reb = get_stat(["OFF REB", "OFF", "O-REB"])
+            s_def_reb = get_stat(["DEF REB", "DEF", "D-REB"])
+            s_tot_reb = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS"])
+            s_reb_avg = get_stat(["REB/G", "RPG", "REB_AVG", "REBOUNDS/G"])
+
+            s_ast     = get_stat(["AST", "ASSISTS", "TOTAL AST"])
+            s_ast_avg = get_stat(["AST/G", "APG", "AST_AVG", "ASSISTS/G"])
+
+            s_to      = get_stat(["TO", "TURNOVERS", "TOTAL TO"])
+            s_to_avg  = get_stat(["TO/G", "TOPG", "TO_AVG", "TURNOVERS/G"])
+
+            s_stl     = get_stat(["STL", "STEALS", "TOTAL STL"])
+            s_stl_avg = get_stat(["STL/G", "SPG", "STL_AVG", "STEALS/G"])
+
+            s_blk     = get_stat(["BLK", "BLOCKS", "TOTAL BLK"])
+            s_blk_avg = get_stat(["BLK/G", "BPG", "BLK_AVG", "BLOCKS/G"])
+
             key = c_name.lower()
             if key not in players_by_key:
                 player_order.append(key)
                 players_by_key[key] = {
                     "name": c_name,
                     "number": c_num,
+                    "gp": s_gp,
+                    "gs": s_gs,
+                    "min": s_min,
+                    "min_avg": s_min_avg,
+                    "pts": s_pts,
                     "avg": s_avg,
                     "fg_pct": s_fg,
                     "three_pt_pct": s_3pt,
                     "ft_pct": s_ft,
-                    "tot_reb": s_reb,
+                    "off_reb": s_off_reb,
+                    "def_reb": s_def_reb,
+                    "tot_reb": s_tot_reb,
+                    "reb_avg": s_reb_avg,
                     "ast": s_ast,
+                    "ast_avg": s_ast_avg,
                     "to": s_to,
+                    "to_avg": s_to_avg,
                     "stl": s_stl,
+                    "stl_avg": s_stl_avg,
                     "blk": s_blk,
+                    "blk_avg": s_blk_avg,
                 }
             else:
-                p_entry = players_by_key[key]
-                if not p_entry["number"] and c_num:
-                    p_entry["number"] = c_num
-                if not p_entry["avg"] and s_avg:
-                    p_entry["avg"] = s_avg
-                if not p_entry["fg_pct"] and s_fg:
-                    p_entry["fg_pct"] = s_fg
-                if not p_entry["three_pt_pct"] and s_3pt:
-                    p_entry["three_pt_pct"] = s_3pt
-                if not p_entry["ft_pct"] and s_ft:
-                    p_entry["ft_pct"] = s_ft
-                if not p_entry["tot_reb"] and s_reb:
-                    p_entry["tot_reb"] = s_reb
-                if not p_entry["ast"] and s_ast:
-                    p_entry["ast"] = s_ast
-                if not p_entry["to"] and s_to:
-                    p_entry["to"] = s_to
-                if not p_entry["stl"] and s_stl:
-                    p_entry["stl"] = s_stl
-                if not p_entry["blk"] and s_blk:
-                    p_entry["blk"] = s_blk
+                p = players_by_key[key]
+                for field, val in [
+                    ("number", c_num), ("gp", s_gp), ("gs", s_gs), ("min", s_min), ("min_avg", s_min_avg),
+                    ("pts", s_pts), ("avg", s_avg), ("fg_pct", s_fg), ("three_pt_pct", s_3pt), ("ft_pct", s_ft),
+                    ("off_reb", s_off_reb), ("def_reb", s_def_reb), ("tot_reb", s_tot_reb), ("reb_avg", s_reb_avg),
+                    ("ast", s_ast), ("ast_avg", s_ast_avg), ("to", s_to), ("to_avg", s_to_avg),
+                    ("stl", s_stl), ("stl_avg", s_stl_avg), ("blk", s_blk), ("blk_avg", s_blk_avg)
+                ]:
+                    if not p.get(field) and val:
+                        p[field] = val
 
-    result_list = [players_by_key[k] for k in player_order if any(players_by_key[k][f] for f in ["avg", "tot_reb", "ast", "fg_pct"])]
+    result_list = [players_by_key[k] for k in player_order if any(players_by_key[k][f] for f in ["avg", "pts", "tot_reb", "ast", "fg_pct"])]
     return result_list
 
 
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
-    """Parses Sidearm Nuxt JSON payloads for stats on modern layouts."""
+    """Parses Sidearm Nuxt JSON payloads for stats on modern layouts (Totals + Averages)."""
     players = []
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -665,31 +680,62 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 c_num = clean_number(resolve(
                     item.get("playerUniform") or item.get("jersey") or item.get("number") or item.get("uniform")))
 
-                ppg = find_stat(item, ["pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame", "points_per_game", "ptsAvg", "scoring_avg", "pts"])
+                gp = find_stat(item, ["gamesPlayed", "gp", "games", "gp_gs"])
+                gs = find_stat(item, ["gamesStarted", "gs", "starts"])
+                min_tot = find_stat(item, ["minutes", "min", "totalMinutes"])
+                min_avg = find_stat(item, ["minutesPerGame", "min_avg", "mpg", "minutes_per_game"])
+
+                pts = find_stat(item, ["points", "totalPoints", "pts"])
+                ppg = find_stat(item, ["pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame", "points_per_game", "ptsAvg", "scoring_avg"])
+
                 fg_pct = find_stat(item, ["fieldGoalsPercentage", "fg_pct", "fgPct", "fieldGoalPct", "field_goal_percentage", "fgPercentage"])
                 three_pct = find_stat(item, ["threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct", "threePointPercentage", "three_point_percentage", "threePct"])
                 ft_pct = find_stat(item, ["freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct", "free_throw_percentage", "ftPercentage"])
-                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reb_avg", "reboundsPerGame", "rebPerGame", "rebounds_per_game"])
-                ast = find_stat(item, ["assists", "ast", "ast_avg", "assistsPerGame", "astPerGame"])
-                to = find_stat(item, ["turnovers", "to", "to_avg", "turnoversPerGame", "toPerGame"])
-                stl = find_stat(item, ["steals", "stl", "stl_avg", "stealsPerGame", "stlPerGame"])
-                blk = find_stat(item, ["blocks", "blk", "blk_avg", "blocksPerGame", "blkPerGame"])
 
-                if not any([ppg, fg_pct, ft_pct, tot_reb, ast]):
+                off_reb = find_stat(item, ["offensiveRebounds", "off_reb", "offRebounds"])
+                def_reb = find_stat(item, ["defensiveRebounds", "def_reb", "defRebounds"])
+                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb"])
+                reb_avg = find_stat(item, ["reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game"])
+
+                ast = find_stat(item, ["assists", "ast", "totalAssists"])
+                ast_avg = find_stat(item, ["assistsPerGame", "ast_avg", "apg", "astPerGame"])
+
+                to = find_stat(item, ["turnovers", "to", "totalTurnovers"])
+                to_avg = find_stat(item, ["turnoversPerGame", "to_avg", "topg", "toPerGame"])
+
+                stl = find_stat(item, ["steals", "stl", "totalSteals"])
+                stl_avg = find_stat(item, ["stealsPerGame", "stl_avg", "spg", "stlPerGame"])
+
+                blk = find_stat(item, ["blocks", "blk", "totalBlocks"])
+                blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame"])
+
+                if not any([ppg, pts, fg_pct, ft_pct, tot_reb, ast]):
                     continue
 
                 players.append({
                     "name": c_name,
                     "number": c_num,
+                    "gp": gp,
+                    "gs": gs,
+                    "min": min_tot,
+                    "min_avg": min_avg,
+                    "pts": pts,
                     "avg": ppg,
                     "fg_pct": fg_pct,
                     "three_pt_pct": three_pct,
                     "ft_pct": ft_pct,
+                    "off_reb": off_reb,
+                    "def_reb": def_reb,
                     "tot_reb": tot_reb,
+                    "reb_avg": reb_avg,
                     "ast": ast,
+                    "ast_avg": ast_avg,
                     "to": to,
+                    "to_avg": to_avg,
                     "stl": stl,
+                    "stl_avg": stl_avg,
                     "blk": blk,
+                    "blk_avg": blk_avg,
                 })
         except Exception:
             continue
@@ -748,15 +794,27 @@ def scrape_team(page: Page, team_cfg: Dict[str, str], gender: str = "men") -> Di
             "number": final_number,
             "position": final_pos,
             "year": final_year,
+            "gp": sp.get("gp", ""),
+            "gs": sp.get("gs", ""),
+            "min": sp.get("min", ""),
+            "min_avg": sp.get("min_avg", ""),
+            "pts": sp.get("pts", ""),
             "avg": sp.get("avg", ""),
             "fg_pct": sp.get("fg_pct", ""),
             "three_pt_pct": sp.get("three_pt_pct", ""),
             "ft_pct": sp.get("ft_pct", ""),
+            "off_reb": sp.get("off_reb", ""),
+            "def_reb": sp.get("def_reb", ""),
             "tot_reb": sp.get("tot_reb", ""),
+            "reb_avg": sp.get("reb_avg", ""),
             "ast": sp.get("ast", ""),
+            "ast_avg": sp.get("ast_avg", ""),
             "to": sp.get("to", ""),
+            "to_avg": sp.get("to_avg", ""),
             "stl": sp.get("stl", ""),
+            "stl_avg": sp.get("stl_avg", ""),
             "blk": sp.get("blk", ""),
+            "blk_avg": sp.get("blk_avg", ""),
         })
 
     return {
