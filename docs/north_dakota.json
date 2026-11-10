@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T04:39:43Z",
+  "generated_at": "2026-11-10T04:54:00Z",
   "players": [
     {
       "name": "Samuel Hincapie",
@@ -354,33 +354,6 @@
       "stl_avg": "0.3",
       "blk": "0.0",
       "blk_avg": "0.0"
-    },
-    {
-      "name": "#TM Team",
-      "number": "",
-      "position": "",
-      "year": "",
-      "gp": "3",
-      "gs": "",
-      "min": "",
-      "min_avg": "",
-      "pts": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "off_reb": "10",
-      "def_reb": "6",
-      "tot_reb": "16",
-      "reb_avg": "5.3",
-      "ast": "",
-      "ast_avg": "",
-      "to": "1",
-      "to_avg": "0.3",
-      "stl": "",
-      "stl_avg": "",
-      "blk": "",
-      "blk_avg": ""
     }
   ]
 }

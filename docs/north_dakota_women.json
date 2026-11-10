@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T04:41:27Z",
+  "generated_at": "2026-11-10T04:54:11Z",
   "players": [
     {
       "name": "London Harris",
@@ -354,33 +354,6 @@
       "stl_avg": "0.0",
       "blk": "0.0",
       "blk_avg": "0.0"
-    },
-    {
-      "name": "#TM Team",
-      "number": "",
-      "position": "",
-      "year": "",
-      "gp": "2",
-      "gs": "",
-      "min": "",
-      "min_avg": "",
-      "pts": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "off_reb": "1",
-      "def_reb": "0",
-      "tot_reb": "1",
-      "reb_avg": "0.5",
-      "ast": "",
-      "ast_avg": "",
-      "to": "1",
-      "to_avg": "0.5",
-      "stl": "",
-      "stl_avg": "",
-      "blk": "",
-      "blk_avg": ""
     }
   ]
 }

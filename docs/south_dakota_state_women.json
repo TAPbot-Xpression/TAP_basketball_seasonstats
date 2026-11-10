@@ -2,7 +2,7 @@
   "team": "South Dakota State",
   "slug": "south_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-10T04:42:26Z",
+  "generated_at": "2026-11-10T04:54:18Z",
   "players": [
     {
       "name": "Brooklyn Meyer",
@@ -196,7 +196,7 @@
     {
       "name": "Claire Sheppard",
       "number": "32",
-      "position": "",
+      "position": "W",
       "year": "R-SO",
       "gp": "2",
       "gs": "0",
@@ -277,7 +277,7 @@
     {
       "name": "Hilary Behrens",
       "number": "10",
-      "position": "",
+      "position": "W",
       "year": "R-JR",
       "gp": "2",
       "gs": "0",

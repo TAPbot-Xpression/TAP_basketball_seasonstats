@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts_women",
   "gender": "women",
-  "generated_at": "2026-11-10T04:42:03Z",
+  "generated_at": "2026-11-10T04:54:15Z",
   "players": [
     {
       "name": "Kayten Donley",
@@ -327,33 +327,6 @@
       "stl_avg": "0.0",
       "blk": "0.0",
       "blk_avg": "0.0"
-    },
-    {
-      "name": "#TM Team",
-      "number": "",
-      "position": "",
-      "year": "",
-      "gp": "3",
-      "gs": "",
-      "min": "",
-      "min_avg": "",
-      "pts": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "off_reb": "3",
-      "def_reb": "5",
-      "tot_reb": "8",
-      "reb_avg": "2.7",
-      "ast": "",
-      "ast_avg": "",
-      "to": "2",
-      "to_avg": "0.7",
-      "stl": "",
-      "stl_avg": "",
-      "blk": "",
-      "blk_avg": ""
     }
   ]
 }

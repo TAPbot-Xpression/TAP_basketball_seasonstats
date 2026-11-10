@@ -2,7 +2,7 @@
   "team": "South Dakota",
   "slug": "south_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T04:40:39Z",
+  "generated_at": "2026-11-10T04:54:10Z",
   "players": [
     {
       "name": "Vince Buzelis",
@@ -381,33 +381,6 @@
       "stl_avg": "0.0",
       "blk": "0.0",
       "blk_avg": "0.0"
-    },
-    {
-      "name": "#TM Team",
-      "number": "",
-      "position": "",
-      "year": "",
-      "gp": "3",
-      "gs": "",
-      "min": "",
-      "min_avg": "",
-      "pts": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "off_reb": "6",
-      "def_reb": "3",
-      "tot_reb": "9",
-      "reb_avg": "3.0",
-      "ast": "",
-      "ast_avg": "",
-      "to": "1",
-      "to_avg": "0.3",
-      "stl": "",
-      "stl_avg": "",
-      "blk": "",
-      "blk_avg": ""
     }
   ]
 }

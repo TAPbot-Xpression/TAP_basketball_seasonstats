@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts",
   "gender": "men",
-  "generated_at": "2026-11-10T04:40:26Z",
+  "generated_at": "2026-11-10T04:54:03Z",
   "players": [
     {
       "name": "Luke Gray",
@@ -381,33 +381,6 @@
       "stl_avg": "0.5",
       "blk": "0.0",
       "blk_avg": "0.0"
-    },
-    {
-      "name": "#TM Team",
-      "number": "",
-      "position": "",
-      "year": "",
-      "gp": "2",
-      "gs": "",
-      "min": "",
-      "min_avg": "",
-      "pts": "",
-      "avg": "",
-      "fg_pct": "",
-      "three_pt_pct": "",
-      "ft_pct": "",
-      "off_reb": "7",
-      "def_reb": "7",
-      "tot_reb": "14",
-      "reb_avg": "7.0",
-      "ast": "",
-      "ast_avg": "",
-      "to": "",
-      "to_avg": "",
-      "stl": "",
-      "stl_avg": "",
-      "blk": "",
-      "blk_avg": ""
     }
   ]
 }
