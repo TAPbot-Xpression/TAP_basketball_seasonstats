@@ -552,7 +552,7 @@
       box-shadow: 0 0 10px var(--team-glow);
     }
 
-    /* Per Game / Season Totals toggle inside the table header */
+    /* Game Averages / Season Totals toggle inside the table header */
     .table-card-header .toggle-group-wrap {
       background: var(--surface);
     }
@@ -710,7 +710,7 @@
       <div class="meta" id="metaBar">Loading data…</div>
     </div>
 
-    <!-- Controls (Division only — Per Game / Totals toggle now lives in the table header) -->
+    <!-- Controls (Division switch) -->
     <div class="header-controls">
       <div class="toggle-group-wrap" role="tablist" aria-label="Basketball Division Switcher">
         <button id="btnMens" class="toggle-btn active" onclick="setGender('men')">
@@ -804,10 +804,13 @@
       <!-- Left: Title + links, with player count underneath -->
       <div class="table-card-left">
         <div class="table-card-title-wrap">
-          <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
+          <span class="table-card-title" id="tableTitle">St. Thomas Season Stats</span>
           <div class="header-links-group">
             <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
               Official Stats Site ↗
+            </a>
+            <a id="teamRosterLink" href="https://tommiesports.com/sports/mbball/roster/print" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+              Official Roster Site ↗
             </a>
             <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
               st_thomas.json ↗
@@ -820,10 +823,10 @@
         </div>
       </div>
 
-      <!-- Right: Per Game / Season Totals toggle -->
+      <!-- Right: Game Averages / Season Totals toggle -->
       <div class="toggle-group-wrap" role="tablist" aria-label="Stat Mode Switcher">
         <button id="btnAvgMode" class="toggle-btn active" onclick="setStatMode('avg')">
-          <span>📊 Per Game</span>
+          <span>📊 Game Averages</span>
         </button>
         <button id="btnTotMode" class="toggle-btn" onclick="setStatMode('tot')">
           <span>📈 Season Totals</span>
@@ -859,11 +862,13 @@
       shortName: 'Kansas City',
       men: {
         file: 'kansas_city.json',
-        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://kcroos.com/sports/mens-basketball/roster/print/2026-27'
       },
       women: {
         file: 'kansas_city_women.json',
-        statsSiteUrl: 'https://kcroos.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://kcroos.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://kcroos.com/sports/womens-basketball/roster/print/2026-27'
       }
     },
     north_dakota: {
@@ -872,11 +877,13 @@
       shortName: 'North Dakota',
       men: {
         file: 'north_dakota.json',
-        statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/roster?print=true'
       },
       women: {
         file: 'north_dakota_women.json',
-        statsSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/roster?print=true'
       }
     },
     north_dakota_state: {
@@ -885,11 +892,13 @@
       shortName: 'North Dakota State',
       men: {
         file: 'north_dakota_state.json',
-        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://gobison.com/sports/mens-basketball/roster/print'
       },
       women: {
         file: 'north_dakota_state_women.json',
-        statsSiteUrl: 'https://gobison.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://gobison.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://gobison.com/sports/womens-basketball/roster/print/2026-27'
       }
     },
     omaha: {
@@ -898,11 +907,13 @@
       shortName: 'Omaha',
       men: {
         file: 'omaha.json',
-        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://omahamavs.com/sports/mens-basketball/roster/print'
       },
       women: {
         file: 'omaha_women.json',
-        statsSiteUrl: 'https://omahamavs.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://omahamavs.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://omahamavs.com/sports/womens-basketball/roster/print/2026-27'
       }
     },
     oral_roberts: {
@@ -911,11 +922,13 @@
       shortName: 'Oral Roberts',
       men: {
         file: 'oral_roberts.json',
-        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://oruathletics.com/sports/mens-basketball/roster?print=true'
       },
       women: {
         file: 'oral_roberts_women.json',
-        statsSiteUrl: 'https://oruathletics.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://oruathletics.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://oruathletics.com/sports/womens-basketball/roster/2026-27?print=true'
       }
     },
     south_dakota: {
@@ -924,11 +937,13 @@
       shortName: 'South Dakota',
       men: {
         file: 'south_dakota.json',
-        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://goyotes.com/sports/mens-basketball/roster?print=true'
       },
       women: {
         file: 'south_dakota_women.json',
-        statsSiteUrl: 'https://goyotes.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://goyotes.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://goyotes.com/sports/womens-basketball/roster?print=true'
       }
     },
     south_dakota_state: {
@@ -937,11 +952,13 @@
       shortName: 'South Dakota State',
       men: {
         file: 'south_dakota_state.json',
-        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://gojacks.com/sports/mens-basketball/roster/print'
       },
       women: {
         file: 'south_dakota_state_women.json',
-        statsSiteUrl: 'https://gojacks.com/sports/womens-basketball/stats/2026-27'
+        statsSiteUrl: 'https://gojacks.com/sports/womens-basketball/stats/2026-27',
+        rosterSiteUrl: 'https://gojacks.com/sports/womens-basketball/roster/print'
       }
     },
     st_thomas: {
@@ -950,17 +967,18 @@
       shortName: 'St. Thomas',
       men: {
         file: 'st_thomas.json',
-        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2026-27'
+        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2026-27',
+        rosterSiteUrl: 'https://tommiesports.com/sports/mbball/roster/print'
       },
       women: {
         file: 'st_thomas_women.json',
-        statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats/2026-27'
+        statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats/2026-27',
+        rosterSiteUrl: 'https://tommiesports.com/sports/wbball/roster/print/2026-27'
       }
     }
   };
 
   // ── Column Definitions for Both Modes ──────────────────────────────────────
-  // tableOnly: true  → shown in the full table, hidden from the spotlight card
   const STAT_CONFIGS = {
     avg: [
       { key: 'gp',           label: 'GP',     tableOnly: true },
@@ -1016,7 +1034,7 @@
     loadTeamData(CURRENT_TEAM);
   }
 
-  // ── Switch Stat View Mode (Per Game vs Totals) ───────────────────────────────
+  // ── Switch Stat View Mode (Game Averages vs Totals) ─────────────────────────
   function setStatMode(mode) {
     if (CURRENT_STAT_MODE === mode) return;
     CURRENT_STAT_MODE = mode;
@@ -1098,12 +1116,19 @@
     document.getElementById('statusText').textContent = 'Loading…';
     document.getElementById('tableBody').innerHTML = `<tr><td colspan="16" class="empty">Loading ${team.shortName} (${genderLabel}) stats…</td></tr>`;
 
-    document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats — Full Roster`;
+    // Removed "— Full Roster" from title
+    document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats`;
 
-    const linkEl = document.getElementById('teamStatsLink');
-    if (linkEl && teamConfig.statsSiteUrl) {
-      linkEl.href = teamConfig.statsSiteUrl;
-      linkEl.title = `View official ${team.shortName} stats on their athletics website`;
+    const linkStatsEl = document.getElementById('teamStatsLink');
+    if (linkStatsEl && teamConfig.statsSiteUrl) {
+      linkStatsEl.href = teamConfig.statsSiteUrl;
+      linkStatsEl.title = `View official ${team.shortName} stats on their athletics website`;
+    }
+
+    const linkRosterEl = document.getElementById('teamRosterLink');
+    if (linkRosterEl && teamConfig.rosterSiteUrl) {
+      linkRosterEl.href = teamConfig.rosterSiteUrl;
+      linkRosterEl.title = `View official ${team.shortName} roster on their athletics website`;
     }
 
     const jsonLinkEl = document.getElementById('teamJsonLink');
@@ -1126,7 +1151,6 @@
         rawList = RAW_DATA;
       }
 
-      // Map and normalize all attributes with fallbacks
       PLAYERS = rawList.map(p => ({
         name:         p.name || p.player || p.player_name || '—',
         number:       p.number !== undefined && p.number !== null ? String(p.number) : (p.jersey ? String(p.jersey) : ''),
@@ -1212,7 +1236,6 @@
 
     body.innerHTML = sorted.map(r => {
       const isHL = searchNum && String(r.number) === String(searchNum);
-      // Use the player's index in the ORIGINAL list so clicks work correctly after sorting
       const origIdx = PLAYERS.indexOf(r);
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
         <td class="col-jersey">${r.number || '—'}</td>
@@ -1252,7 +1275,7 @@
     card.style.display     = 'block';
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
-    const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Per Game" : "Season Totals";
+    const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Game Averages" : "Season Totals";
 
     document.getElementById('spotJersey').textContent = player.number || '—';
     document.getElementById('spotYr').textContent  = player.year || '—';
@@ -1260,7 +1283,6 @@
     document.getElementById('spotName').textContent = player.name || '—';
     document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball (${modeLabel})`;
 
-    // Spotlight excludes table-only columns (GP, GS)
     const spotCols = STAT_CONFIGS[CURRENT_STAT_MODE].filter(c => !c.tableOnly);
     const grid = document.getElementById('spotStatGrid');
 
