@@ -1,0 +1,13 @@
+{
+  "team": "Non-Conf",
+  "display_name": "Non-Conf",
+  "slug": "non_conf_women",
+  "gender": "women",
+  "is_non_conf": true,
+  "status": "empty",
+  "message": "No Non-Conf opponent loaded. Add a stats link in GitHub Actions > Run workflow.",
+  "source_stats_url": "",
+  "source_roster_url": "",
+  "generated_at": "2026-11-10T05:59:48Z",
+  "players": []
+}
