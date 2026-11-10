@@ -45,7 +45,7 @@
     }
 
     [data-theme="kansas_city"] {
-      --team-primary:   #002b49; /* Navy */
+      --team-primary:   #002b49;
       --team-accent:    #004b87;
       --team-glow:      rgba(0, 75, 135, 0.45);
       --team-light:     #bae6fd;
@@ -61,7 +61,7 @@
     }
 
     [data-theme="north_dakota_state"] {
-      --team-primary:   #005643; /* Green */
+      --team-primary:   #005643;
       --team-accent:    #007a5e;
       --team-glow:      rgba(0, 122, 94, 0.4);
       --team-light:     #a7f3d0;
@@ -93,7 +93,7 @@
     }
 
     [data-theme="south_dakota_state"] {
-      --team-primary:   #0033a0; /* Blue */
+      --team-primary:   #0033a0;
       --team-accent:    #0056b3;
       --team-glow:      rgba(0, 86, 179, 0.45);
       --team-light:     #bfdbfe;
@@ -120,7 +120,7 @@
       transition: background-color 0.3s;
     }
 
-    .container { max-width: 1280px; margin: 0 auto; }
+    .container { max-width: 1360px; margin: 0 auto; }
 
     /* ── Header ─────────────────────────────────────────────────────────────── */
     header {
@@ -151,7 +151,7 @@
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.15;
@@ -167,38 +167,46 @@
       line-height: 1.4;
     }
 
-    /* ── Gender Switcher (Top Right Corner) ─────────────────────────────────── */
-    .gender-toggle-wrap {
+    .header-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* ── Toggle Switch Group ─────────────────────────────────────────────────── */
+    .toggle-group-wrap {
       display: inline-flex;
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: 5px;
+      padding: 4px;
       border-radius: 11px;
-      gap: 5px;
+      gap: 4px;
     }
 
-    .gender-btn {
+    .toggle-btn {
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 0.65rem 1.15rem;
+      padding: 0.55rem 1rem;
       border-radius: 8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.92rem;
+      font-size: 0.86rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
-    .gender-btn:hover:not(.active) {
+    .toggle-btn:hover:not(.active) {
       color: var(--text);
       background: var(--surface-2);
     }
 
-    .gender-btn.active {
+    .toggle-btn.active {
       background: var(--surface-2);
       border-color: var(--team-accent);
       color: #ffffff;
@@ -352,7 +360,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* Number circle without '#' */
     .jersey-badge {
       background: var(--team-accent);
       color: var(--team-btn-text, #ffffff);
@@ -369,7 +376,6 @@
       box-shadow: 0 0 20px var(--team-glow);
     }
 
-    /* Stacked Year & Position to the left of the player name */
     .spotlight-meta-stack {
       display: flex;
       flex-direction: column;
@@ -413,14 +419,14 @@
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
       gap: 1px;
       background: var(--border);
     }
 
     .stat-cell {
       background: var(--surface);
-      padding: 0.95rem 1.05rem;
+      padding: 0.9rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
@@ -431,9 +437,9 @@
     .stat-cell:hover { background: var(--surface-2); }
 
     .stat-key {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-muted);
       display: flex;
@@ -443,12 +449,12 @@
 
     .stat-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--text);
     }
 
-    /* ── Top 3 Medal Styling ─────────────────────────────────────────────────── */
+    /* ── Leader Medals ──────────────────────────────────────────────────────── */
     .stat-cell.rank-1 {
       background: var(--gold-bg);
       border-bottom: 2.5px solid var(--gold);
@@ -468,8 +474,8 @@
     .stat-cell.rank-3 .stat-val { color: var(--bronze); }
 
     .rank-tag {
-      font-size: 0.7rem;
-      padding: 1px 5px;
+      font-size: 0.68rem;
+      padding: 1px 4px;
       border-radius: 4px;
       font-weight: 800;
     }
@@ -551,9 +557,9 @@
       background: rgba(0,0,0,0.3);
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      padding: 0.8rem 0.95rem;
+      padding: 0.8rem 0.85rem;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       text-align: center;
@@ -572,13 +578,13 @@
     thead th.sorted { color: var(--team-accent); }
 
     tbody td {
-      padding: 0.75rem 0.95rem;
+      padding: 0.75rem 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--text);
       white-space: nowrap;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
     tbody td.col-player {
@@ -599,7 +605,7 @@
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      width: 52px;
+      width: 45px;
       text-align: left;
     }
 
@@ -609,7 +615,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.86rem;
       font-weight: 600;
-      width: 58px;
+      width: 50px;
     }
 
     tbody tr:last-child td { border-bottom: none; }
@@ -666,11 +672,12 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       h1 { font-size: 1.8rem; }
+      .header-controls { align-items: flex-start; width: 100%; }
+      .toggle-group-wrap { width: 100%; justify-content: center; }
+      .toggle-btn { flex: 1; justify-content: center; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
-      header { flex-direction: column; }
-      .gender-toggle-wrap { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -686,18 +693,31 @@
       <div class="meta" id="metaBar">Loading data…</div>
     </div>
 
-    <!-- Men's / Women's Toggle Switch (Top Right Corner) -->
-    <div class="gender-toggle-wrap" role="tablist" aria-label="Basketball Division Switcher">
-      <button id="btnMens" class="gender-btn active" onclick="setGender('men')">
-        <span>🏀 Men's Stats</span>
-      </button>
-      <button id="btnWomens" class="gender-btn" onclick="setGender('women')">
-        <span>🏀 Women's Stats</span>
-      </button>
+    <!-- Controls (Division & View Mode) -->
+    <div class="header-controls">
+      <!-- Men's / Women's Toggle -->
+      <div class="toggle-group-wrap" role="tablist" aria-label="Basketball Division Switcher">
+        <button id="btnMens" class="toggle-btn active" onclick="setGender('men')">
+          <span>🏀 Men's Stats</span>
+        </button>
+        <button id="btnWomens" class="toggle-btn" onclick="setGender('women')">
+          <span>🏀 Women's Stats</span>
+        </button>
+      </div>
+
+      <!-- Per Game (Averages) vs Season Totals Toggle -->
+      <div class="toggle-group-wrap" role="tablist" aria-label="Stat Mode Switcher">
+        <button id="btnAvgMode" class="toggle-btn active" onclick="setStatMode('avg')">
+          <span>📊 Per Game</span>
+        </button>
+        <button id="btnTotMode" class="toggle-btn" onclick="setStatMode('tot')">
+          <span>📈 Season Totals</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Team Selector (Alphabetical Order - 8 Teams, Denver Excluded) -->
+  <!-- Team Selector -->
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
@@ -744,7 +764,7 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Enter a jersey number or click any player's name in the table to view their stat card</span>
+      <span class="search-hint">Enter a jersey number or click any player's name in the table below</span>
     </div>
   </section>
 
@@ -756,23 +776,16 @@
   <!-- Spotlight Card -->
   <div id="spotlightCard">
     <div class="spotlight-header">
-      <!-- Player Number (No #) -->
       <div class="jersey-badge" id="spotJersey">—</div>
-      
-      <!-- Stacked Year & Position to the left of Name -->
       <div class="spotlight-meta-stack">
         <span class="spot-tag" id="spotYr">—</span>
         <span class="spot-tag" id="spotPos">—</span>
       </div>
-
-      <!-- Player Name and Team Details -->
       <div class="spotlight-details">
         <div class="spotlight-name" id="spotName">—</div>
         <div class="spotlight-sub" id="spotSub">Summit League Basketball</div>
       </div>
     </div>
-
-    <!-- Basketball Stat Grid (9 Key Stats) -->
     <div>
       <div class="stat-grid" id="spotStatGrid"></div>
     </div>
@@ -784,7 +797,7 @@
       <div class="table-card-title-wrap">
         <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
         <div class="header-links-group">
-          <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2025-26" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+          <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
             Official Stats Site ↗
           </a>
           <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
@@ -801,7 +814,7 @@
       <table id="statsTable">
         <thead id="tableHead"></thead>
         <tbody id="tableBody">
-          <tr><td colspan="13" class="empty">Loading stats…</td></tr>
+          <tr><td colspan="15" class="empty">Loading stats…</td></tr>
         </tbody>
       </table>
     </div>
@@ -817,7 +830,7 @@
 </div>
 
 <script>
-  // ── Team Registry & Config (Men's and Women's Endpoints) ────────────────────
+  // ── Team Registry & Config ─────────────────────────────────────────────────
   const TEAMS = {
     kansas_city: {
       id: 'kansas_city',
@@ -825,11 +838,11 @@
       shortName: 'Kansas City',
       men: {
         file: 'kansas_city.json',
-        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2025-26'
+        statsSiteUrl: 'https://kcroos.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'kansas_city_women.json',
-        statsSiteUrl: 'https://kcroos.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://kcroos.com/sports/womens-basketball/stats/2026-27'
       }
     },
     north_dakota: {
@@ -838,11 +851,11 @@
       shortName: 'North Dakota',
       men: {
         file: 'north_dakota.json',
-        statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats'
+        statsSiteUrl: 'https://fightinghawks.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'north_dakota_women.json',
-        statsSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://fightinghawks.com/sports/womens-basketball/stats/2026-27'
       }
     },
     north_dakota_state: {
@@ -851,11 +864,11 @@
       shortName: 'North Dakota State',
       men: {
         file: 'north_dakota_state.json',
-        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2025-26'
+        statsSiteUrl: 'https://gobison.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'north_dakota_state_women.json',
-        statsSiteUrl: 'https://gobison.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://gobison.com/sports/womens-basketball/stats/2026-27'
       }
     },
     omaha: {
@@ -864,11 +877,11 @@
       shortName: 'Omaha',
       men: {
         file: 'omaha.json',
-        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2025-26'
+        statsSiteUrl: 'https://omahamavs.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'omaha_women.json',
-        statsSiteUrl: 'https://omahamavs.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://omahamavs.com/sports/womens-basketball/stats/2026-27'
       }
     },
     oral_roberts: {
@@ -877,11 +890,11 @@
       shortName: 'Oral Roberts',
       men: {
         file: 'oral_roberts.json',
-        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2025-26?path=mbball'
+        statsSiteUrl: 'https://oruathletics.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'oral_roberts_women.json',
-        statsSiteUrl: 'https://oruathletics.com/sports/womens-basketball/stats?path=wbball'
+        statsSiteUrl: 'https://oruathletics.com/sports/womens-basketball/stats/2026-27'
       }
     },
     south_dakota: {
@@ -890,11 +903,11 @@
       shortName: 'South Dakota',
       men: {
         file: 'south_dakota.json',
-        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2025-26'
+        statsSiteUrl: 'https://goyotes.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'south_dakota_women.json',
-        statsSiteUrl: 'https://goyotes.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://goyotes.com/sports/womens-basketball/stats/2026-27'
       }
     },
     south_dakota_state: {
@@ -903,11 +916,11 @@
       shortName: 'South Dakota State',
       men: {
         file: 'south_dakota_state.json',
-        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2025-26'
+        statsSiteUrl: 'https://gojacks.com/sports/mens-basketball/stats/2026-27'
       },
       women: {
         file: 'south_dakota_state_women.json',
-        statsSiteUrl: 'https://gojacks.com/sports/womens-basketball/stats'
+        statsSiteUrl: 'https://gojacks.com/sports/womens-basketball/stats/2026-27'
       }
     },
     st_thomas: {
@@ -916,38 +929,60 @@
       shortName: 'St. Thomas',
       men: {
         file: 'st_thomas.json',
-        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2025-26'
+        statsSiteUrl: 'https://tommiesports.com/sports/mbball/stats/2026-27'
       },
       women: {
         file: 'st_thomas_women.json',
-        statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats'
+        statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats/2026-27'
       }
     }
   };
 
-  // ── Basketball Stat Columns (9 Key Stats — Minutes Excluded) ────────────────
-  const STAT_COLUMNS = [
-    { key: 'avg',          label: 'AVG' },
-    { key: 'fg_pct',       label: 'FG%' },
-    { key: 'three_pt_pct', label: '3PT%' },
-    { key: 'ft_pct',       label: 'FT%' },
-    { key: 'tot_reb',      label: 'TOT' },
-    { key: 'ast',          label: 'AST' },
-    { key: 'to',           label: 'TO' },
-    { key: 'stl',          label: 'STL' },
-    { key: 'blk',          label: 'BLK' }
-  ];
+  // ── Column Definitions for Both Modes ──────────────────────────────────────
+  const STAT_CONFIGS = {
+    avg: [
+      { key: 'gp',           label: 'GP',    fixed: true },
+      { key: 'gs',           label: 'GS',    fixed: true },
+      { key: 'min_avg',      label: 'MIN/G' },
+      { key: 'avg',          label: 'PPG' },
+      { key: 'fg_pct',       label: 'FG%' },
+      { key: 'three_pt_pct', label: '3PT%' },
+      { key: 'ft_pct',       label: 'FT%' },
+      { key: 'reb_avg',      label: 'RPG' },
+      { key: 'ast_avg',      label: 'APG' },
+      { key: 'to_avg',       label: 'TOPG' },
+      { key: 'stl_avg',      label: 'SPG' },
+      { key: 'blk_avg',      label: 'BPG' }
+    ],
+    tot: [
+      { key: 'gp',           label: 'GP',    fixed: true },
+      { key: 'gs',           label: 'GS',    fixed: true },
+      { key: 'min',          label: 'MIN' },
+      { key: 'pts',          label: 'PTS' },
+      { key: 'fg_pct',       label: 'FG%' },
+      { key: 'three_pt_pct', label: '3PT%' },
+      { key: 'ft_pct',       label: 'FT%' },
+      { key: 'off_reb',      label: 'OFF' },
+      { key: 'def_reb',      label: 'DEF' },
+      { key: 'tot_reb',      label: 'TOT' },
+      { key: 'ast',          label: 'AST' },
+      { key: 'to',           label: 'TO' },
+      { key: 'stl',          label: 'STL' },
+      { key: 'blk',          label: 'BLK' }
+    ]
+  };
 
   let CURRENT_GENDER = 'men';
+  let CURRENT_STAT_MODE = 'avg'; // 'avg' or 'tot'
   let CURRENT_TEAM = 'st_thomas';
   let RAW_DATA = null;
   let PLAYERS = [];
   let sortCol = null;
-  let sortDir = -1; // Default to descending order for stats
+  let sortDir = -1;
   let searchNum = '';
   let RANKS = {};
 
-  // ── Gender Toggle Switch ────────────────────────────────────────────────────
+  // ── Switch Gender Division ──────────────────────────────────────────────────
   function setGender(gender) {
     if (CURRENT_GENDER === gender) return;
     CURRENT_GENDER = gender;
@@ -955,16 +990,29 @@
     document.getElementById('btnMens').classList.toggle('active', gender === 'men');
     document.getElementById('btnWomens').classList.toggle('active', gender === 'women');
 
-    // Reset spotlight & search
-    document.getElementById('playerSearch').value = '';
-    searchNum = '';
-    document.getElementById('spotlightCard').style.display = 'none';
-    document.getElementById('notFound').style.display = 'none';
-
+    resetSearchAndSpotlight();
     loadTeamData(CURRENT_TEAM);
   }
 
-  // ── Team Switching ──────────────────────────────────────────────────────────
+  // ── Switch Stat View Mode (Per Game vs Totals) ───────────────────────────────
+  function setStatMode(mode) {
+    if (CURRENT_STAT_MODE === mode) return;
+    CURRENT_STAT_MODE = mode;
+
+    document.getElementById('btnAvgMode').classList.toggle('active', mode === 'avg');
+    document.getElementById('btnTotMode').classList.toggle('active', mode === 'tot');
+
+    sortCol = null;
+    calculateRanks();
+    renderTable();
+
+    if (searchNum) {
+      const p = PLAYERS.find(pl => String(pl.number) === searchNum);
+      if (p) renderPlayerSpotlight(p);
+    }
+  }
+
+  // ── Switch Team ─────────────────────────────────────────────────────────────
   function selectTeam(teamId, btn) {
     if (!TEAMS[teamId]) return;
     CURRENT_TEAM = teamId;
@@ -973,15 +1021,18 @@
     document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
+    resetSearchAndSpotlight();
+    loadTeamData(teamId);
+  }
+
+  function resetSearchAndSpotlight() {
     document.getElementById('playerSearch').value = '';
     searchNum = '';
     document.getElementById('spotlightCard').style.display = 'none';
     document.getElementById('notFound').style.display = 'none';
-
-    loadTeamData(teamId);
   }
 
-  // ── Stat Parser ─────────────────────────────────────────────────────────────
+  // ── Stat Parser Helper ──────────────────────────────────────────────────────
   function parseStat(val) {
     if (val === undefined || val === null || val === '-' || val === '--' || val === '') {
       return -999999;
@@ -991,10 +1042,11 @@
     return isNaN(num) ? -999999 : num;
   }
 
-  // ── Calculate Top 3 Ranks Across Roster ──────────────────────────────────────
+  // ── Calculate Roster Ranks for Active Mode ───────────────────────────────────
   function calculateRanks() {
     RANKS = {};
-    STAT_COLUMNS.forEach(c => {
+    const cols = STAT_CONFIGS[CURRENT_STAT_MODE];
+    cols.forEach(c => {
       const vals = PLAYERS
         .map(p => parseStat(p[c.key]))
         .filter(v => v !== -999999);
@@ -1022,11 +1074,10 @@
 
     document.getElementById('statusDot').className = 'status-dot';
     document.getElementById('statusText').textContent = 'Loading…';
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="13" class="empty">Loading ${team.shortName} (${genderLabel}) stats…</td></tr>`;
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="16" class="empty">Loading ${team.shortName} (${genderLabel}) stats…</td></tr>`;
 
-    // Update Title and Links
     document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats — Full Roster`;
-    
+
     const linkEl = document.getElementById('teamStatsLink');
     if (linkEl && teamConfig.statsSiteUrl) {
       linkEl.href = teamConfig.statsSiteUrl;
@@ -1046,30 +1097,40 @@
 
       RAW_DATA = await res.json();
 
-      // Normalize array structure
+      let rawList = [];
       if (RAW_DATA && Array.isArray(RAW_DATA.players)) {
-        PLAYERS = RAW_DATA.players;
+        rawList = RAW_DATA.players;
       } else if (Array.isArray(RAW_DATA)) {
-        PLAYERS = RAW_DATA;
-      } else {
-        PLAYERS = [];
+        rawList = RAW_DATA;
       }
 
-      // Map player records
-      PLAYERS = PLAYERS.map(p => ({
+      // Map and normalize all attributes with fallbacks
+      PLAYERS = rawList.map(p => ({
         name:         p.name || p.player || p.player_name || '—',
         number:       p.number !== undefined && p.number !== null ? String(p.number) : (p.jersey ? String(p.jersey) : ''),
         position:     p.position || p.pos || '—',
         year:         p.year || p.class || '—',
+        gp:           p.gp || '',
+        gs:           p.gs || '',
+        min:          p.min || '',
+        min_avg:      p.min_avg || p.mpg || '',
+        pts:          p.pts || '',
         avg:          p.avg || p.ppg || '',
         fg_pct:       p.fg_pct || p['fg%'] || '',
         three_pt_pct: p.three_pt_pct || p['3pt%'] || p['3p%'] || '',
         ft_pct:       p.ft_pct || p['ft%'] || '',
+        off_reb:      p.off_reb || '',
+        def_reb:      p.def_reb || '',
         tot_reb:      p.tot_reb || p.reb || p.tot || '',
-        ast:          p.ast || p.apg || '',
+        reb_avg:      p.reb_avg || p.rpg || '',
+        ast:          p.ast || '',
+        ast_avg:      p.ast_avg || p.apg || '',
         to:           p.to || p.turnovers || '',
+        to_avg:       p.to_avg || p.topg || '',
         stl:          p.stl || '',
-        blk:          p.blk || ''
+        stl_avg:      p.stl_avg || p.spg || '',
+        blk:          p.blk || '',
+        blk_avg:      p.blk_avg || p.bpg || ''
       }));
 
       calculateRanks();
@@ -1087,7 +1148,7 @@
       document.getElementById('statusDot').className = 'status-dot error';
       document.getElementById('statusText').textContent = 'Error';
       document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="13" class="empty" style="color:#f87171">
+        `<tr><td colspan="16" class="empty" style="color:#f87171">
           Failed to load stats for ${team.name} (${teamConfig.file}).<br>
           <small style="color:var(--text-muted)">Ensure the scraper has run and generated this file.</small>
         </td></tr>`;
@@ -1099,13 +1160,14 @@
   function renderTable() {
     const head = document.getElementById('tableHead');
     const body = document.getElementById('tableBody');
+    const activeCols = STAT_CONFIGS[CURRENT_STAT_MODE];
 
     head.innerHTML = `<tr>
       <th class="col-left">#</th>
       <th class="col-center-fixed">Pos</th>
       <th class="col-center-fixed">Yr</th>
       <th class="col-left">Player</th>
-      ${STAT_COLUMNS.map(c => `
+      ${activeCols.map(c => `
         <th onclick="sortBy('${c.key}')" class="${sortCol === c.key ? 'sorted' : ''}">
           ${c.label}${sortCol === c.key ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
         </th>
@@ -1113,7 +1175,7 @@
     </tr>`;
 
     if (!PLAYERS.length) {
-      body.innerHTML = `<tr><td colspan="13" class="empty">No roster data found for this team.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="16" class="empty">No roster data found for this team.</td></tr>`;
       return;
     }
 
@@ -1133,7 +1195,7 @@
         <td class="col-pos">${r.position || '—'}</td>
         <td class="col-yr">${r.year || '—'}</td>
         <td class="col-player" title="Click to view stat card" onclick="displayPlayerCard(${idx})">${esc(r.name)}</td>
-        ${STAT_COLUMNS.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
+        ${activeCols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
   }
@@ -1144,7 +1206,7 @@
       sortDir *= -1;
     } else {
       sortCol = col;
-      sortDir = -1; // Default to descending order for stats
+      sortDir = -1;
     }
     renderTable();
     if (searchNum) highlightRow(searchNum);
@@ -1166,22 +1228,18 @@
     card.style.display     = 'block';
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
-    const playerName  = player.name || '—';
+    const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Per Game" : "Season Totals";
 
-    // 1. Number badge (no #)
     document.getElementById('spotJersey').textContent = player.number || '—';
-    
-    // 2. Stacked Year and Position
     document.getElementById('spotYr').textContent  = player.year || '—';
     document.getElementById('spotPos').textContent = player.position || '—';
+    document.getElementById('spotName').textContent = player.name || '—';
+    document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball (${modeLabel})`;
 
-    // 3. Name & Subtitle
-    document.getElementById('spotName').textContent = playerName;
-    document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball`;
-
-    // 4. Stat Grid
+    const activeCols = STAT_CONFIGS[CURRENT_STAT_MODE];
     const grid = document.getElementById('spotStatGrid');
-    grid.innerHTML = STAT_COLUMNS.map(c => {
+
+    grid.innerHTML = activeCols.map(c => {
       const val = player[c.key] || '—';
       const rank = getRank(c.key, val);
       const rankClass = rank ? `rank-${rank}` : '';
@@ -1205,12 +1263,11 @@
     document.getElementById('playerSearch').value = player.number || '';
     renderPlayerSpotlight(player);
 
-    // Scroll smoothly to spotlight card
     const card = document.getElementById('spotlightCard');
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  // ── Spotlight Search By Number Input ───────────────────────────────────────
+  // ── Spotlight Search Input ─────────────────────────────────────────────────
   document.getElementById('playerSearch').addEventListener('input', function () {
     searchNum = this.value.trim();
     const notFound = document.getElementById('notFound');
@@ -1237,7 +1294,7 @@
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  // Initial load: defaults to St. Thomas
+  // Initial load
   loadTeamData('st_thomas');
 </script>
 
