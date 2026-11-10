@@ -30,6 +30,7 @@ Features:
       * Tracks section categories (Scoring, Shooting, Rebounding, Assists, Turnovers, Steals, Blocks).
       * Resolves contextual row labels (e.g. "Per Game", "Margin" inside Rebounding; "3PT: Percentage" inside Shooting).
       * Supports both New Style (Nuxt 3 HTML table markup) and Old Style (Sidearm classic tables).
+  - Margins are written without a "+" for positive values ("5.5") and with "-" for negatives ("-3.2").
   - Multi-Row Table Header Resolver for Old Style HTML player tables.
   - Season totals and per-game averages for every player.
   - Universal normalization: counting stats -> "0", averages -> "0.0", percentages -> ".000".
@@ -186,7 +187,7 @@ STAFF_KEYWORDS = [
 
 # ── Team Stats Definition ─────────────────────────────────────────────────────
 # (json_key, kind, [global label aliases])
-# kind: pct -> ".445" | avg -> "72.5" | margin -> "+5.5" | ratio -> "1.25" | int -> "12"
+# kind: pct -> ".445" | avg -> "72.5" | margin -> "5.5" or "-3.2" | ratio -> "1.25" | int -> "12"
 TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
     ("ppg", "avg", [
         "Points Per Game", "Pts Per Game", "Points/Game", "PPG", "Scoring Offense", "Points per game"]),
@@ -231,7 +232,7 @@ TEAM_STAT_KIND = {spec[0]: spec[1] for spec in TEAM_STAT_SPECS}
 
 
 def _label_key(text: str) -> str:
-    """Normalizes a label for matching: 'Points Per Game:' -> 'pointspergame'."""
+    """Normalizes a label for matching: 'Points Per Game:' -> 'pointspergame:'."""
     return re.sub(r"[^a-z0-9%/:]", "", (text or "").lower())
 
 
@@ -396,13 +397,15 @@ def clean_stat_pct(val: Any) -> str:
 
 
 def clean_stat_margin(val: Any) -> str:
-    """Margins keep their sign: '+5.5', '-3.2', '0.0'."""
+    """Margins drop the '+' and keep the '-': '5.5', '-3.2', '0.0'."""
     t = _num_text(val) if val is not None else None
     if t is None:
         return "0.0"
     try:
-        num = float(t.replace("%", ""))
-        return "0.0" if num == 0 else f"{num:+.1f}"
+        num = round(float(t.replace("%", "")), 1)
+        # No '+' flag in the format, so positives print plain and negatives keep '-'.
+        # Rounding first means a tiny negative like -0.04 becomes "0.0", not "-0.0".
+        return "0.0" if num == 0 else f"{num:.1f}"
     except Exception:
         return "0.0"
 
@@ -673,12 +676,12 @@ def parse_team_stats(html: str) -> Dict[str, str]:
                     break
 
         for tr in table.find_all("tr"):
-            # Check if this row is a section divider / colgroup header
+            # Section divider / colgroup header row
             # New Style: <th colspan="3" scope="colgroup"><div> Rebounding </div></th>
             # Old Style: <td scope="colgroup" colspan="3" id="team-rebounding">Rebounding</td>
             section_cell = tr.find(["th", "td"], attrs={"scope": re.compile(r"colgroup", re.I)}) or \
                            tr.find(["th", "td"], attrs={"id": re.compile(r"^team-(scoring|shooting|rebounding|assists|turnovers|steals|blocks)", re.I)})
-            
+
             if section_cell:
                 sec_text = section_cell.get_text(" ", strip=True)
                 norm_sec = normalize_section_name(sec_text)
@@ -696,7 +699,7 @@ def parse_team_stats(html: str) -> Dict[str, str]:
             first_cell_text = cell_texts[0].strip()
             label_norm = _label_key(first_cell_text)
 
-            # Determine stat value from team column (index 1 / overall_idx)
+            # Team value: 'Overall' column if a header names one, else first numeric cell after the label
             val: Optional[str] = None
             if overall_idx is not None and overall_idx < len(cell_texts):
                 val = _num_text(cell_texts[overall_idx])
@@ -1368,7 +1371,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 def write_team_json(slug: str, team_data: Dict[str, Any]) -> None:
     for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
         with open(dest, "w", encoding="utf-8") as f:
-            json.dump(team_data, f, indent=2)
+            json.dump(team_data, f, indent=2)  # no sort_keys: key order is part of the layout
 
 
 def read_existing_json(slug: str) -> Dict[str, Any]:
@@ -1444,6 +1447,7 @@ async def scrape_single_team(
         gender_label = "Women's" if gender == "women" else "Men's"
         logger.info(f"Processing {label} ({gender_label})...")
 
+        # Stats page and roster page load in parallel
         stats_html, (roster_lookup, roster_used) = await asyncio.gather(
             fetch_page_html(context, team_cfg["stats_url"]),
             fetch_roster(context, team_cfg["roster_candidates"], label),
@@ -1530,9 +1534,12 @@ async def scrape_single_team(
         existing = read_existing_json(slug)
         same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
 
+        # Keep the previous team stats if this run could not read any.
+        # Values are re-run through the formatters so any old "+5.5" margins become "5.5".
         if ts_status == "not_found" and same_source and existing.get("team_stats") \
                 and existing.get("team_stats_status") in ("ok", "partial", "kept_previous"):
-            team_stats = existing["team_stats"]
+            old_ts = existing["team_stats"]
+            team_stats = {k: format_team_stat(k, old_ts.get(k)) for k in TEAM_STAT_KEYS}
             missing = existing.get("team_stats_missing", [])
             ts_status = "kept_previous"
             logger.warning(f"  [{label}] Team stats not found - keeping previous team_stats")
@@ -1563,6 +1570,7 @@ async def scrape_single_team(
         team_data["team_stats"] = team_stats
         team_data["players"] = merged_players
 
+        # Never overwrite good data with an empty player scrape
         if not merged_players:
             if existing.get("players") and same_source:
                 logger.warning(f"  [{label}] No players parsed - keeping existing {slug}.json")
@@ -1595,7 +1603,7 @@ def build_non_conf_tasks(
         candidates += [c for c in derive_roster_candidates(stats_url) if c not in candidates]
 
         team_cfg = {
-            "name": slot["name"],
+            "name": slot["name"],        # blank -> auto-detected from the stats page
             "slug": NON_CONF_SLUGS[gender],
             "stats_url": stats_url,
             "roster_candidates": candidates,
