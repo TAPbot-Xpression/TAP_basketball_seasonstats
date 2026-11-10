@@ -2,7 +2,7 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-10T18:20:21Z",
+  "generated_at": "2026-11-10T18:24:53Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
@@ -15,7 +15,7 @@
     "ft_pct": ".676",
     "ft_per_game": "12.0",
     "reb_per_game": "34.0",
-    "reb_margin": "+2.5",
+    "reb_margin": "2.5",
     "ast_per_game": "12.5",
     "to_per_game": "11.5",
     "ast_to_ratio": "1.10",
