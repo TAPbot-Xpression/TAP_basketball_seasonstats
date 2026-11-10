@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T03:27:05Z",
+  "generated_at": "2026-11-10T03:42:06Z",
   "players": [
     {
       "name": "Samuel Hincapie",
@@ -56,7 +56,7 @@
       "stl": "0.7",
       "stl_avg": "0.7",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Andrija Radojevic",
@@ -110,7 +110,7 @@
       "stl": "1.3",
       "stl_avg": "1.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Carter Evanson",
@@ -164,7 +164,7 @@
       "stl": "0.7",
       "stl_avg": "0.7",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Zack Parks",
@@ -191,7 +191,7 @@
       "stl": "1.3",
       "stl_avg": "1.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jayden Thomas",
@@ -216,7 +216,7 @@
       "to": "1",
       "to_avg": "0.3",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.3",
       "blk_avg": "0.3"
     },
@@ -243,9 +243,9 @@
       "to": "2",
       "to_avg": "2.0",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Sage Hanson",
@@ -270,9 +270,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Josh Jones",
@@ -297,9 +297,9 @@
       "to": "5",
       "to_avg": "1.7",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "DeAngelo Dungey",
@@ -324,9 +324,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Daemon Ely",
@@ -353,7 +353,7 @@
       "stl": "0.3",
       "stl_avg": "0.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "#TM Team",
@@ -372,7 +372,7 @@
       "off_reb": "10",
       "def_reb": "6",
       "tot_reb": "16",
-      "reb_avg": "",
+      "reb_avg": "5.3",
       "ast": "",
       "ast_avg": "",
       "to": "1",

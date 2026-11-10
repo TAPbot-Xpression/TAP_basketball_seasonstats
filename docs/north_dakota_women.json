@@ -2,7 +2,7 @@
   "team": "North Dakota",
   "slug": "north_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T03:28:45Z",
+  "generated_at": "2026-11-10T03:43:49Z",
   "players": [
     {
       "name": "London Harris",
@@ -29,7 +29,7 @@
       "stl": "1.5",
       "stl_avg": "1.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jayda Maves",
@@ -81,9 +81,9 @@
       "to": "3",
       "to_avg": "1.5",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Ciona Wells",
@@ -110,7 +110,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Aliyah Green",
@@ -137,7 +137,7 @@
       "stl": "2.0",
       "stl_avg": "2.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jayden Sonnenberg",
@@ -162,9 +162,9 @@
       "to": "1",
       "to_avg": "0.5",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Kendra Harvey",
@@ -216,9 +216,9 @@
       "to": "1",
       "to_avg": "0.5",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Lauren Hillesheim",
@@ -270,9 +270,9 @@
       "to": "2",
       "to_avg": "1.0",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Maggie Fricke",
@@ -297,9 +297,9 @@
       "to": "2",
       "to_avg": "1.0",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Lauren Reardon",
@@ -324,9 +324,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Kinley Smith",
@@ -351,9 +351,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "#TM Team",
@@ -372,7 +372,7 @@
       "off_reb": "1",
       "def_reb": "0",
       "tot_reb": "1",
-      "reb_avg": "",
+      "reb_avg": "0.5",
       "ast": "",
       "ast_avg": "",
       "to": "1",

@@ -2,7 +2,7 @@
   "team": "South Dakota",
   "slug": "south_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T03:27:57Z",
+  "generated_at": "2026-11-10T03:42:59Z",
   "players": [
     {
       "name": "Vince Buzelis",
@@ -29,7 +29,7 @@
       "stl": "1.3",
       "stl_avg": "1.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jahni Summers",
@@ -108,7 +108,7 @@
       "to": "8",
       "to_avg": "2.7",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.3",
       "blk_avg": "0.3"
     },
@@ -137,7 +137,7 @@
       "stl": "2.3",
       "stl_avg": "2.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Ethan Kizer",
@@ -162,7 +162,7 @@
       "to": "1",
       "to_avg": "0.3",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.7",
       "blk_avg": "0.7"
     },
@@ -191,7 +191,7 @@
       "stl": "0.7",
       "stl_avg": "0.7",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Marvin Richard III",
@@ -218,7 +218,7 @@
       "stl": "2.0",
       "stl_avg": "2.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Josh Townley-Thomas",
@@ -243,7 +243,7 @@
       "to": "4",
       "to_avg": "1.3",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.3",
       "blk_avg": "0.3"
     },
@@ -272,7 +272,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Melo Sanchez",
@@ -297,9 +297,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jake Brack",
@@ -324,9 +324,9 @@
       "to": "2",
       "to_avg": "0.7",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Brandon Domsch",
@@ -351,9 +351,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Michael Nee",
@@ -378,9 +378,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "#TM Team",
@@ -399,7 +399,7 @@
       "off_reb": "6",
       "def_reb": "3",
       "tot_reb": "9",
-      "reb_avg": "",
+      "reb_avg": "3.0",
       "ast": "",
       "ast_avg": "",
       "to": "1",

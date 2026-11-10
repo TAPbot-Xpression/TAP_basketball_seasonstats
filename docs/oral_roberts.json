@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts",
   "gender": "men",
-  "generated_at": "2026-11-10T03:27:46Z",
+  "generated_at": "2026-11-10T03:42:47Z",
   "players": [
     {
       "name": "Luke Gray",
@@ -56,7 +56,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Boden Williams",
@@ -110,7 +110,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Chase Martin",
@@ -164,7 +164,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Alex Couto",
@@ -189,9 +189,9 @@
       "to": "2",
       "to_avg": "1.0",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Amire Robinson",
@@ -216,9 +216,9 @@
       "to": "2",
       "to_avg": "1.0",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jamal George",
@@ -245,7 +245,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Alberto Blanco",
@@ -272,7 +272,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Blake Smith",
@@ -297,9 +297,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Mihail Gavazov",
@@ -326,7 +326,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Cam Haffner",
@@ -353,7 +353,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Marko Pavlovic",
@@ -380,7 +380,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "#TM Team",
@@ -399,7 +399,7 @@
       "off_reb": "7",
       "def_reb": "7",
       "tot_reb": "14",
-      "reb_avg": "",
+      "reb_avg": "7.0",
       "ast": "",
       "ast_avg": "",
       "to": "",

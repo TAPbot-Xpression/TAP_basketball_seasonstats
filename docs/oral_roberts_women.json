@@ -2,7 +2,7 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts_women",
   "gender": "women",
-  "generated_at": "2026-11-10T03:29:26Z",
+  "generated_at": "2026-11-10T03:44:24Z",
   "players": [
     {
       "name": "Kayten Donley",
@@ -56,7 +56,7 @@
       "stl": "1.3",
       "stl_avg": "1.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Keelie Kronberger",
@@ -83,7 +83,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Gentry Baldwin",
@@ -110,7 +110,7 @@
       "stl": "1.3",
       "stl_avg": "1.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Aliyah Duval",
@@ -137,7 +137,7 @@
       "stl": "2.3",
       "stl_avg": "2.3",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Kaylee Ward",
@@ -189,9 +189,9 @@
       "to": "2",
       "to_avg": "0.7",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Preslee Hartsock",
@@ -218,7 +218,7 @@
       "stl": "1.7",
       "stl_avg": "1.7",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Haven Joseph",
@@ -243,9 +243,9 @@
       "to": "",
       "to_avg": "",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Azailah Funches",
@@ -272,7 +272,7 @@
       "stl": "0.7",
       "stl_avg": "0.7",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Alana Shetlar",
@@ -297,7 +297,7 @@
       "to": "2",
       "to_avg": "0.7",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.3",
       "blk_avg": "0.3"
     },
@@ -324,9 +324,9 @@
       "to": "1",
       "to_avg": "0.5",
       "stl": "0.0",
-      "stl_avg": "",
+      "stl_avg": "0.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "#TM Team",
@@ -345,7 +345,7 @@
       "off_reb": "3",
       "def_reb": "5",
       "tot_reb": "8",
-      "reb_avg": "",
+      "reb_avg": "2.7",
       "ast": "",
       "ast_avg": "",
       "to": "2",

@@ -2,7 +2,7 @@
   "team": "South Dakota",
   "slug": "south_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T03:29:38Z",
+  "generated_at": "2026-11-10T03:44:35Z",
   "players": [
     {
       "name": "Molly Joyce",
@@ -29,7 +29,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Bri Robinson",
@@ -56,7 +56,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Latazia Williamson",
@@ -110,7 +110,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Ava Miller",
@@ -137,7 +137,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Livi Downs",
@@ -191,7 +191,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Jenna Hopp",
@@ -245,7 +245,7 @@
       "stl": "0.5",
       "stl_avg": "0.5",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Alyssa Bartlett",
@@ -272,7 +272,7 @@
       "stl": "2.0",
       "stl_avg": "2.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Natalie Ramsey",
@@ -299,7 +299,7 @@
       "stl": "1.0",
       "stl_avg": "1.0",
       "blk": "0.0",
-      "blk_avg": ""
+      "blk_avg": "0.0"
     },
     {
       "name": "Katy Reyerson",
@@ -345,7 +345,7 @@
       "off_reb": "2",
       "def_reb": "2",
       "tot_reb": "4",
-      "reb_avg": "",
+      "reb_avg": "2.0",
       "ast": "",
       "ast_avg": "",
       "to": "1",
