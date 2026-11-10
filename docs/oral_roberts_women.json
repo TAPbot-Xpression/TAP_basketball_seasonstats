@@ -2,11 +2,33 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts_women",
   "gender": "women",
-  "generated_at": "2026-11-10T17:33:34Z",
+  "generated_at": "2026-11-10T17:45:09Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "reb_margin"
+  ],
+  "team_stats": {
+    "ppg": "68.7",
+    "scoring_margin": "+1.7",
+    "fg_pct": ".385",
+    "fg_per_game": "24.0",
+    "three_pt_pct": ".299",
+    "three_pt_per_game": "8.7",
+    "ft_pct": ".667",
+    "ft_per_game": "12.0",
+    "reb_per_game": "34.3",
+    "reb_margin": "0.0",
+    "ast_per_game": "10.7",
+    "to_per_game": "13.0",
+    "ast_to_ratio": "0.80",
+    "pts_off_to": "25",
+    "stl_per_game": "10.7",
+    "blk_per_game": "1.7"
+  },
   "players": [
     {
-      "name": "Kayten Donley",
       "number": "30",
+      "name": "Kayten Donley",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -32,8 +54,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Aubrey Hishaw",
       "number": "21",
+      "name": "Aubrey Hishaw",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -59,8 +81,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Keelie Kronberger",
       "number": "12",
+      "name": "Keelie Kronberger",
       "position": "G",
       "year": "FR",
       "gp": "3",
@@ -86,8 +108,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Gentry Baldwin",
       "number": "2",
+      "name": "Gentry Baldwin",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -113,8 +135,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Aliyah Duval",
       "number": "13",
+      "name": "Aliyah Duval",
       "position": "G",
       "year": "FR",
       "gp": "3",
@@ -140,8 +162,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kaylee Ward",
       "number": "23",
+      "name": "Kaylee Ward",
       "position": "F",
       "year": "FR",
       "gp": "3",
@@ -167,8 +189,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Hannah Coons",
       "number": "14",
+      "name": "Hannah Coons",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -194,8 +216,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Preslee Hartsock",
       "number": "10",
+      "name": "Preslee Hartsock",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -221,8 +243,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Haven Joseph",
       "number": "7",
+      "name": "Haven Joseph",
       "position": "F",
       "year": "JR",
       "gp": "1",
@@ -248,8 +270,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Azailah Funches",
       "number": "1",
+      "name": "Azailah Funches",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -275,8 +297,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Alana Shetlar",
       "number": "15",
+      "name": "Alana Shetlar",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -302,8 +324,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Majesty Cade",
       "number": "24",
+      "name": "Majesty Cade",
       "position": "G",
       "year": "SO",
       "gp": "2",

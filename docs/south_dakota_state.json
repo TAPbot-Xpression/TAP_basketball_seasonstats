@@ -2,11 +2,39 @@
   "team": "South Dakota State",
   "slug": "south_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:28Z",
+  "generated_at": "2026-11-10T17:45:02Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "three_pt_pct",
+    "reb_per_game",
+    "reb_margin",
+    "ast_per_game",
+    "to_per_game",
+    "stl_per_game",
+    "blk_per_game"
+  ],
+  "team_stats": {
+    "ppg": "69.5",
+    "scoring_margin": "+12.0",
+    "fg_pct": ".445",
+    "fg_per_game": "26.5",
+    "three_pt_pct": ".000",
+    "three_pt_per_game": "8.0",
+    "ft_pct": ".680",
+    "ft_per_game": "8.5",
+    "reb_per_game": "0.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "0.0",
+    "to_per_game": "0.0",
+    "ast_to_ratio": "1.00",
+    "pts_off_to": "17",
+    "stl_per_game": "0.0",
+    "blk_per_game": "0.0"
+  },
   "players": [
     {
-      "name": "Davis Kern",
       "number": "22",
+      "name": "Davis Kern",
       "position": "F",
       "year": "R-FR",
       "gp": "2",
@@ -32,8 +60,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Jon Mekonnen",
       "number": "5",
+      "name": "Jon Mekonnen",
       "position": "F",
       "year": "SO",
       "gp": "2",
@@ -59,8 +87,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Joe Sayler",
       "number": "3",
+      "name": "Joe Sayler",
       "position": "G",
       "year": "JR",
       "gp": "2",
@@ -86,8 +114,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kalen Garry",
       "number": "10",
+      "name": "Kalen Garry",
       "position": "G",
       "year": "SR",
       "gp": "2",
@@ -113,8 +141,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Cam Swearengen",
       "number": "11",
+      "name": "Cam Swearengen",
       "position": "G",
       "year": "FR",
       "gp": "1",
@@ -140,8 +168,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "EJ Ryans",
       "number": "7",
+      "name": "EJ Ryans",
       "position": "G",
       "year": "JR",
       "gp": "2",
@@ -167,8 +195,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Trey Buchanan",
       "number": "0",
+      "name": "Trey Buchanan",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -194,8 +222,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Semaj Stampley",
       "number": "1",
+      "name": "Semaj Stampley",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -221,8 +249,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Youssouf Yatabare",
       "number": "4",
+      "name": "Youssouf Yatabare",
       "position": "F",
       "year": "FR",
       "gp": "1",
@@ -248,8 +276,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Blake Ellwein",
       "number": "23",
+      "name": "Blake Ellwein",
       "position": "F",
       "year": "FR",
       "gp": "2",
@@ -275,8 +303,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jaden Rogers",
       "number": "6",
+      "name": "Jaden Rogers",
       "position": "G",
       "year": "SO",
       "gp": "1",
@@ -302,8 +330,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Myles Thompson",
       "number": "21",
+      "name": "Myles Thompson",
       "position": "F",
       "year": "GR",
       "gp": "1",

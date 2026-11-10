@@ -2,11 +2,33 @@
   "team": "Oral Roberts",
   "slug": "oral_roberts",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:21Z",
+  "generated_at": "2026-11-10T17:44:50Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "reb_margin"
+  ],
+  "team_stats": {
+    "ppg": "74.5",
+    "scoring_margin": "+12.5",
+    "fg_pct": ".400",
+    "fg_per_game": "26.0",
+    "three_pt_pct": ".211",
+    "three_pt_per_game": "7.5",
+    "ft_pct": ".698",
+    "ft_per_game": "15.0",
+    "reb_per_game": "46.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "18.5",
+    "to_per_game": "15.0",
+    "ast_to_ratio": "1.20",
+    "pts_off_to": "22",
+    "stl_per_game": "11.5",
+    "blk_per_game": "1.5"
+  },
   "players": [
     {
-      "name": "Luke Gray",
       "number": "25",
+      "name": "Luke Gray",
       "position": "F",
       "year": "JR",
       "gp": "2",
@@ -32,8 +54,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Cal Furnish",
       "number": "6",
+      "name": "Cal Furnish",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -59,8 +81,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Boden Williams",
       "number": "0",
+      "name": "Boden Williams",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -86,8 +108,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Thomas Zorbas",
       "number": "18",
+      "name": "Thomas Zorbas",
       "position": "F",
       "year": "JR",
       "gp": "2",
@@ -113,8 +135,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Chase Martin",
       "number": "2",
+      "name": "Chase Martin",
       "position": "G",
       "year": "R-SR",
       "gp": "2",
@@ -140,8 +162,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Martins Kilups",
       "number": "7",
+      "name": "Martins Kilups",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -167,8 +189,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Alex Couto",
       "number": "8",
+      "name": "Alex Couto",
       "position": "G",
       "year": "R-FR",
       "gp": "2",
@@ -194,8 +216,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Amire Robinson",
       "number": "22",
+      "name": "Amire Robinson",
       "position": "G",
       "year": "R-JR",
       "gp": "2",
@@ -221,8 +243,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jamal George",
       "number": "10",
+      "name": "Jamal George",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -248,8 +270,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Alberto Blanco",
       "number": "11",
+      "name": "Alberto Blanco",
       "position": "F",
       "year": "FR",
       "gp": "2",
@@ -275,8 +297,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Blake Smith",
       "number": "43",
+      "name": "Blake Smith",
       "position": "G",
       "year": "SR",
       "gp": "2",
@@ -302,8 +324,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Mihail Gavazov",
       "number": "23",
+      "name": "Mihail Gavazov",
       "position": "F",
       "year": "SO",
       "gp": "2",
@@ -329,8 +351,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Cam Haffner",
       "number": "4",
+      "name": "Cam Haffner",
       "position": "G",
       "year": "SR",
       "gp": "1",
@@ -356,8 +378,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Marko Pavlovic",
       "number": "21",
+      "name": "Marko Pavlovic",
       "position": "F",
       "year": "SO",
       "gp": "2",

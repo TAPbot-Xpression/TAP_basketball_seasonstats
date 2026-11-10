@@ -2,11 +2,39 @@
   "team": "St. Thomas",
   "slug": "st_thomas",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:27Z",
+  "generated_at": "2026-11-10T17:44:58Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "three_pt_pct",
+    "reb_per_game",
+    "reb_margin",
+    "ast_per_game",
+    "to_per_game",
+    "stl_per_game",
+    "blk_per_game"
+  ],
+  "team_stats": {
+    "ppg": "72.0",
+    "scoring_margin": "-4.7",
+    "fg_pct": ".423",
+    "fg_per_game": "22.0",
+    "three_pt_pct": ".000",
+    "three_pt_per_game": "9.0",
+    "ft_pct": ".838",
+    "ft_per_game": "19.0",
+    "reb_per_game": "0.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "0.0",
+    "to_per_game": "0.0",
+    "ast_to_ratio": "1.30",
+    "pts_off_to": "9",
+    "stl_per_game": "0.0",
+    "blk_per_game": "0.0"
+  },
   "players": [
     {
-      "name": "Jeremy Lorenz",
       "number": "33",
+      "name": "Jeremy Lorenz",
       "position": "F",
       "year": "R-JR",
       "gp": "3",
@@ -32,8 +60,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Tim Franks",
       "number": "5",
+      "name": "Tim Franks",
       "position": "G",
       "year": "R-SO",
       "gp": "3",
@@ -59,8 +87,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Hayden Tibbits",
       "number": "1",
+      "name": "Hayden Tibbits",
       "position": "G",
       "year": "R-JR",
       "gp": "3",
@@ -86,8 +114,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Carter Bjerke",
       "number": "32",
+      "name": "Carter Bjerke",
       "position": "F",
       "year": "GR",
       "gp": "3",
@@ -113,8 +141,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Jonovan Wilkinson",
       "number": "22",
+      "name": "Jonovan Wilkinson",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -140,8 +168,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kendall Blue",
       "number": "4",
+      "name": "Kendall Blue",
       "position": "G",
       "year": "GR",
       "gp": "2",
@@ -167,8 +195,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Austin Herro",
       "number": "2",
+      "name": "Austin Herro",
       "position": "G",
       "year": "R-JR",
       "gp": "3",
@@ -194,8 +222,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Julius Wade",
       "number": "11",
+      "name": "Julius Wade",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -221,8 +249,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Caden Wilkins",
       "number": "21",
+      "name": "Caden Wilkins",
       "position": "F",
       "year": "R-SO",
       "gp": "3",
@@ -248,8 +276,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Brogan Madson",
       "number": "0",
+      "name": "Brogan Madson",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -275,8 +303,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kyle Counts",
       "number": "24",
+      "name": "Kyle Counts",
       "position": "F",
       "year": "R-SO",
       "gp": "3",

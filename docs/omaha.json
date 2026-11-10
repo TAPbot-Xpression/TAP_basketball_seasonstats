@@ -2,11 +2,39 @@
   "team": "Omaha",
   "slug": "omaha",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:21Z",
+  "generated_at": "2026-11-10T17:44:47Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "three_pt_pct",
+    "reb_per_game",
+    "reb_margin",
+    "ast_per_game",
+    "to_per_game",
+    "stl_per_game",
+    "blk_per_game"
+  ],
+  "team_stats": {
+    "ppg": "65.3",
+    "scoring_margin": "-22.3",
+    "fg_pct": ".386",
+    "fg_per_game": "22.7",
+    "three_pt_pct": ".000",
+    "three_pt_per_game": "8.0",
+    "ft_pct": ".621",
+    "ft_per_game": "12.0",
+    "reb_per_game": "0.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "0.0",
+    "to_per_game": "0.0",
+    "ast_to_ratio": "1.00",
+    "pts_off_to": "11",
+    "stl_per_game": "0.0",
+    "blk_per_game": "0.0"
+  },
   "players": [
     {
-      "name": "Deke Thompson",
       "number": "21",
+      "name": "Deke Thompson",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -32,8 +60,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Cahmai Crosby",
       "number": "2",
+      "name": "Cahmai Crosby",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -59,8 +87,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jonny Jordan Jr.",
       "number": "11",
+      "name": "Jonny Jordan Jr.",
       "position": "G",
       "year": "FR",
       "gp": "3",
@@ -86,8 +114,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Grant Stubblefield",
       "number": "3",
+      "name": "Grant Stubblefield",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -113,8 +141,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Isaac Ondekane",
       "number": "24",
+      "name": "Isaac Ondekane",
       "position": "F",
       "year": "GR",
       "gp": "3",
@@ -140,8 +168,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Dace Pleasant",
       "number": "5",
+      "name": "Dace Pleasant",
       "position": "F",
       "year": "JR",
       "gp": "3",
@@ -167,8 +195,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Cory Curtis Jr.",
       "number": "1",
+      "name": "Cory Curtis Jr.",
       "position": "G",
       "year": "GR",
       "gp": "3",
@@ -194,8 +222,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Justin Bolis",
       "number": "7",
+      "name": "Justin Bolis",
       "position": "F",
       "year": "SR",
       "gp": "3",
@@ -221,8 +249,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Ethan Sheats",
       "number": "8",
+      "name": "Ethan Sheats",
       "position": "F",
       "year": "FR",
       "gp": "2",
@@ -248,8 +276,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Brock Scholl",
       "number": "44",
+      "name": "Brock Scholl",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -275,8 +303,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Heri Bukinga",
       "number": "32",
+      "name": "Heri Bukinga",
       "position": "F",
       "year": "SO",
       "gp": "3",
@@ -302,8 +330,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Chris Dockery",
       "number": "0",
+      "name": "Chris Dockery",
       "position": "F",
       "year": "SR",
       "gp": "3",
@@ -329,8 +357,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Aidan Skradis",
       "number": "12",
+      "name": "Aidan Skradis",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -356,8 +384,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Gavin Baker",
       "number": "42",
+      "name": "Gavin Baker",
       "position": "F",
       "year": "FR",
       "gp": "3",
@@ -383,8 +411,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Brandon Orgilbold",
       "number": "13",
+      "name": "Brandon Orgilbold",
       "position": "G",
       "year": "SR",
       "gp": "3",

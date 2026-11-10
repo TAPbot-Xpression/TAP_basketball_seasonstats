@@ -2,11 +2,33 @@
   "team": "South Dakota",
   "slug": "south_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:29Z",
+  "generated_at": "2026-11-10T17:44:58Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "reb_margin"
+  ],
+  "team_stats": {
+    "ppg": "91.3",
+    "scoring_margin": "+9.3",
+    "fg_pct": ".503",
+    "fg_per_game": "29.3",
+    "three_pt_pct": ".316",
+    "three_pt_per_game": "8.0",
+    "ft_pct": ".747",
+    "ft_per_game": "24.7",
+    "reb_per_game": "37.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "13.0",
+    "to_per_game": "15.0",
+    "ast_to_ratio": "0.90",
+    "pts_off_to": "19",
+    "stl_per_game": "7.3",
+    "blk_per_game": "2.0"
+  },
   "players": [
     {
-      "name": "Vince Buzelis",
       "number": "4",
+      "name": "Vince Buzelis",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -32,8 +54,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jahni Summers",
       "number": "44",
+      "name": "Jahni Summers",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -59,8 +81,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Kajus Kublickas",
       "number": "9",
+      "name": "Kajus Kublickas",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -86,8 +108,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Stef van Bussel",
       "number": "15",
+      "name": "Stef van Bussel",
       "position": "F",
       "year": "R-JR",
       "gp": "3",
@@ -113,8 +135,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Josiah Dotzler",
       "number": "13",
+      "name": "Josiah Dotzler",
       "position": "G",
       "year": "R-JR",
       "gp": "3",
@@ -140,8 +162,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Ethan Kizer",
       "number": "21",
+      "name": "Ethan Kizer",
       "position": "F",
       "year": "R-JR",
       "gp": "3",
@@ -167,8 +189,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Cade Kelderman",
       "number": "2",
+      "name": "Cade Kelderman",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -194,8 +216,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Marvin Richard III",
       "number": "0",
+      "name": "Marvin Richard III",
       "position": "G",
       "year": "FR",
       "gp": "1",
@@ -221,8 +243,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Josh Townley-Thomas",
       "number": "8",
+      "name": "Josh Townley-Thomas",
       "position": "F",
       "year": "R-JR",
       "gp": "3",
@@ -248,8 +270,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Iliam Fevry",
       "number": "19",
+      "name": "Iliam Fevry",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -275,8 +297,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Melo Sanchez",
       "number": "6",
+      "name": "Melo Sanchez",
       "position": "G",
       "year": "SR",
       "gp": "2",
@@ -302,8 +324,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jake Brack",
       "number": "34",
+      "name": "Jake Brack",
       "position": "F",
       "year": "SR",
       "gp": "3",
@@ -329,8 +351,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Brandon Domsch",
       "number": "22",
+      "name": "Brandon Domsch",
       "position": "F",
       "year": "SO",
       "gp": "1",
@@ -356,8 +378,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Michael Nee",
       "number": "3",
+      "name": "Michael Nee",
       "position": "G",
       "year": "FR",
       "gp": "1",

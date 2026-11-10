@@ -2,11 +2,33 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:23Z",
+  "generated_at": "2026-11-10T17:44:53Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "reb_margin"
+  ],
+  "team_stats": {
+    "ppg": "73.3",
+    "scoring_margin": "-15.7",
+    "fg_pct": ".399",
+    "fg_per_game": "24.3",
+    "three_pt_pct": ".253",
+    "three_pt_per_game": "6.3",
+    "ft_pct": ".753",
+    "ft_per_game": "18.3",
+    "reb_per_game": "32.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "9.7",
+    "to_per_game": "10.0",
+    "ast_to_ratio": "1.00",
+    "pts_off_to": "19",
+    "stl_per_game": "7.7",
+    "blk_per_game": "2.0"
+  },
   "players": [
     {
-      "name": "Samuel Hincapie",
       "number": "12",
+      "name": "Samuel Hincapie",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -32,8 +54,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Luke Winkel",
       "number": "14",
+      "name": "Luke Winkel",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -59,8 +81,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Andrija Radojevic",
       "number": "15",
+      "name": "Andrija Radojevic",
       "position": "F",
       "year": "SR",
       "gp": "3",
@@ -86,8 +108,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Zach Kraft",
       "number": "1",
+      "name": "Zach Kraft",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -113,8 +135,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Carter Evanson",
       "number": "0",
+      "name": "Carter Evanson",
       "position": "G",
       "year": "FR",
       "gp": "3",
@@ -140,8 +162,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Jayden Moore",
       "number": "2",
+      "name": "Jayden Moore",
       "position": "G",
       "year": "FR",
       "gp": "3",
@@ -167,8 +189,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Zack Parks",
       "number": "23",
+      "name": "Zack Parks",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -194,8 +216,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jayden Thomas",
       "number": "8",
+      "name": "Jayden Thomas",
       "position": "F",
       "year": "JR",
       "gp": "3",
@@ -221,8 +243,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Tyler Wagner",
       "number": "5",
+      "name": "Tyler Wagner",
       "position": "G",
       "year": "SO",
       "gp": "1",
@@ -248,8 +270,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Sage Hanson",
       "number": "32",
+      "name": "Sage Hanson",
       "position": "G",
       "year": "FR",
       "gp": "1",
@@ -275,8 +297,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Josh Jones",
       "number": "22",
+      "name": "Josh Jones",
       "position": "F",
       "year": "SR",
       "gp": "3",
@@ -302,8 +324,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "DeAngelo Dungey",
       "number": "3",
+      "name": "DeAngelo Dungey",
       "position": "G",
       "year": "FR",
       "gp": "1",
@@ -329,8 +351,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Daemon Ely",
       "number": "52",
+      "name": "Daemon Ely",
       "position": "F",
       "year": "JR",
       "gp": "3",

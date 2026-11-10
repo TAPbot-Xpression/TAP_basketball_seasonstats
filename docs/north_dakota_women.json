@@ -2,11 +2,33 @@
   "team": "North Dakota",
   "slug": "north_dakota_women",
   "gender": "women",
-  "generated_at": "2026-11-10T17:33:31Z",
+  "generated_at": "2026-11-10T17:45:02Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "reb_margin"
+  ],
+  "team_stats": {
+    "ppg": "76.0",
+    "scoring_margin": "+1.5",
+    "fg_pct": ".364",
+    "fg_per_game": "23.5",
+    "three_pt_pct": ".231",
+    "three_pt_per_game": "7.5",
+    "ft_pct": ".741",
+    "ft_per_game": "21.5",
+    "reb_per_game": "37.5",
+    "reb_margin": "0.0",
+    "ast_per_game": "13.0",
+    "to_per_game": "16.0",
+    "ast_to_ratio": "0.80",
+    "pts_off_to": "26",
+    "stl_per_game": "8.0",
+    "blk_per_game": "1.5"
+  },
   "players": [
     {
-      "name": "London Harris",
       "number": "21",
+      "name": "London Harris",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -32,8 +54,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jayda Maves",
       "number": "23",
+      "name": "Jayda Maves",
       "position": "G",
       "year": "SR",
       "gp": "2",
@@ -59,8 +81,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Sydney Piekny",
       "number": "15",
+      "name": "Sydney Piekny",
       "position": "G",
       "year": "JR",
       "gp": "2",
@@ -86,8 +108,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Ciona Wells",
       "number": "1",
+      "name": "Ciona Wells",
       "position": "G",
       "year": "JR",
       "gp": "2",
@@ -113,8 +135,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Aliyah Green",
       "number": "33",
+      "name": "Aliyah Green",
       "position": "F",
       "year": "SO",
       "gp": "2",
@@ -140,8 +162,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jayden Sonnenberg",
       "number": "30",
+      "name": "Jayden Sonnenberg",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -167,8 +189,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kendra Harvey",
       "number": "8",
+      "name": "Kendra Harvey",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -194,8 +216,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Addison Klosterbuer",
       "number": "10",
+      "name": "Addison Klosterbuer",
       "position": "G",
       "year": "SR",
       "gp": "2",
@@ -221,8 +243,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Lauren Hillesheim",
       "number": "4",
+      "name": "Lauren Hillesheim",
       "position": "G",
       "year": "SO",
       "gp": "2",
@@ -248,8 +270,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Mia Jacobson",
       "number": "24",
+      "name": "Mia Jacobson",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -275,8 +297,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Maggie Fricke",
       "number": "2",
+      "name": "Maggie Fricke",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -302,8 +324,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Lauren Reardon",
       "number": "13",
+      "name": "Lauren Reardon",
       "position": "G",
       "year": "SO",
       "gp": "1",
@@ -329,8 +351,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kinley Smith",
       "number": "32",
+      "name": "Kinley Smith",
       "position": "F",
       "year": "FR",
       "gp": "1",

@@ -2,11 +2,39 @@
   "team": "Kansas City",
   "slug": "kansas_city_women",
   "gender": "women",
-  "generated_at": "2026-11-10T17:33:27Z",
+  "generated_at": "2026-11-10T17:44:59Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "three_pt_pct",
+    "reb_per_game",
+    "reb_margin",
+    "ast_per_game",
+    "to_per_game",
+    "stl_per_game",
+    "blk_per_game"
+  ],
+  "team_stats": {
+    "ppg": "94.7",
+    "scoring_margin": "+25.7",
+    "fg_pct": ".495",
+    "fg_per_game": "35.3",
+    "three_pt_pct": ".000",
+    "three_pt_per_game": "8.3",
+    "ft_pct": ".610",
+    "ft_per_game": "15.7",
+    "reb_per_game": "0.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "0.0",
+    "to_per_game": "0.0",
+    "ast_to_ratio": "1.20",
+    "pts_off_to": "36",
+    "stl_per_game": "0.0",
+    "blk_per_game": "0.0"
+  },
   "players": [
     {
-      "name": "Avery Hurst",
       "number": "23",
+      "name": "Avery Hurst",
       "position": "G",
       "year": "GR",
       "gp": "2",
@@ -32,8 +60,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Emani Bennett",
       "number": "0",
+      "name": "Emani Bennett",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -59,8 +87,8 @@
       "blk_avg": "0.3"
     },
     {
-      "name": "Elauni Bennett",
       "number": "2",
+      "name": "Elauni Bennett",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -86,8 +114,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Shiloh Kalenga",
       "number": "3",
+      "name": "Shiloh Kalenga",
       "position": "F",
       "year": "FR",
       "gp": "3",
@@ -113,8 +141,8 @@
       "blk_avg": "1.3"
     },
     {
-      "name": "Chrishawn Coleman",
       "number": "12",
+      "name": "Chrishawn Coleman",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -140,8 +168,8 @@
       "blk_avg": "0.7"
     },
     {
-      "name": "Micaela Carter",
       "number": "25",
+      "name": "Micaela Carter",
       "position": "G",
       "year": "SR",
       "gp": "3",
@@ -167,8 +195,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Lili Szabo",
       "number": "14",
+      "name": "Lili Szabo",
       "position": "G",
       "year": "FR",
       "gp": "1",
@@ -194,8 +222,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jayla Lewis",
       "number": "1",
+      "name": "Jayla Lewis",
       "position": "G",
       "year": "FR",
       "gp": "2",
@@ -221,8 +249,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Bella Edwards",
       "number": "7",
+      "name": "Bella Edwards",
       "position": "G",
       "year": "SO",
       "gp": "3",
@@ -248,8 +276,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kimora Fagan",
       "number": "11",
+      "name": "Kimora Fagan",
       "position": "G",
       "year": "R-SO",
       "gp": "2",
@@ -275,8 +303,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Talasia Thomas",
       "number": "4",
+      "name": "Talasia Thomas",
       "position": "F",
       "year": "JR",
       "gp": "3",
@@ -302,8 +330,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Josie Megehee",
       "number": "21",
+      "name": "Josie Megehee",
       "position": "G",
       "year": "R-FR",
       "gp": "3",
@@ -329,8 +357,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Remi-Hope Drantmann",
       "number": "15",
+      "name": "Remi-Hope Drantmann",
       "position": "F",
       "year": "SO",
       "gp": "2",

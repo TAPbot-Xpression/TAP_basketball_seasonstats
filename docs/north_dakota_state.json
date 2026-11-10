@@ -2,11 +2,39 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-10T17:33:20Z",
+  "generated_at": "2026-11-10T17:44:47Z",
+  "team_stats_status": "partial",
+  "team_stats_missing": [
+    "three_pt_pct",
+    "reb_per_game",
+    "reb_margin",
+    "ast_per_game",
+    "to_per_game",
+    "stl_per_game",
+    "blk_per_game"
+  ],
+  "team_stats": {
+    "ppg": "76.0",
+    "scoring_margin": "-7.5",
+    "fg_pct": ".424",
+    "fg_per_game": "27.0",
+    "three_pt_pct": ".000",
+    "three_pt_per_game": "10.0",
+    "ft_pct": ".676",
+    "ft_per_game": "12.0",
+    "reb_per_game": "0.0",
+    "reb_margin": "0.0",
+    "ast_per_game": "0.0",
+    "to_per_game": "0.0",
+    "ast_to_ratio": "1.10",
+    "pts_off_to": "16",
+    "stl_per_game": "0.0",
+    "blk_per_game": "0.0"
+  },
   "players": [
     {
-      "name": "Rob Diaz III",
       "number": "0",
+      "name": "Rob Diaz III",
       "position": "G",
       "year": "SR",
       "gp": "4",
@@ -32,8 +60,8 @@
       "blk_avg": "0.2"
     },
     {
-      "name": "Riley Massey",
       "number": "2",
+      "name": "Riley Massey",
       "position": "G",
       "year": "SO",
       "gp": "4",
@@ -59,8 +87,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Max Iversen",
       "number": "4",
+      "name": "Max Iversen",
       "position": "G",
       "year": "FR",
       "gp": "4",
@@ -86,8 +114,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Andrew Nagy",
       "number": "44",
+      "name": "Andrew Nagy",
       "position": "F",
       "year": "JR",
       "gp": "4",
@@ -113,8 +141,8 @@
       "blk_avg": "0.5"
     },
     {
-      "name": "Andy Stefonowicz",
       "number": "5",
+      "name": "Andy Stefonowicz",
       "position": "G",
       "year": "JR",
       "gp": "3",
@@ -140,8 +168,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Melvin Bell Jr.",
       "number": "1",
+      "name": "Melvin Bell Jr.",
       "position": "G",
       "year": "SO",
       "gp": "4",
@@ -167,8 +195,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Karl Poom",
       "number": "23",
+      "name": "Karl Poom",
       "position": "F",
       "year": "JR",
       "gp": "4",
@@ -194,8 +222,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Carson Smith",
       "number": "7",
+      "name": "Carson Smith",
       "position": "G",
       "year": "JR",
       "gp": "4",
@@ -221,8 +249,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Kaden Tate",
       "number": "3",
+      "name": "Kaden Tate",
       "position": "F",
       "year": "JR",
       "gp": "4",
@@ -248,8 +276,8 @@
       "blk_avg": "1.0"
     },
     {
-      "name": "Jaziah Harper",
       "number": "14",
+      "name": "Jaziah Harper",
       "position": "G",
       "year": "SO",
       "gp": "4",
@@ -275,8 +303,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Amir Danforth",
       "number": "13",
+      "name": "Amir Danforth",
       "position": "G",
       "year": "FR",
       "gp": "4",
@@ -302,8 +330,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Oliver Junker",
       "number": "22",
+      "name": "Oliver Junker",
       "position": "F",
       "year": "FR",
       "gp": "1",
@@ -329,8 +357,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Jack Robison",
       "number": "11",
+      "name": "Jack Robison",
       "position": "G",
       "year": "JR",
       "gp": "2",
@@ -356,8 +384,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Chance Schoenfeld",
       "number": "12",
+      "name": "Chance Schoenfeld",
       "position": "F",
       "year": "FR",
       "gp": "1",
@@ -383,8 +411,8 @@
       "blk_avg": "0.0"
     },
     {
-      "name": "Colin Stack",
       "number": "35",
+      "name": "Colin Stack",
       "position": "F",
       "year": "FR",
       "gp": "1",
