@@ -10,11 +10,15 @@ Features:
       * Rebounding: tot_reb (season total), reb_avg (per game), off_reb, def_reb
       * Playmaking: ast (season total), ast_avg (per game), to (season total), to_avg (per game)
       * Defense: stl (season total), stl_avg (per game), blk (season total), blk_avg (per game)
+  - Nuxt JSON Handling:
+      * Searches all property aliases across Sidearm Nuxt variations.
+      * Includes automatic calculated fallback (Stat / GP) formatted to 1 decimal place if the Nuxt
+        payload only stores raw totals and does not pre-calculate per-game floats for assists,
+        turnovers, steals, blocks, rebounds, or minutes.
+  - Old Sidearm HTML tables: Targets cumulative & overall stats tables to extract both totals & averages.
   - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
     Sidearm bot challenges and wait for full DOM hydration.
   - Print Roster URLs: Uses the exact print-view URLs supplied for each team.
-  - Rebuilt Sidearm HTML Table Parser: Accurately maps columns for both total and per-game numbers.
-  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Normalizes Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
   - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
@@ -623,6 +627,29 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
                         p[field] = val
 
     result_list = [players_by_key[k] for k in player_order if any(players_by_key[k][f] for f in ["avg", "pts", "tot_reb", "ast", "fg_pct"])]
+    
+    # Fill in calculated averages if missing and gp is available
+    for p in result_list:
+        try:
+            gp_val = float(p.get("gp", "0"))
+            if gp_val > 0:
+                if not p.get("min_avg") and p.get("min"):
+                    p["min_avg"] = f"{float(p['min']) / gp_val:.1f}"
+                if not p.get("avg") and p.get("pts"):
+                    p["avg"] = f"{float(p['pts']) / gp_val:.1f}"
+                if not p.get("reb_avg") and p.get("tot_reb"):
+                    p["reb_avg"] = f"{float(p['tot_reb']) / gp_val:.1f}"
+                if not p.get("ast_avg") and p.get("ast"):
+                    p["ast_avg"] = f"{float(p['ast']) / gp_val:.1f}"
+                if not p.get("to_avg") and p.get("to"):
+                    p["to_avg"] = f"{float(p['to']) / gp_val:.1f}"
+                if not p.get("stl_avg") and p.get("stl"):
+                    p["stl_avg"] = f"{float(p['stl']) / gp_val:.1f}"
+                if not p.get("blk_avg") and p.get("blk"):
+                    p["blk_avg"] = f"{float(p['blk']) / gp_val:.1f}"
+        except Exception:
+            pass
+
     return result_list
 
 
@@ -683,7 +710,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 gp = find_stat(item, ["gamesPlayed", "gp", "games", "gp_gs"])
                 gs = find_stat(item, ["gamesStarted", "gs", "starts"])
                 min_tot = find_stat(item, ["minutes", "min", "totalMinutes"])
-                min_avg = find_stat(item, ["minutesPerGame", "min_avg", "mpg", "minutes_per_game"])
+                min_avg = find_stat(item, ["minutesPerGame", "min_avg", "mpg", "minutes_per_game", "minPerGame", "avgMinutes"])
 
                 pts = find_stat(item, ["points", "totalPoints", "pts"])
                 ppg = find_stat(item, ["pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame", "points_per_game", "ptsAvg", "scoring_avg"])
@@ -692,22 +719,43 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 three_pct = find_stat(item, ["threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct", "threePointPercentage", "three_point_percentage", "threePct"])
                 ft_pct = find_stat(item, ["freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct", "free_throw_percentage", "ftPercentage"])
 
-                off_reb = find_stat(item, ["offensiveRebounds", "off_reb", "offRebounds"])
-                def_reb = find_stat(item, ["defensiveRebounds", "def_reb", "defRebounds"])
-                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb"])
-                reb_avg = find_stat(item, ["reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game"])
+                off_reb = find_stat(item, ["offensiveRebounds", "off_reb", "offRebounds", "offensiveReboundsTotal"])
+                def_reb = find_stat(item, ["defensiveRebounds", "def_reb", "defRebounds", "defensiveReboundsTotal"])
+                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reboundsTotal"])
+                reb_avg = find_stat(item, ["reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game", "reboundsAvg"])
 
-                ast = find_stat(item, ["assists", "ast", "totalAssists"])
-                ast_avg = find_stat(item, ["assistsPerGame", "ast_avg", "apg", "astPerGame"])
+                ast = find_stat(item, ["assists", "ast", "totalAssists", "assistsTotal"])
+                ast_avg = find_stat(item, ["assistsPerGame", "ast_avg", "apg", "astPerGame", "assists_per_game", "assistsAvg"])
 
-                to = find_stat(item, ["turnovers", "to", "totalTurnovers"])
-                to_avg = find_stat(item, ["turnoversPerGame", "to_avg", "topg", "toPerGame"])
+                to = find_stat(item, ["turnovers", "to", "totalTurnovers", "turnoversTotal"])
+                to_avg = find_stat(item, ["turnoversPerGame", "to_avg", "topg", "toPerGame", "turnovers_per_game", "turnoversAvg"])
 
-                stl = find_stat(item, ["steals", "stl", "totalSteals"])
-                stl_avg = find_stat(item, ["stealsPerGame", "stl_avg", "spg", "stlPerGame"])
+                stl = find_stat(item, ["steals", "stl", "totalSteals", "stealsTotal"])
+                stl_avg = find_stat(item, ["stealsPerGame", "stl_avg", "spg", "stlPerGame", "steals_per_game", "stealsAvg"])
 
-                blk = find_stat(item, ["blocks", "blk", "totalBlocks"])
-                blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame"])
+                blk = find_stat(item, ["blocks", "blk", "totalBlocks", "blocksTotal"])
+                blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame", "blocks_per_game", "blocksAvg"])
+
+                # Calculate averages if missing and GP is present
+                try:
+                    gp_val = float(gp) if gp else 0.0
+                    if gp_val > 0:
+                        if not min_avg and min_tot:
+                            min_avg = f"{float(min_tot) / gp_val:.1f}"
+                        if not ppg and pts:
+                            ppg = f"{float(pts) / gp_val:.1f}"
+                        if not reb_avg and tot_reb:
+                            reb_avg = f"{float(tot_reb) / gp_val:.1f}"
+                        if not ast_avg and ast:
+                            ast_avg = f"{float(ast) / gp_val:.1f}"
+                        if not to_avg and to:
+                            to_avg = f"{float(to) / gp_val:.1f}"
+                        if not stl_avg and stl:
+                            stl_avg = f"{float(stl) / gp_val:.1f}"
+                        if not blk_avg and blk:
+                            blk_avg = f"{float(blk) / gp_val:.1f}"
+                except Exception:
+                    pass
 
                 if not any([ppg, pts, fg_pct, ft_pct, tot_reb, ast]):
                     continue
