@@ -356,20 +356,26 @@ def normalize_position(pos_str: str) -> str:
 
 
 _CLASS_MAP = {
-    # Standard labels
-    "FR": "FR", "FRESHMAN": "FR",
-    "SO": "SO", "SOPHOMORE": "SO",
-    "JR": "JR", "JUNIOR": "JR",
-    "SR": "SR", "SENIOR": "SR",
-    "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADUATESTUDENT": "GR",
-    "GRADSTUDENT": "GR", "GS": "GR",
+    # Freshman
+    "FR": "FR", "FRESHMAN": "FR", "FY": "FR", "FIRST": "FR", "FIRSTYEAR": "FR",
+    "1ST": "FR", "1STYEAR": "FR", "1": "FR",
 
-    # Ordinal labels (NDSU: 1st, 2nd, 3rd, 4th, 5th, etc.)
-    "1ST": "FR", "1STYEAR": "FR", "1": "FR", "FIRSTYEAR": "FR", "FIRST": "FR",
-    "2ND": "SO", "2NDYEAR": "SO", "2": "SO", "SECONDYEAR": "SO", "SECOND": "SO",
-    "3RD": "JR", "3RDYEAR": "JR", "3": "JR", "THIRDYEAR": "JR", "THIRD": "JR",
-    "4TH": "SR", "4THYEAR": "SR", "4": "SR", "FOURTHYEAR": "SR", "FOURTH": "SR",
-    "5TH": "GR", "5THYEAR": "GR", "5": "GR", "FIFTHYEAR": "GR", "FIFTH": "GR",
+    # Sophomore
+    "SO": "SO", "SOPHOMORE": "SO", "SECOND": "SO", "SECONDYEAR": "SO",
+    "2ND": "SO", "2NDYEAR": "SO", "2": "SO",
+
+    # Junior
+    "JR": "JR", "JUNIOR": "JR", "THIRD": "JR", "THIRDYEAR": "JR",
+    "3RD": "JR", "3RDYEAR": "JR", "3": "JR",
+
+    # Senior
+    "SR": "SR", "SENIOR": "SR", "FOURTH": "SR", "FOURTHYEAR": "SR",
+    "4TH": "SR", "4THYEAR": "SR", "4": "SR",
+
+    # Graduate / 5th year
+    "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADUATESTUDENT": "GR",
+    "GRADSTUDENT": "GR", "GS": "GR", "FIFTH": "GR", "FIFTHYEAR": "GR",
+    "5TH": "GR", "5THYEAR": "GR", "5": "GR",
 }
 
 
