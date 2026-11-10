@@ -6,15 +6,16 @@ Features:
   - Generates individual team JSON files (<slug>.json and <slug>_women.json in root & docs/).
   - Dual Output (Totals & Per-Game Averages):
       * Games Played: gp, gs, min, min_avg
-      * Scoring: pts (total points), avg (PPG), fg_pct, three_pt_pct, ft_pct
-      * Rebounding: tot_reb (season total), reb_avg (per game), off_reb, def_reb
-      * Playmaking: ast (season total), ast_avg (per game), to (season total), to_avg (per game)
-      * Defense: stl (season total), stl_avg (per game), blk (season total), blk_avg (per game)
+      * Scoring: pts (total points), avg (PPG / PTS/G), fg_pct, three_pt_pct, ft_pct
+      * Rebounding: tot_reb (season total), reb_avg (REB/G), off_reb, def_reb
+      * Playmaking: ast (season total), ast_avg (AST/G), to (season total), to_avg (TO/G)
+      * Defense: stl (season total), stl_avg (STL/G), blk (season total), blk_avg (BLK/G)
   - Nuxt JSON Handling:
-      * Searches all property aliases across Sidearm Nuxt variations.
-      * Includes automatic calculated fallback (Stat / GP) formatted to 1 decimal place if the Nuxt
-        payload only stores raw totals and does not pre-calculate per-game floats for assists,
-        turnovers, steals, blocks, rebounds, or minutes.
+      * Disambiguates Scoring PPG vs Rebounding RPG: Sidearm Nuxt objects often use 'avg' / 'average'
+        or 'reboundsAvg' / 'scoringAvg'. Generic 'avg'/'average' is checked for rebounding (or rejected
+        from PPG) to prevent REB/G from overwriting PTS/G.
+      * Includes automatic calculated fallback (PTS / GP, TOT_REB / GP, etc.) formatted to 1 decimal place
+        if the Nuxt payload or table does not provide pre-computed per-game averages.
   - Old Sidearm HTML tables: Targets cumulative & overall stats tables to extract both totals & averages.
   - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
     Sidearm bot challenges and wait for full DOM hydration.
@@ -713,7 +714,12 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 min_avg = find_stat(item, ["minutesPerGame", "min_avg", "mpg", "minutes_per_game", "minPerGame", "avgMinutes"])
 
                 pts = find_stat(item, ["points", "totalPoints", "pts"])
-                ppg = find_stat(item, ["pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame", "points_per_game", "ptsAvg", "scoring_avg"])
+                
+                # Disambiguate points per game (PPG): strictly match scoring average keys, avoiding generic 'avg' which Sidearm Nuxt maps to rebounds
+                ppg = find_stat(item, [
+                    "pointsPerGame", "pts_avg", "ppg", "scoringAvg", "scoring_avg",
+                    "ptsPerGame", "points_per_game", "ptsAvg", "pointsAverage"
+                ])
 
                 fg_pct = find_stat(item, ["fieldGoalsPercentage", "fg_pct", "fgPct", "fieldGoalPct", "field_goal_percentage", "fgPercentage"])
                 three_pct = find_stat(item, ["threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct", "threePointPercentage", "three_point_percentage", "threePct"])
@@ -722,7 +728,12 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 off_reb = find_stat(item, ["offensiveRebounds", "off_reb", "offRebounds", "offensiveReboundsTotal"])
                 def_reb = find_stat(item, ["defensiveRebounds", "def_reb", "defRebounds", "defensiveReboundsTotal"])
                 tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reboundsTotal"])
-                reb_avg = find_stat(item, ["reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game", "reboundsAvg"])
+                
+                # Rebounds per game (RPG): matches reboundsAvg, reboundsPerGame, or Sidearm's generic 'avg'/'average'
+                reb_avg = find_stat(item, [
+                    "reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game",
+                    "reboundsAvg", "rebAvg", "reboundsAverage", "avg", "average"
+                ])
 
                 ast = find_stat(item, ["assists", "ast", "totalAssists", "assistsTotal"])
                 ast_avg = find_stat(item, ["assistsPerGame", "ast_avg", "apg", "astPerGame", "assists_per_game", "assistsAvg"])
@@ -736,16 +747,24 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 blk = find_stat(item, ["blocks", "blk", "totalBlocks", "blocksTotal"])
                 blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame", "blocks_per_game", "blocksAvg"])
 
-                # Calculate averages if missing and GP is present
+                # Calculate per-game averages if missing or verify PPG math
                 try:
                     gp_val = float(gp) if gp else 0.0
                     if gp_val > 0:
+                        pts_val = float(pts) if pts else 0.0
+                        tot_reb_val = float(tot_reb) if tot_reb else 0.0
+
+                        # Always calculate/correct PPG directly from Total PTS / GP
+                        if pts_val > 0:
+                            calc_ppg = f"{pts_val / gp_val:.1f}"
+                            # If ppg is empty, or if ppg matches reb_avg (rebound collision) while calc_ppg is different, use calculated PPG
+                            if not ppg or (reb_avg and ppg == reb_avg and calc_ppg != reb_avg):
+                                ppg = calc_ppg
+
                         if not min_avg and min_tot:
                             min_avg = f"{float(min_tot) / gp_val:.1f}"
-                        if not ppg and pts:
-                            ppg = f"{float(pts) / gp_val:.1f}"
-                        if not reb_avg and tot_reb:
-                            reb_avg = f"{float(tot_reb) / gp_val:.1f}"
+                        if not reb_avg and tot_reb_val > 0:
+                            reb_avg = f"{tot_reb_val / gp_val:.1f}"
                         if not ast_avg and ast:
                             ast_avg = f"{float(ast) / gp_val:.1f}"
                         if not to_avg and to:
