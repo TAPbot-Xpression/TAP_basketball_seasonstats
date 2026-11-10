@@ -1,30 +1,27 @@
 """
 scrape_basketball.py
 Unified Summit League Basketball player season stats and roster scraper (Men's & Women's)
-plus two flexible "Non-Conf" slots (one Men's, one Women's) for any Sidearm opponent.
+plus flexible "Non-Conf" slots for any Sidearm opponent.
 
-Features:
-  - High-Performance Concurrent Scraping:
-      * Async Playwright with an asyncio Semaphore pool (concurrency = 5).
-      * Scrapes all conference teams and both Non-Conf slots in parallel.
-  - Non-Conf Slots (non_conf.json / non_conf_women.json):
-      * Reads non_conf_config.json (written by the GitHub "Run workflow" form):
-            {"men":   {"name": "", "stats_url": "", "roster_url": ""},
-             "women": {"name": "", "stats_url": "", "roster_url": ""}}
-      * Empty slot  -> writes a placeholder JSON so the site shows "no opponent loaded".
-      * Roster link blank -> derives candidate print-roster URLs from the stats link
-        and tries each until one returns players.
-      * Team name blank -> auto-detected from the stats page (og:site_name / <title> / domain).
-      * Auto-detects New Style (Nuxt JSON) vs Old Style (HTML tables) by what the page contains.
-      * If a Non-Conf link can't be parsed, a stale opponent is never shown as the new one.
-  - Safety: if a scrape returns zero players, existing good data for that team is kept.
-  - Position & Academic Class Standardization:
-      * 'G' (Guard), 'F' (Forward), 'W' (Winger / Wing, e.g., SDSU).
-      * FR, SO, JR, SR, GR, R-FR, R-SO, R-JR, R-SR, plus ordinals (1st, 2nd, 3rd, 4th, 5th - NDSU).
-  - Nuxt & Print Roster Parser: __NUXT_DATA__ extraction with table / card-block fallbacks.
-  - Team & TM Discard Filtering: removes #TM Team, Team, Totals, Opponents rows.
-  - Dual Output (Totals & Per-Game Averages) with calculated per-game fallbacks.
-  - Multi-tier roster matching: exact -> jersey -> suffix-agnostic -> last name + number -> fuzzy.
+Fixes & Improvements:
+  1. Multi-Row Table Header Resolver:
+     - Builds a true 2D (colspan/rowspan aware) header grid for Old Style HTML tables.
+     - Fixes jersey number being mistakenly read as Total Minutes.
+  2. Rebound Totals vs. Averages:
+     - Correctly differentiates cumulative season totals (OFF, DEF, TOT) from per-game averages.
+  3. Expanded Nuxt 3 Stat Keys:
+     - Full alias coverage for Nuxt-based teams (St. Thomas, KC, Omaha, NDSU) so OFF and DEF
+       rebounds are always extracted.
+  4. Universal Stat Normalization:
+     - Counting stats (GP, GS, MIN, PTS, OFF, DEF, TOT, AST, TO, STL, BLK) always format as clean integers ("0", "12").
+     - Per-game averages (MIN/G, PTS/G, REB/G, AST/G, TO/G, STL/G, BLK/G) always format as decimals ("0.0", "5.5").
+     - Percentages (FG%, 3PT%, FT%) always format as percentages (".000", ".455", "1.000").
+     - Replaces all inconsistent "-", "--", "", or "None" values with proper "0" / "0.0".
+  5. Position & Academic Class Standardization:
+     - Positions: G (Guard), F (Forward), W (Winger / Wing).
+     - Classes: FR (including FY/Fy./1st), SO, JR, SR, GR (including 5th), and R-* (redshirt).
+  6. High-Performance Concurrency:
+     - Async Playwright with asyncio Semaphore (concurrency = 5) for ultra-fast parallel runs.
 """
 
 import asyncio
@@ -46,7 +43,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 CONCURRENCY_LIMIT = 5
-MIN_ROSTER_ENTRIES = 8   # roster_lookup holds name + #number keys, so 8 ~= 4+ players
+MIN_ROSTER_ENTRIES = 8
 NON_CONF_CONFIG_PATH = "non_conf_config.json"
 NON_CONF_SLUGS = {"men": "non_conf", "women": "non_conf_women"}
 
@@ -176,7 +173,6 @@ STAFF_KEYWORDS = [
 # ── Non-Conf Config Helpers ───────────────────────────────────────────────────
 
 def load_non_conf_config() -> Dict[str, Dict[str, str]]:
-    """Reads non_conf_config.json. Missing/invalid file means both slots are empty."""
     cfg = {g: {"name": "", "stats_url": "", "roster_url": ""} for g in ("men", "women")}
     try:
         with open(NON_CONF_CONFIG_PATH, encoding="utf-8") as f:
@@ -194,12 +190,6 @@ def load_non_conf_config() -> Dict[str, Dict[str, str]]:
 
 
 def derive_roster_candidates(stats_url: str) -> List[str]:
-    """
-    Builds likely Sidearm print-roster URLs from a stats URL, e.g.
-      https://x.com/sports/mens-basketball/stats/2026-27
-        -> /roster/print/2026-27, /roster/2026-27?print=true, /roster/print,
-           /roster?print=true, /roster/2026-27, /roster
-    """
     base = stats_url.strip().split("#")[0].split("?")[0].rstrip("/")
     m = re.match(r"^(.*?)/stats(?:/(\d{4}-\d{2}))?$", base)
     if not m:
@@ -223,7 +213,6 @@ def derive_roster_candidates(stats_url: str) -> List[str]:
 
 
 def detect_team_name(html: Optional[str], url: str) -> str:
-    """Best-effort school name from og:site_name, <title>, or the domain."""
     host = urlparse(url).netloc.lower().replace("www.", "")
 
     def tidy(text: str) -> str:
@@ -251,14 +240,12 @@ def detect_team_name(html: Optional[str], url: str) -> str:
 # ── Async Playwright Fetcher ──────────────────────────────────────────────────
 
 async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
-    """Fetches URL content using an async Playwright page."""
     page: Optional[Page] = None
     try:
         page = await context.new_page()
         logger.info(f"Navigating to {url}")
         await page.goto(url, wait_until="domcontentloaded", timeout=25000)
 
-        # Allow fast network settling
         try:
             await page.wait_for_load_state("networkidle", timeout=3000)
         except Exception:
@@ -273,10 +260,59 @@ async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
             await page.close()
 
 
-# ── Normalization Helpers ─────────────────────────────────────────────────────
+# ── Normalization & Cleaning Helpers ──────────────────────────────────────────
+
+def clean_stat_int(val: Any) -> str:
+    """Normalizes counting stats (gp, gs, min, pts, off_reb, def_reb, tot_reb, ast, to, stl, blk) to a string integer or '0'."""
+    if val is None:
+        return "0"
+    s = str(val).strip()
+    if not s or s in ("-", "--", "—", "null", "None", "N/A", "na"):
+        return "0"
+    try:
+        num = float(s)
+        return str(int(round(num)))
+    except Exception:
+        m = re.match(r"^(\d+)", s)
+        return m.group(1) if m else "0"
+
+
+def clean_stat_float(val: Any) -> str:
+    """Normalizes average stats (min_avg, avg, reb_avg, ast_avg, to_avg, stl_avg, blk_avg) to '0.0' or 'X.X'."""
+    if val is None:
+        return "0.0"
+    s = str(val).strip()
+    if not s or s in ("-", "--", "—", "null", "None", "N/A", "na"):
+        return "0.0"
+    try:
+        num = float(s)
+        return f"{num:.1f}"
+    except Exception:
+        return "0.0"
+
+
+def clean_stat_pct(val: Any) -> str:
+    """Normalizes percentage stats (fg_pct, three_pt_pct, ft_pct) to '.000' or '.XXX' / '1.000'."""
+    if val is None:
+        return ".000"
+    s = str(val).strip().replace("%", "")
+    if not s or s in ("-", "--", "—", "null", "None", "N/A", "na"):
+        return ".000"
+    try:
+        num = float(s)
+        if num == 0.0:
+            return ".000"
+        if num > 1.0:
+            num = num / 100.0
+        if num >= 1.0:
+            return "1.000"
+        formatted = f"{num:.3f}"
+        return formatted.lstrip("0") if formatted.startswith("0.") else formatted
+    except Exception:
+        return ".000"
+
 
 def clean_name(raw_name: str) -> str:
-    """Normalizes player names to standard 'Firstname Lastname'."""
     if not raw_name:
         return ""
 
@@ -285,7 +321,6 @@ def clean_name(raw_name: str) -> str:
     if "@" in text or not text:
         return ""
 
-    # Remove jersey markers like #01 or #TM
     text = re.sub(r"#\d{1,2}\b", " ", text)
     text = re.sub(r"#?tm\b", " ", text, flags=re.I)
 
@@ -326,7 +361,6 @@ def clean_name(raw_name: str) -> str:
 
 
 def clean_number(raw_num: Any) -> str:
-    """Extracts jersey number and removes leading zeros ('05' -> '5', '00' -> '0')."""
     if raw_num is None:
         return ""
     text = str(raw_num).strip().replace("#", "")
@@ -339,40 +373,36 @@ def clean_number(raw_num: Any) -> str:
 
 
 def normalize_position(pos_str: str) -> str:
-    """Normalizes basketball positions to G (Guard), F (Forward), or W (Winger / Wing)."""
     if not pos_str:
         return ""
     p = pos_str.upper().strip().rstrip(".")
-    # Winger / Wing (e.g. SDSU)
     if re.fullmatch(r"(W|WING|WINGER)(\s*/\s*\w+)?", p):
         return "W"
-    # Guard
     if re.fullmatch(r"(G|PG|SG|GUARD)(\s*/\s*\w+)?", p):
         return "G"
-    # Forward / Center
     if re.fullmatch(r"(F|C|SF|PF|FORWARD|CENTER)(\s*/\s*\w+)?", p):
         return "F"
     return ""
 
 
 _CLASS_MAP = {
-    # Freshman
+    # Freshman / 1st Year
     "FR": "FR", "FRESHMAN": "FR", "FY": "FR", "FIRST": "FR", "FIRSTYEAR": "FR",
     "1ST": "FR", "1STYEAR": "FR", "1": "FR",
 
-    # Sophomore
+    # Sophomore / 2nd Year
     "SO": "SO", "SOPHOMORE": "SO", "SECOND": "SO", "SECONDYEAR": "SO",
     "2ND": "SO", "2NDYEAR": "SO", "2": "SO",
 
-    # Junior
+    # Junior / 3rd Year
     "JR": "JR", "JUNIOR": "JR", "THIRD": "JR", "THIRDYEAR": "JR",
     "3RD": "JR", "3RDYEAR": "JR", "3": "JR",
 
-    # Senior
+    # Senior / 4th Year
     "SR": "SR", "SENIOR": "SR", "FOURTH": "SR", "FOURTHYEAR": "SR",
     "4TH": "SR", "4THYEAR": "SR", "4": "SR",
 
-    # Graduate / 5th year
+    # Graduate / 5th Year
     "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADUATESTUDENT": "GR",
     "GRADSTUDENT": "GR", "GS": "GR", "FIFTH": "GR", "FIFTHYEAR": "GR",
     "5TH": "GR", "5THYEAR": "GR", "5": "GR",
@@ -380,10 +410,6 @@ _CLASS_MAP = {
 
 
 def normalize_year(yr_str: str) -> str:
-    """
-    Standardizes academic class standings (FR, SO, JR, SR, GR, R-*).
-    Handles traditional, redshirt, and ordinal (1st Year, 2nd, 3rd, 4th, 5th) notations.
-    """
     if not yr_str:
         return ""
 
@@ -394,7 +420,6 @@ def normalize_year(yr_str: str) -> str:
     if y in _CLASS_MAP:
         return _CLASS_MAP[y]
 
-    # Redshirt prefixes (R-1st, RS-2nd, Redshirt Junior, etc.)
     for prefix in ("REDSHIRT", "RS", "R"):
         if y.startswith(prefix):
             remainder = y[len(prefix):]
@@ -406,7 +431,6 @@ def normalize_year(yr_str: str) -> str:
 
 
 def is_valid_player_name(name: str) -> bool:
-    """Validates that a string represents an actual basketball player name."""
     if not name or len(name.strip()) < 2:
         return False
 
@@ -436,7 +460,6 @@ def is_valid_player_name(name: str) -> bool:
 
 
 def strip_suffixes(name: str) -> str:
-    """Removes common suffixes (Jr., III, etc.) and punctuation for comparison."""
     cleaned = re.sub(r"\b(jr\.?|sr\.?|iii|iv|ii)\b", "", name.lower()).strip()
     return re.sub(r"\s+", " ", cleaned)
 
@@ -446,7 +469,6 @@ def find_roster_entry(
     number: str,
     roster_lookup: Dict[str, Dict[str, str]]
 ) -> Optional[Dict[str, str]]:
-    """Multi-tier lookup to match a stats player against roster entries."""
     if not roster_lookup:
         return None
 
@@ -492,7 +514,6 @@ def find_roster_entry(
 # ── Roster & Stats Parsers ────────────────────────────────────────────────────
 
 def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
-    """Extracts roster metadata (Position, Year, Jersey, Name) from __NUXT_DATA__ payloads."""
     roster_lookup: Dict[str, Dict[str, str]] = {}
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -557,18 +578,12 @@ def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
 
 
 def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
-    """
-    Parses Sidearm roster pages (Nuxt JSON, responsive HTML tables, or stacked card blocks).
-    Extracts player Name, Jersey Number, Position (G/F/W), and Academic Year.
-    """
-    # 1. Modern Nuxt extraction first
     roster_lookup = parse_nuxt_roster_data(html)
     if len(roster_lookup) >= 5:
         return roster_lookup
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # Decompose staff sections
     for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
         staff.decompose()
     for hdr in soup.find_all(["h2", "h3", "h4"], string=re.compile(r"coaching staff|coaches", re.I)):
@@ -576,17 +591,12 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
         if parent:
             parent.decompose()
 
-    # Method A: Structured HTML Table Rows
     for row in soup.find_all("tr"):
         cells = [c.get_text(strip=True) for c in row.find_all(["td", "th"])]
         if len(cells) < 3:
             continue
 
-        num = ""
-        pos = ""
-        yr = ""
-        name_cand = ""
-
+        num, pos, yr, name_cand = "", "", "", ""
         for col in cells:
             if not num and re.match(r"^\d{1,2}$", col):
                 num = clean_number(col)
@@ -608,7 +618,6 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
             if num != "":
                 roster_lookup[f"#{num}"] = info
 
-    # Method B: Text/Card-Based Block Parsing
     if not roster_lookup:
         body_text = soup.get_text(separator="\n", strip=True)
         lines = [line.strip() for line in body_text.split("\n") if line.strip()]
@@ -618,9 +627,7 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
             line = lines[i]
             if re.match(r"^\d{1,2}$", line):
                 p_num = clean_number(line)
-                p_name = ""
-                p_pos = ""
-                p_yr = ""
+                p_name, p_pos, p_yr = "", "", ""
 
                 j = i + 1
                 limit = min(len(lines), i + 8)
@@ -703,7 +710,6 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 c_num = clean_number(resolve(
                     item.get("playerUniform") or item.get("jersey") or item.get("number") or item.get("uniform")))
 
-                # Position and Year if present in stats object
                 c_pos = normalize_position(resolve(item.get("position") or item.get("pos") or item.get("positionShort")))
                 c_yr  = normalize_year(resolve(
                     item.get("academicYear") or item.get("year") or item.get("class") or
@@ -712,7 +718,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
 
                 gp = find_stat(item, ["gamesPlayed", "gp", "games", "gp_gs"])
                 gs = find_stat(item, ["gamesStarted", "gs", "starts"])
-                min_tot = find_stat(item, ["minutesPlayed", "minutes", "min", "totalMinutes"])
+                min_tot = find_stat(item, ["minutesPlayed", "minutes", "min", "totalMinutes", "mins"])
                 min_avg = find_stat(item, ["minutesPerGame", "min_avg", "mpg", "minutes_per_game", "minPerGame", "avgMinutes"])
 
                 pts = find_stat(item, ["points", "totalPoints", "pts"])
@@ -725,9 +731,18 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 three_pct = find_stat(item, ["threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct", "threePointPercentage", "three_point_percentage", "threePct"])
                 ft_pct = find_stat(item, ["freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct", "free_throw_percentage", "ftPercentage"])
 
-                off_reb = find_stat(item, ["offensiveRebounds", "off_reb", "offRebounds", "offensiveReboundsTotal"])
-                def_reb = find_stat(item, ["defensiveRebounds", "def_reb", "defRebounds", "defensiveReboundsTotal"])
-                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reboundsTotal"])
+                # Expanded offensive/defensive rebound keys for Nuxt 3
+                off_reb = find_stat(item, [
+                    "reboundsOffensive", "offensiveRebounds", "offReb", "rebOff", "offRebounds",
+                    "oReb", "oreb", "offensive", "offenseRebounds", "offensiveReboundsTotal",
+                    "off_reb", "rebounds_offensive", "off_rebounds", "offensive_rebounds"
+                ])
+                def_reb = find_stat(item, [
+                    "reboundsDefensive", "defensiveRebounds", "defReb", "rebDef", "defRebounds",
+                    "dReb", "dreb", "defensive", "defenseRebounds", "defensiveReboundsTotal",
+                    "def_reb", "rebounds_defensive", "def_rebounds", "defensive_rebounds"
+                ])
+                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reboundsTotal", "totRebounds"])
                 reb_avg = find_stat(item, [
                     "reboundsPerGame", "reb_avg", "rpg", "rebPerGame", "rebounds_per_game",
                     "reboundsAvg", "rebAvg", "reboundsAverage"
@@ -745,7 +760,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 blk = find_stat(item, ["blocks", "blk", "totalBlocks", "blocksTotal"])
                 blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame", "blocks_per_game", "blocksAvg"])
 
-                # Calculate per-game averages if missing
+                # Calculated per-game fallbacks if missing
                 try:
                     gp_val = float(gp) if gp else 0.0
                     if gp_val > 0:
@@ -777,27 +792,27 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                     "number": c_num,
                     "position": c_pos,
                     "year": c_yr,
-                    "gp": gp,
-                    "gs": gs,
-                    "min": min_tot,
-                    "min_avg": min_avg,
-                    "pts": pts,
-                    "avg": ppg,
-                    "fg_pct": fg_pct,
-                    "three_pt_pct": three_pct,
-                    "ft_pct": ft_pct,
-                    "off_reb": off_reb,
-                    "def_reb": def_reb,
-                    "tot_reb": tot_reb,
-                    "reb_avg": reb_avg,
-                    "ast": ast,
-                    "ast_avg": ast_avg,
-                    "to": to,
-                    "to_avg": to_avg,
-                    "stl": stl,
-                    "stl_avg": stl_avg,
-                    "blk": blk,
-                    "blk_avg": blk_avg,
+                    "gp": clean_stat_int(gp),
+                    "gs": clean_stat_int(gs),
+                    "min": clean_stat_int(min_tot),
+                    "min_avg": clean_stat_float(min_avg),
+                    "pts": clean_stat_int(pts),
+                    "avg": clean_stat_float(ppg),
+                    "fg_pct": clean_stat_pct(fg_pct),
+                    "three_pt_pct": clean_stat_pct(three_pct),
+                    "ft_pct": clean_stat_pct(ft_pct),
+                    "off_reb": clean_stat_int(off_reb),
+                    "def_reb": clean_stat_int(def_reb),
+                    "tot_reb": clean_stat_int(tot_reb),
+                    "reb_avg": clean_stat_float(reb_avg),
+                    "ast": clean_stat_int(ast),
+                    "ast_avg": clean_stat_float(ast_avg),
+                    "to": clean_stat_int(to),
+                    "to_avg": clean_stat_float(to_avg),
+                    "stl": clean_stat_int(stl),
+                    "stl_avg": clean_stat_float(stl_avg),
+                    "blk": clean_stat_int(blk),
+                    "blk_avg": clean_stat_float(blk_avg),
                 })
         except Exception:
             continue
@@ -808,10 +823,62 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
     return players
 
 
+def build_table_header_grid(thead: BeautifulSoup) -> Dict[int, str]:
+    """
+    Builds a true 2D column header map by properly simulating HTML table layout
+    with rowspan and colspan expansion across multi-row <thead> elements.
+    """
+    rows = thead.find_all("tr")
+    if not rows:
+        return {}
+
+    grid: List[List[str]] = []
+    for r_idx, row in enumerate(rows):
+        c_idx = 0
+        ths = row.find_all(["th", "td"])
+        for th in ths:
+            # Advance to the next open cell in this row
+            while len(grid) > r_idx and c_idx < len(grid[r_idx]) and grid[r_idx][c_idx] != "":
+                c_idx += 1
+
+            text = th.get_text(strip=True).upper()
+            try:
+                rowspan = int(th.get("rowspan", 1))
+            except Exception:
+                rowspan = 1
+            try:
+                colspan = int(th.get("colspan", 1))
+            except Exception:
+                colspan = 1
+
+            for r in range(r_idx, r_idx + rowspan):
+                while len(grid) <= r:
+                    grid.append([])
+                for c in range(c_idx, c_idx + colspan):
+                    while len(grid[r]) <= c:
+                        grid[r].append("")
+                    grid[r][c] = text
+            c_idx += colspan
+
+    col_headers: Dict[int, str] = {}
+    if grid:
+        num_cols = max(len(r) for r in grid)
+        for c in range(num_cols):
+            parts = []
+            for r in range(len(grid)):
+                if c < len(grid[r]) and grid[r][c]:
+                    val = grid[r][c]
+                    if val not in parts:
+                        parts.append(val)
+            col_headers[c] = " ".join(parts).strip()
+
+    return col_headers
+
+
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
     Parses Old Style Sidearm HTML stats pages into both Totals and Per-Game Averages.
-    Filters out #TM Team and aggregates multiple cumulative tables.
+    Uses multi-row table header resolution to avoid column alignment bugs.
     """
     players_by_key: Dict[str, Dict[str, Any]] = {}
     player_order: List[str] = []
@@ -824,7 +891,6 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         parent_classes = " ".join(" ".join(p.get("class", [])) for p in parent_tags).lower()
         parent_text = " ".join(p.get_text() for p in parent_tags[:2])[:300].lower()
 
-        # Discard irrelevant tables
         if any(bad in parent_ids for bad in ["game-comparison", "game-by-game", "game-highs"]):
             continue
         if any(bad in parent_classes for bad in ["game-comparison", "game-by-game"]):
@@ -849,9 +915,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
         header_map: Dict[int, str] = {}
         if thead:
-            header_row = thead.find_all("tr")[-1] if thead.find_all("tr") else thead
-            for idx, th in enumerate(header_row.find_all(["th", "td"])):
-                header_map[idx] = th.get_text(strip=True).upper()
+            header_map = build_table_header_grid(thead)
 
         for row in rows:
             if row.find("th") and not row.find("td"):
@@ -866,17 +930,10 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             cell_texts = [c.get_text(strip=True) for c in cells]
 
             label_map: Dict[str, str] = {}
-            seen_headers: set = set()
             for idx, cell in enumerate(cells):
                 lbl = cell.get("data-label", "").strip().upper()
                 if not lbl and idx in header_map:
-                    h_val = header_map[idx]
-                    if h_val == "AVG":
-                        lbl = "AVG" if "AVG" not in seen_headers else "REB_AVG"
-                    else:
-                        lbl = h_val
-                    seen_headers.add(h_val)
-
+                    lbl = header_map[idx]
                 if lbl and lbl not in label_map:
                     label_map[lbl] = cell.get_text(strip=True)
 
@@ -884,18 +941,18 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             name_a = row.find("a", href=re.compile(r"roster", re.I)) or row.find("a", attrs={"data-player-id": True})
             if name_a:
                 raw_name = name_a.get_text(separator=" ", strip=True)
-            elif "NAME" in label_map:
-                raw_name = label_map["NAME"]
-            elif "PLAYER" in label_map:
-                raw_name = label_map["PLAYER"]
-            elif len(cell_texts) > 1:
+            else:
+                for k in ("PLAYER", "NAME", "FULL NAME", "PLAYER NAME"):
+                    if k in label_map:
+                        raw_name = label_map[k]
+                        break
+            if not raw_name and len(cell_texts) > 1:
                 raw_name = cell_texts[1]
 
             c_name = clean_name(raw_name)
             if not is_valid_player_name(c_name):
                 continue
 
-            # Drop team / #TM rows explicitly
             if c_name.lower() in ("team", "tm", "tm team", "team tm", "#tm team"):
                 continue
 
@@ -909,39 +966,47 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
             def get_stat(data_labels: List[str]) -> str:
                 for lbl in data_labels:
+                    # Match exact key
                     if lbl in label_map:
                         v = label_map[lbl].strip()
                         if v and "view bio" not in v.lower() and v.lower() != "null":
                             return v
+                    # Match contains key
+                    for k, v in label_map.items():
+                        if lbl in k.split():
+                            clean_v = v.strip()
+                            if clean_v and "view bio" not in clean_v.lower() and clean_v.lower() != "null":
+                                return clean_v
                 return ""
 
-            s_gp      = get_stat(["GP", "GAMES", "GP-GS"])
+            s_gp      = get_stat(["GP", "GAMES", "GP-GS", "GP/GS"])
             s_gs      = get_stat(["GS", "STARTS"])
-            s_min     = get_stat(["MIN", "TOTAL MIN", "MINUTES"])
-            s_min_avg = get_stat(["MIN/G", "MIN/GAME", "MPG", "AVG MIN"])
+            s_min     = get_stat(["TOTAL MIN", "MINUTES TOTAL", "MINUTES", "MIN"])
+            s_min_avg = get_stat(["MIN/G", "MIN/GAME", "MPG", "AVG MIN", "MINUTES AVG"])
 
-            s_pts     = get_stat(["PTS", "TOTAL POINTS", "POINTS"])
-            s_avg     = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G"])
+            s_pts     = get_stat(["TOTAL POINTS", "POINTS TOTAL", "PTS", "POINTS"])
+            s_avg     = get_stat(["PTS/G", "PPG", "PTS_AVG", "POINTS/G", "SCORING AVG", "AVG"])
 
-            s_fg      = get_stat(["FG%", "FG PCT", "PCT"])
+            s_fg      = get_stat(["FG%", "FG PCT", "FIELD GOAL PCT"])
             s_3pt     = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
             s_ft      = get_stat(["FT%", "FT PCT", "FTPCT"])
 
-            s_off_reb = get_stat(["OFF REB", "OFF", "O-REB"])
-            s_def_reb = get_stat(["DEF REB", "DEF", "D-REB"])
-            s_tot_reb = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS"])
-            s_reb_avg = get_stat(["REB/G", "RPG", "REB_AVG", "REBOUNDS/G"])
+            # Cumulative Season Rebound Totals
+            s_off_reb = get_stat(["REBOUNDS OFF", "OFF REB", "OFF", "O-REB", "OFFENSIVE"])
+            s_def_reb = get_stat(["REBOUNDS DEF", "DEF REB", "DEF", "D-REB", "DEFENSIVE"])
+            s_tot_reb = get_stat(["REBOUNDS TOT", "TOTAL REBOUNDS", "TOT REB", "TOTAL", "TOT", "REBOUNDS", "REB"])
+            s_reb_avg = get_stat(["REBOUNDS AVG", "REB/G", "RPG", "REB_AVG", "REBOUNDS/G"])
 
-            s_ast     = get_stat(["AST", "ASSISTS", "TOTAL AST"])
+            s_ast     = get_stat(["TOTAL AST", "ASSISTS TOTAL", "AST", "ASSISTS"])
             s_ast_avg = get_stat(["AST/G", "APG", "AST_AVG", "ASSISTS/G"])
 
-            s_to      = get_stat(["TO", "TURNOVERS", "TOTAL TO"])
+            s_to      = get_stat(["TOTAL TO", "TURNOVERS TOTAL", "TO", "TURNOVERS"])
             s_to_avg  = get_stat(["TO/G", "TOPG", "TO_AVG", "TURNOVERS/G"])
 
-            s_stl     = get_stat(["STL", "STEALS", "TOTAL STL"])
+            s_stl     = get_stat(["TOTAL STL", "STEALS TOTAL", "STL", "STEALS"])
             s_stl_avg = get_stat(["STL/G", "SPG", "STL_AVG", "STEALS/G"])
 
-            s_blk     = get_stat(["BLK", "BLOCKS", "TOTAL BLK"])
+            s_blk     = get_stat(["TOTAL BLK", "BLOCKS TOTAL", "BLK", "BLOCKS"])
             s_blk_avg = get_stat(["BLK/G", "BPG", "BLK_AVG", "BLOCKS/G"])
 
             key = c_name.lower()
@@ -1009,6 +1074,29 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         except Exception:
             pass
 
+        # Universal clean & formatting
+        p["gp"]           = clean_stat_int(p.get("gp"))
+        p["gs"]           = clean_stat_int(p.get("gs"))
+        p["min"]          = clean_stat_int(p.get("min"))
+        p["min_avg"]      = clean_stat_float(p.get("min_avg"))
+        p["pts"]          = clean_stat_int(p.get("pts"))
+        p["avg"]          = clean_stat_float(p.get("avg"))
+        p["fg_pct"]       = clean_stat_pct(p.get("fg_pct"))
+        p["three_pt_pct"] = clean_stat_pct(p.get("three_pt_pct"))
+        p["ft_pct"]       = clean_stat_pct(p.get("ft_pct"))
+        p["off_reb"]      = clean_stat_int(p.get("off_reb"))
+        p["def_reb"]      = clean_stat_int(p.get("def_reb"))
+        p["tot_reb"]      = clean_stat_int(p.get("tot_reb"))
+        p["reb_avg"]      = clean_stat_float(p.get("reb_avg"))
+        p["ast"]          = clean_stat_int(p.get("ast"))
+        p["ast_avg"]      = clean_stat_float(p.get("ast_avg"))
+        p["to"]           = clean_stat_int(p.get("to"))
+        p["to_avg"]       = clean_stat_float(p.get("to_avg"))
+        p["stl"]          = clean_stat_int(p.get("stl"))
+        p["stl_avg"]      = clean_stat_float(p.get("stl_avg"))
+        p["blk"]          = clean_stat_int(p.get("blk"))
+        p["blk_avg"]      = clean_stat_float(p.get("blk_avg"))
+
     return result_list
 
 
@@ -1034,7 +1122,6 @@ def now_iso() -> str:
 
 
 def write_empty_non_conf(gender: str) -> None:
-    """Placeholder for a Non-Conf slot with no link, so the site shows 'no opponent loaded'."""
     slug = NON_CONF_SLUGS[gender]
     write_team_json(slug, {
         "team": "Non-Conf",
@@ -1059,7 +1146,6 @@ async def fetch_roster(
     candidates: List[str],
     label: str
 ) -> Tuple[Dict[str, Dict[str, str]], str]:
-    """Tries each roster URL in order; returns the first good roster (or the best one found)."""
     best_lookup: Dict[str, Dict[str, str]] = {}
     best_url = ""
 
@@ -1083,7 +1169,6 @@ async def scrape_single_team(
     gender: str,
     semaphore: asyncio.Semaphore
 ) -> Dict[str, Any]:
-    """Scrapes one team (conference or Non-Conf) within the semaphore limit."""
     async with semaphore:
         slug = team_cfg["slug"]
         is_non_conf = bool(team_cfg.get("is_non_conf"))
@@ -1091,7 +1176,6 @@ async def scrape_single_team(
         gender_label = "Women's" if gender == "women" else "Men's"
         logger.info(f"Processing {label} ({gender_label})...")
 
-        # Fetch stats page and roster (trying candidate URLs) in parallel
         stats_html, (roster_lookup, roster_used) = await asyncio.gather(
             fetch_page_html(context, team_cfg["stats_url"]),
             fetch_roster(context, team_cfg["roster_candidates"], label),
@@ -1100,7 +1184,6 @@ async def scrape_single_team(
         team_name = team_cfg["name"] or detect_team_name(stats_html, team_cfg["stats_url"])
         logger.info(f"  [{label}] Loaded {len(roster_lookup)} roster entries")
 
-        # Parse stats - New Style (Nuxt JSON) first, then Old Style (HTML tables)
         stats_players: List[Dict[str, Any]] = []
         style = "none"
         if stats_html:
@@ -1115,7 +1198,6 @@ async def scrape_single_team(
 
         logger.info(f"  [{label}] Parsed {len(stats_players)} player stat lines - detected: {style}")
 
-        # Merge stats with roster info
         merged_players = []
         seen_names: set = set()
 
@@ -1137,27 +1219,27 @@ async def scrape_single_team(
                 "number": final_number,
                 "position": final_pos,
                 "year": final_year,
-                "gp": sp.get("gp", ""),
-                "gs": sp.get("gs", ""),
-                "min": sp.get("min", ""),
-                "min_avg": sp.get("min_avg", ""),
-                "pts": sp.get("pts", ""),
-                "avg": sp.get("avg", ""),
-                "fg_pct": sp.get("fg_pct", ""),
-                "three_pt_pct": sp.get("three_pt_pct", ""),
-                "ft_pct": sp.get("ft_pct", ""),
-                "off_reb": sp.get("off_reb", ""),
-                "def_reb": sp.get("def_reb", ""),
-                "tot_reb": sp.get("tot_reb", ""),
-                "reb_avg": sp.get("reb_avg", ""),
-                "ast": sp.get("ast", ""),
-                "ast_avg": sp.get("ast_avg", ""),
-                "to": sp.get("to", ""),
-                "to_avg": sp.get("to_avg", ""),
-                "stl": sp.get("stl", ""),
-                "stl_avg": sp.get("stl_avg", ""),
-                "blk": sp.get("blk", ""),
-                "blk_avg": sp.get("blk_avg", ""),
+                "gp": clean_stat_int(sp.get("gp")),
+                "gs": clean_stat_int(sp.get("gs")),
+                "min": clean_stat_int(sp.get("min")),
+                "min_avg": clean_stat_float(sp.get("min_avg")),
+                "pts": clean_stat_int(sp.get("pts")),
+                "avg": clean_stat_float(sp.get("avg")),
+                "fg_pct": clean_stat_pct(sp.get("fg_pct")),
+                "three_pt_pct": clean_stat_pct(sp.get("three_pt_pct")),
+                "ft_pct": clean_stat_pct(sp.get("ft_pct")),
+                "off_reb": clean_stat_int(sp.get("off_reb")),
+                "def_reb": clean_stat_int(sp.get("def_reb")),
+                "tot_reb": clean_stat_int(sp.get("tot_reb")),
+                "reb_avg": clean_stat_float(sp.get("reb_avg")),
+                "ast": clean_stat_int(sp.get("ast")),
+                "ast_avg": clean_stat_float(sp.get("ast_avg")),
+                "to": clean_stat_int(sp.get("to")),
+                "to_avg": clean_stat_float(sp.get("to_avg")),
+                "stl": clean_stat_int(sp.get("stl")),
+                "stl_avg": clean_stat_float(sp.get("stl_avg")),
+                "blk": clean_stat_int(sp.get("blk")),
+                "blk_avg": clean_stat_float(sp.get("blk_avg")),
             })
 
         team_data: Dict[str, Any] = {
@@ -1182,7 +1264,6 @@ async def scrape_single_team(
                     "basketball stats page (a Sidearm site)."
                 )
 
-        # Never overwrite good data with an empty scrape
         if not merged_players:
             existing = read_existing_json(slug)
             same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
@@ -1199,7 +1280,6 @@ def build_non_conf_tasks(
     context: BrowserContext,
     semaphore: asyncio.Semaphore
 ) -> List[Any]:
-    """Creates scrape tasks for filled Non-Conf slots and writes placeholders for empty ones."""
     config = load_non_conf_config()
     tasks = []
 
@@ -1217,7 +1297,7 @@ def build_non_conf_tasks(
         candidates += [c for c in derive_roster_candidates(stats_url) if c not in candidates]
 
         team_cfg = {
-            "name": slot["name"],        # blank -> auto-detected from the stats page
+            "name": slot["name"],
             "slug": NON_CONF_SLUGS[gender],
             "stats_url": stats_url,
             "roster_candidates": candidates,
