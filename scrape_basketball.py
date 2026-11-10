@@ -26,8 +26,10 @@ JSON layout (identical for every team file, so Datalinq graphics can use one pat
     }
 
 Features:
-  - Team stats: label-driven parser (finds "Points Per Game", "Scoring Margin", etc. by name,
-    prefers the "Overall" column) so it works on both New Style and Old Style Sidearm pages.
+  - Section/Colgroup-Aware Team Stats Parser:
+      * Tracks section categories (Scoring, Shooting, Rebounding, Assists, Turnovers, Steals, Blocks).
+      * Resolves contextual row labels (e.g. "Per Game", "Margin" inside Rebounding; "3PT: Percentage" inside Shooting).
+      * Supports both New Style (Nuxt 3 HTML table markup) and Old Style (Sidearm classic tables).
   - Multi-Row Table Header Resolver for Old Style HTML player tables.
   - Season totals and per-game averages for every player.
   - Universal normalization: counting stats -> "0", averages -> "0.0", percentages -> ".000".
@@ -182,29 +184,28 @@ STAFF_KEYWORDS = [
     "communications", "compliance", "academic", "marketing"
 ]
 
-
 # ── Team Stats Definition ─────────────────────────────────────────────────────
-# (json_key, kind, [label aliases as they might appear on the page])
-# kind: pct -> ".445" | avg -> "72.5" | margin -> "+5.5" | ratio -> "1.25" | int -> "123"
+# (json_key, kind, [global label aliases])
+# kind: pct -> ".445" | avg -> "72.5" | margin -> "+5.5" | ratio -> "1.25" | int -> "12"
 TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
     ("ppg", "avg", [
         "Points Per Game", "Pts Per Game", "Points/Game", "PPG", "Scoring Offense", "Points per game"]),
     ("scoring_margin", "margin", [
         "Scoring Margin", "Score Margin", "Scoring Mgn"]),
     ("fg_pct", "pct", [
-        "FG%", "FG Pct", "FG Percentage", "Field Goal Percentage", "Field Goal Pct", "Field Goal %"]),
+        "FG%", "FG Pct", "FG Percentage", "Field Goal Percentage", "Field Goal Pct", "Field Goal %", "FG: Percentage"]),
     ("fg_per_game", "avg", [
-        "FG Per Game", "FG/Game", "FG Made Per Game", "FGM Per Game", "Field Goals Per Game", "FG per game"]),
+        "FG Per Game", "FG/Game", "FG Made Per Game", "FGM Per Game", "Field Goals Per Game", "FG per game", "FG: Per Game", "FGM/G"]),
     ("three_pt_pct", "pct", [
-        "3PT%", "3-PT%", "3FG%", "3P%", "3PT FG%", "3-PT FG%", "3 PT FG%", "3-Point FG%",
+        "3PT: Percentage", "3PT%", "3-PT%", "3FG%", "3P%", "3PT FG%", "3-PT FG%", "3 PT FG%", "3-Point FG%",
         "3-Point Percentage", "Three Point Percentage", "3PT Pct", "3FG Pct"]),
     ("three_pt_per_game", "avg", [
-        "3FG Per Game", "3PT Per Game", "3-PT Per Game", "3PT FG Per Game", "3-PT FG Per Game",
-        "3-Point FG Per Game", "3 PT FG Per Game", "3FG/Game", "Three Pointers Per Game", "3PT/Game"]),
+        "3PT: Per Game", "3FG Per Game", "3PT Per Game", "3-PT Per Game", "3PT FG Per Game", "3-PT FG Per Game",
+        "3-Point FG Per Game", "3 PT FG Per Game", "3FG/Game", "Three Pointers Per Game", "3PT/Game", "3PT/G"]),
     ("ft_pct", "pct", [
-        "FT%", "FT Pct", "FT Percentage", "Free Throw Percentage", "Free Throw Pct", "Free Throw %"]),
+        "FT: Percentage", "FT%", "FT Pct", "FT Percentage", "Free Throw Percentage", "Free Throw Pct", "Free Throw %"]),
     ("ft_per_game", "avg", [
-        "FT Per Game", "FT/Game", "FT Made Per Game", "FTM Per Game", "Free Throws Per Game"]),
+        "FT: Per Game", "FT Per Game", "FT/Game", "FT Made Per Game", "FTM Per Game", "Free Throws Per Game", "FT/G"]),
     ("reb_per_game", "avg", [
         "Rebounds Per Game", "Rebounds/Game", "Reb Per Game", "RPG", "Rebounding", "REB/G"]),
     ("reb_margin", "margin", [
@@ -218,7 +219,7 @@ TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
         "Assists/Turnover", "Assist to Turnover Ratio", "A/TO"]),
     ("pts_off_to", "int", [
         "Points Off TO", "Points Off Turnovers", "Pts Off TO", "Pts Off Turnovers",
-        "Points Off of Turnovers", "Points off TOs", "Pts. Off TO"]),
+        "Points Off of Turnovers", "Points off TOs", "Pts. Off TO", "PTS OFF TO"]),
     ("stl_per_game", "avg", [
         "Steals Per Game", "Steals/Game", "STL Per Game", "SPG", "STL/G"]),
     ("blk_per_game", "avg", [
@@ -231,7 +232,7 @@ TEAM_STAT_KIND = {spec[0]: spec[1] for spec in TEAM_STAT_SPECS}
 
 def _label_key(text: str) -> str:
     """Normalizes a label for matching: 'Points Per Game:' -> 'pointspergame'."""
-    return re.sub(r"[^a-z0-9%/]", "", (text or "").lower())
+    return re.sub(r"[^a-z0-9%/:]", "", (text or "").lower())
 
 
 _LABEL_LOOKUP: Dict[str, str] = {}
@@ -629,78 +630,149 @@ def find_roster_entry(
     return None
 
 
-# ── Team Stats Parser (Overall) ───────────────────────────────────────────────
+# ── Section / Colgroup Aware Team Stats Parser ───────────────────────────────
 
 def parse_team_stats(html: str) -> Dict[str, str]:
     """
-    Finds the Overall team stats by LABEL (e.g. "Points Per Game", "Scoring Margin").
-    Returns {json_key: raw_value_text} for whatever it found.
-
-    Pass 1: table rows  -> first cell is the label; uses the 'Overall' column when a header
-            names one, otherwise the first numeric value after the label.
-    Pass 2: any other markup (dl/dt/dd, divs, spans) -> label element followed by a numeric sibling.
+    Parses Overall team stats using section/colgroup context (Scoring, Shooting, Rebounding,
+    Assists, Turnovers, Steals, Blocks) as well as direct label aliases.
+    Works for both New Style (Nuxt 3) and Old Style (Sidearm classic) team summary tables.
     """
     found: Dict[str, str] = {}
     soup = BeautifulSoup(html, "html.parser")
 
-    # Pass 1 - table rows
+    def normalize_section_name(text: str) -> str:
+        s = (text or "").lower().strip()
+        if "rebound" in s:
+            return "rebounding"
+        if "assist" in s:
+            return "assists"
+        if "turnover" in s:
+            return "turnovers"
+        if "steal" in s:
+            return "steals"
+        if "block" in s:
+            return "blocks"
+        if "shoot" in s:
+            return "shooting"
+        if "score" in s or "scoring" in s:
+            return "scoring"
+        return ""
+
     for table in soup.find_all("table"):
+        current_section = ""
         overall_idx: Optional[int] = None
+
+        # Check for header row that names columns (e.g. St. Thomas (MN), Opponents)
         for tr in table.find_all("tr"):
-            header_cells = tr.find_all("th")
-            if header_cells and not tr.find("td"):
-                texts = [_label_key(c.get_text(" ", strip=True)) for c in tr.find_all(["th", "td"])]
-                if "overall" in texts:
-                    overall_idx = texts.index("overall")
+            th_cells = tr.find_all("th")
+            if th_cells and not tr.find("td"):
+                headers = [_label_key(c.get_text(" ", strip=True)) for c in th_cells]
+                if "overall" in headers:
+                    overall_idx = headers.index("overall")
                     break
 
         for tr in table.find_all("tr"):
+            # Check if this row is a section divider / colgroup header
+            # New Style: <th colspan="3" scope="colgroup"><div> Rebounding </div></th>
+            # Old Style: <td scope="colgroup" colspan="3" id="team-rebounding">Rebounding</td>
+            section_cell = tr.find(["th", "td"], attrs={"scope": re.compile(r"colgroup", re.I)}) or \
+                           tr.find(["th", "td"], attrs={"id": re.compile(r"^team-(scoring|shooting|rebounding|assists|turnovers|steals|blocks)", re.I)})
+            
+            if section_cell:
+                sec_text = section_cell.get_text(" ", strip=True)
+                norm_sec = normalize_section_name(sec_text)
+                if not norm_sec and section_cell.get("id"):
+                    norm_sec = normalize_section_name(section_cell.get("id", ""))
+                if norm_sec:
+                    current_section = norm_sec
+                    continue
+
             cells = tr.find_all(["td", "th"])
             if not (2 <= len(cells) <= 8):
                 continue
-            texts = [c.get_text(" ", strip=True) for c in cells]
-            key = _LABEL_LOOKUP.get(_label_key(texts[0]))
-            if not key or key in found:
-                continue
 
+            cell_texts = [c.get_text(" ", strip=True) for c in cells]
+            first_cell_text = cell_texts[0].strip()
+            label_norm = _label_key(first_cell_text)
+
+            # Determine stat value from team column (index 1 / overall_idx)
             val: Optional[str] = None
-            if overall_idx and overall_idx < len(texts):
-                val = _num_text(texts[overall_idx])
+            if overall_idx is not None and overall_idx < len(cell_texts):
+                val = _num_text(cell_texts[overall_idx])
             if val is None:
-                for t in texts[1:]:
+                for t in cell_texts[1:]:
                     val = _num_text(t)
                     if val is not None:
                         break
-            if val is not None:
-                found[key] = val
 
-    # Pass 2 - generic label/value markup for anything still missing
-    if len(found) < len(TEAM_STAT_KEYS):
-        for el in soup.find_all(["dt", "th", "td", "span", "div", "li", "p", "strong", "b", "label"]):
-            if el.find(True) is not None:
-                continue  # only leaf elements
-            key = _LABEL_LOOKUP.get(_label_key(el.get_text(" ", strip=True)))
-            if not key or key in found:
+            if val is None:
                 continue
 
-            val = None
-            for sib in el.find_next_siblings(limit=3):
-                val = _num_text(sib.get_text(" ", strip=True))
-                if val is not None:
-                    break
-            if val is None and el.parent is not None:
-                for sib in el.parent.find_next_siblings(limit=2):
-                    val = _num_text(sib.get_text(" ", strip=True))
-                    if val is not None:
-                        break
-            if val is not None:
-                found[key] = val
+            matched_key: Optional[str] = None
+
+            # 1. Section-aware contextual matching
+            if current_section == "rebounding":
+                if label_norm in ("pergame", "rpg", "pergame:rpg", "pergame/rpg") or "pergame" in label_norm or "rpg" in label_norm:
+                    matched_key = "reb_per_game"
+                elif label_norm in ("margin", "reboundingmargin", "reboundmargin") or "margin" in label_norm:
+                    matched_key = "reb_margin"
+
+            elif current_section == "assists":
+                if label_norm in ("pergame", "apg", "pergame:apg", "pergame/apg") or "pergame" in label_norm or "apg" in label_norm:
+                    matched_key = "ast_per_game"
+
+            elif current_section == "turnovers":
+                if label_norm in ("pergame", "to/g", "topg", "pergame:to/g", "pergame/to/g") or "pergame" in label_norm:
+                    matched_key = "to_per_game"
+                elif "ratio" in label_norm or "ast/to" in label_norm or "a/to" in label_norm:
+                    matched_key = "ast_to_ratio"
+                elif "pointsoff" in label_norm or "ptsoff" in label_norm:
+                    matched_key = "pts_off_to"
+
+            elif current_section == "steals":
+                if label_norm in ("pergame", "stl/g", "spg", "pergame:stl/g", "pergame/stl/g") or "pergame" in label_norm or "stl/g" in label_norm:
+                    matched_key = "stl_per_game"
+
+            elif current_section == "blocks":
+                if label_norm in ("pergame", "blk/g", "bpg", "pergame:blk/g", "pergame/blk/g") or "pergame" in label_norm or "blk/g" in label_norm:
+                    matched_key = "blk_per_game"
+
+            elif current_section == "shooting":
+                if "3pt" in label_norm or "3fg" in label_norm:
+                    if "percentage" in label_norm or "pct" in label_norm or "%" in label_norm:
+                        matched_key = "three_pt_pct"
+                    elif "pergame" in label_norm or "/g" in label_norm:
+                        matched_key = "three_pt_per_game"
+                elif "fg" in label_norm and "3" not in label_norm:
+                    if "percentage" in label_norm or "pct" in label_norm or "%" in label_norm:
+                        matched_key = "fg_pct"
+                    elif "pergame" in label_norm or "/g" in label_norm:
+                        matched_key = "fg_per_game"
+                elif "ft" in label_norm:
+                    if "percentage" in label_norm or "pct" in label_norm or "%" in label_norm:
+                        matched_key = "ft_pct"
+                    elif "pergame" in label_norm or "/g" in label_norm:
+                        matched_key = "ft_per_game"
+
+            elif current_section == "scoring":
+                if "pointspergame" in label_norm or "ppg" in label_norm or label_norm == "pergame":
+                    matched_key = "ppg"
+                elif "margin" in label_norm:
+                    matched_key = "scoring_margin"
+
+            # 2. Global direct alias lookup fallback
+            if not matched_key:
+                matched_key = _LABEL_LOOKUP.get(label_norm)
+
+            if matched_key and matched_key not in found:
+                found[matched_key] = val
 
     return found
 
 
 def build_team_stats(found: Dict[str, str]) -> Dict[str, str]:
-    """Formats parsed values in a fixed key order. Missing values use the standard zero format."""
+    """Formats parsed values in fixed key order. Missing values use standard zero format."""
     return {key: format_team_stat(key, found.get(key)) for key in TEAM_STAT_KEYS}
 
 
@@ -1296,7 +1368,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 def write_team_json(slug: str, team_data: Dict[str, Any]) -> None:
     for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
         with open(dest, "w", encoding="utf-8") as f:
-            json.dump(team_data, f, indent=2)  # no sort_keys: key order is part of the layout
+            json.dump(team_data, f, indent=2)
 
 
 def read_existing_json(slug: str) -> Dict[str, Any]:
@@ -1372,7 +1444,6 @@ async def scrape_single_team(
         gender_label = "Women's" if gender == "women" else "Men's"
         logger.info(f"Processing {label} ({gender_label})...")
 
-        # Stats page and roster page load in parallel
         stats_html, (roster_lookup, roster_used) = await asyncio.gather(
             fetch_page_html(context, team_cfg["stats_url"]),
             fetch_roster(context, team_cfg["roster_candidates"], label),
@@ -1459,7 +1530,6 @@ async def scrape_single_team(
         existing = read_existing_json(slug)
         same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
 
-        # Keep the previous team stats if this run could not read any
         if ts_status == "not_found" and same_source and existing.get("team_stats") \
                 and existing.get("team_stats_status") in ("ok", "partial", "kept_previous"):
             team_stats = existing["team_stats"]
@@ -1493,7 +1563,6 @@ async def scrape_single_team(
         team_data["team_stats"] = team_stats
         team_data["players"] = merged_players
 
-        # Never overwrite good data with an empty player scrape
         if not merged_players:
             if existing.get("players") and same_source:
                 logger.warning(f"  [{label}] No players parsed - keeping existing {slug}.json")
