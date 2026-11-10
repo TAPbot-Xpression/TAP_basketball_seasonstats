@@ -109,7 +109,7 @@
       --team-btn-text:  #ffffff;
     }
 
-    /* Non-Conf: neutral steel so it reads as "visiting opponent", not a Summit team */
+    /* Non-Conf Neutral Styling */
     [data-theme="non_conf"] {
       --team-primary:   #334155;
       --team-accent:    #94a3b8;
@@ -189,24 +189,24 @@
       display: inline-flex;
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: 4px;
-      border-radius: 11px;
-      gap: 4px;
+      padding: 3px;
+      border-radius: 9px;
+      gap: 3px;
     }
 
     .toggle-btn {
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 0.55rem 1rem;
-      border-radius: 8px;
+      padding: 0.48rem 0.85rem;
+      border-radius: 7px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.86rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
       transition: all 0.2s ease;
       white-space: nowrap;
     }
@@ -220,7 +220,7 @@
       background: var(--surface-2);
       border-color: var(--team-accent);
       color: #ffffff;
-      box-shadow: 0 0 14px var(--team-glow);
+      box-shadow: 0 0 12px var(--team-glow);
     }
 
     /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
@@ -272,11 +272,10 @@
       box-shadow: 0 0 15px var(--team-glow);
     }
 
-    /* Non-Conf pill: dashed outline sets it apart from the 8 Summit teams */
     .team-pill.non-conf {
       border-style: dashed;
       border-color: var(--border-light);
-      margin-left: 0.4rem;
+      margin-left: 0.3rem;
     }
 
     .team-pill.non-conf.active {
@@ -519,26 +518,26 @@
 
     .table-card-header {
       background: var(--surface-2);
-      padding: 1rem 1.35rem;
+      padding: 0.85rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-      gap: 0.85rem;
+      gap: 1rem;
+      flex-wrap: nowrap; /* Keeps items on single row at desktop full screen */
     }
 
-    /* Left column: title row + player count underneath */
     .table-card-left {
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
+      gap: 0.4rem;
+      min-width: 0;
     }
 
     .table-card-title-wrap {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
     }
 
@@ -546,66 +545,42 @@
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text);
+      white-space: nowrap;
     }
 
-    /* Opponent chip shown next to the title on the Non-Conf tab */
-    .opponent-chip {
-      display: none;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 9999px;
-      background: var(--team-glow);
-      border: 1px solid var(--team-accent);
-      color: var(--team-light);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-    }
-
-    .opponent-chip.show { display: inline-flex; }
-
+    /* Compact Hyperlinks Group */
     .header-links-group {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      flex-wrap: wrap;
+      gap: 0.4rem;
+      flex-wrap: nowrap;
     }
 
     .site-link-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.7rem;
-      border-radius: 7px;
+      gap: 0.3rem;
+      padding: 0.22rem 0.52rem;
+      border-radius: 6px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-light);
       color: var(--team-accent);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.84rem;
+      font-size: 0.76rem;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
 
     .site-link-btn:hover {
       background: var(--team-accent);
       color: var(--team-btn-text, #ffffff);
       border-color: var(--team-accent);
-      box-shadow: 0 0 10px var(--team-glow);
+      box-shadow: 0 0 8px var(--team-glow);
     }
 
     .site-link-btn.hidden { display: none; }
-
-    /* Game Averages / Season Totals toggle inside the table header */
-    .table-card-header .toggle-group-wrap {
-      background: var(--surface);
-    }
-
-    .table-card-header .toggle-btn {
-      padding: 0.45rem 0.9rem;
-    }
 
     .table-wrap { overflow-x: auto; }
 
@@ -693,7 +668,7 @@
       display: flex;
       align-items: center;
       gap: 0.55rem;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-family: 'JetBrains Mono', monospace;
       color: var(--text-muted);
     }
@@ -759,12 +734,16 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 768px) {
-      h1 { font-size: 1.8rem; }
+    @media (max-width: 980px) {
+      .table-card-header { flex-wrap: wrap; }
       .header-controls { align-items: flex-start; width: 100%; }
       .toggle-group-wrap { width: 100%; justify-content: center; }
       .toggle-btn { flex: 1; justify-content: center; }
       .table-card-header .toggle-group-wrap { width: 100%; }
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 1.8rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
       .team-pill.non-conf { margin-left: 0; }
     }
@@ -823,8 +802,8 @@
       <button class="team-pill active" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
-      <button class="team-pill non-conf" data-team="non_conf" onclick="selectTeam('non_conf', this)">
-        <span class="team-pill-dot ring" style="color:#94a3b8"></span> Non-Conf
+      <button class="team-pill non-conf" id="nonConfPill" data-team="non_conf" onclick="selectTeam('non_conf', this)">
+        <span class="team-pill-dot ring" style="color:#94a3b8"></span> <span id="nonConfPillLabel">Non-Conf</span>
       </button>
     </div>
   </section>
@@ -864,7 +843,7 @@
       </div>
       <div class="spotlight-details">
         <div class="spotlight-name" id="spotName">—</div>
-        <div class="spotlight-sub" id="spotSub">Summit League Basketball</div>
+        <div class="spotlight-sub" id="spotSub">Basketball Stats</div>
       </div>
     </div>
     <div>
@@ -876,20 +855,19 @@
   <div class="table-card">
     <div class="table-card-header">
 
-      <!-- Left: Title + links, with player count underneath -->
+      <!-- Left: Title + compact links, with player count underneath -->
       <div class="table-card-left">
         <div class="table-card-title-wrap">
           <span class="table-card-title" id="tableTitle">St. Thomas Men's Stats</span>
-          <span class="opponent-chip" id="opponentChip" title="Opponent loaded in the Non-Conf slot"></span>
           <div class="header-links-group">
             <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-              Official Stats Site ↗
+              Stats Site ↗
             </a>
             <a id="teamRosterLink" href="https://tommiesports.com/sports/mbball/roster/print" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-              Official Roster Site ↗
+              Roster Site ↗
             </a>
             <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-              st_thomas.json ↗
+              JSON ↗
             </a>
           </div>
         </div>
@@ -931,8 +909,6 @@
 
 <script>
   // ── Team Registry & Config ─────────────────────────────────────────────────
-  // Non-Conf links are NOT hard-coded: they come from "source_stats_url" and
-  // "source_roster_url" inside non_conf.json / non_conf_women.json.
   const TEAMS = {
     kansas_city: {
       id: 'kansas_city',
@@ -1056,7 +1032,7 @@
     },
     non_conf: {
       id: 'non_conf',
-      name: 'Non-Conf',
+      name: 'Non-Conf Opponent',
       shortName: 'Non-Conf',
       isNonConf: true,
       men:   { file: 'non_conf.json',       statsSiteUrl: '', rosterSiteUrl: '' },
@@ -1107,7 +1083,7 @@
   let sortDir = -1;
   let searchNum = '';
   let RANKS = {};
-  let LOAD_TOKEN = 0; // guards against out-of-order responses when switching quickly
+  let LOAD_TOKEN = 0;
 
   // ── Switch Gender Division ──────────────────────────────────────────────────
   function setGender(gender) {
@@ -1207,15 +1183,13 @@
     }
   }
 
-  function setOpponentChip(text) {
-    const chip = document.getElementById('opponentChip');
-    if (text) {
-      chip.textContent = `vs. ${text}`;
-      chip.classList.add('show');
-    } else {
-      chip.textContent = '';
-      chip.classList.remove('show');
+  // ── Helper to format Opponent Names with (Non-Conf) ──────────────────────────
+  function getDisplayTeamName(teamObj, rawJson) {
+    if (teamObj.isNonConf) {
+      const opp = (rawJson && rawJson.team && rawJson.team !== 'Non-Conf') ? rawJson.team : 'Non-Conf Opponent';
+      return `${opp} (Non-Conf)`;
     }
+    return teamObj.name;
   }
 
   // ── Placeholder / Error Panels ──────────────────────────────────────────────
@@ -1236,16 +1210,14 @@
     document.getElementById('statusText').textContent = 'Loading…';
     showTablePanel(`Loading ${esc(team.shortName)} (${genderLabel}) stats…`);
 
-    document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats`;
-    setOpponentChip('');
-
-    // Conference teams have fixed links; Non-Conf links are filled in after the JSON loads
+    // Reset links for initial fetch
     if (isNonConf) {
       setLink('teamStatsLink', '');
       setLink('teamRosterLink', '');
     } else {
       setLink('teamStatsLink', teamConfig.statsSiteUrl, `View official ${team.shortName} stats on their athletics website`);
       setLink('teamRosterLink', teamConfig.rosterSiteUrl, `View official ${team.shortName} roster on their athletics website`);
+      document.getElementById('tableTitle').textContent = `${team.name} ${genderLabel} Stats`;
     }
 
     const jsonLinkEl = document.getElementById('teamJsonLink');
@@ -1257,7 +1229,7 @@
 
     try {
       const res = await fetch(`${teamConfig.file}?t=${Date.now()}`);
-      if (token !== LOAD_TOKEN) return; // a newer selection took over
+      if (token !== LOAD_TOKEN) return;
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
@@ -1303,24 +1275,29 @@
 
       const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
       const status = RAW_DATA.status || 'ok';
+      const formattedTitle = getDisplayTeamName(team, RAW_DATA);
 
-      // ── Non-Conf specific handling ────────────────────────────────────────
+      document.getElementById('tableTitle').textContent = `${formattedTitle} ${genderLabel} Stats`;
+
+      // ── Non-Conf dynamic configuration ──────────────────────────────────────
       if (isNonConf) {
         const stackUrl  = RAW_DATA.source_stats_url  || '';
         const rosterUrl = RAW_DATA.source_roster_url || '';
-        const oppName   = (status === 'empty') ? '' : (RAW_DATA.team || '');
+        const rawName   = (RAW_DATA.team && RAW_DATA.team !== 'Non-Conf') ? RAW_DATA.team : 'Non-Conf';
 
-        setLink('teamStatsLink',  stackUrl,  `View ${oppName || 'opponent'} stats on their athletics website`);
-        setLink('teamRosterLink', rosterUrl, `View ${oppName || 'opponent'} roster on their athletics website`);
-        setOpponentChip(oppName && oppName !== 'Non-Conf' ? oppName : '');
+        // Update the pill label dynamically
+        document.getElementById('nonConfPillLabel').textContent = `${rawName} (Non-Conf)`;
+
+        setLink('teamStatsLink',  stackUrl,  `View ${rawName} stats on their athletics website`);
+        setLink('teamRosterLink', rosterUrl, `View ${rawName} roster on their athletics website`);
 
         if (status === 'empty') {
           document.getElementById('statusDot').className = 'status-dot warn';
           document.getElementById('statusText').textContent = 'No opponent loaded';
           document.getElementById('metaBar').innerHTML =
-            `<strong>Non-Conf ${genderLabel}</strong> · Waiting for an opponent link`;
+            `<strong>${formattedTitle} ${genderLabel}</strong> · Waiting for an opponent link`;
           showTablePanel(`
-            <span class="empty-title">No Non-Conf ${genderLabel} opponent loaded</span>
+            <span class="empty-title">No ${genderLabel} Opponent Loaded</span>
             ${esc(RAW_DATA.message || 'Add a stats link to load an opponent.')}
             <br>
             <span class="empty-steps">
@@ -1334,9 +1311,9 @@
           document.getElementById('statusDot').className = 'status-dot warn';
           document.getElementById('statusText').textContent = '0 Players';
           document.getElementById('metaBar').innerHTML =
-            `<strong>${esc(RAW_DATA.team || 'Non-Conf')}</strong> · Updated: ${updatedTime}`;
+            `<strong>${esc(formattedTitle)}</strong> · Updated: ${updatedTime}`;
           showTablePanel(`
-            <span class="empty-title">Couldn't read stats for ${esc(RAW_DATA.team || 'this opponent')}</span>
+            <span class="empty-title">Couldn't read stats for ${esc(formattedTitle)}</span>
             ${esc(RAW_DATA.message || 'Make sure the link is the opponent\'s basketball stats page.')}
             ${stackUrl ? `<br><small>Link used: <a href="${esc(stackUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--team-accent)">${esc(stackUrl)}</a></small>` : ''}`);
           return;
@@ -1344,7 +1321,7 @@
 
         const styleNote = RAW_DATA.site_style ? ` · ${esc(RAW_DATA.site_style)}` : '';
         document.getElementById('metaBar').innerHTML =
-          `<strong>${esc(RAW_DATA.team || 'Non-Conf')}</strong> · Non-Conf ${genderLabel} · Updated: ${updatedTime}${styleNote}`;
+          `<strong>${esc(formattedTitle)}</strong> · ${genderLabel} Basketball · Updated: ${updatedTime}${styleNote}`;
       } else {
         document.getElementById('metaBar').innerHTML =
           `<strong>${esc(team.name)}</strong> · Updated: ${updatedTime}`;
@@ -1446,15 +1423,14 @@
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
     const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Game Averages" : "Season Totals";
-    const isNonConf   = !!TEAMS[CURRENT_TEAM].isNonConf;
-    const teamLabel   = (RAW_DATA && RAW_DATA.team) || TEAMS[CURRENT_TEAM].name;
-    const confTag     = isNonConf ? 'Non-Conf · ' : '';
+    const teamObj     = TEAMS[CURRENT_TEAM];
+    const teamTitle   = getDisplayTeamName(teamObj, RAW_DATA);
 
     document.getElementById('spotJersey').textContent = player.number || '—';
     document.getElementById('spotYr').textContent  = player.year || '—';
     document.getElementById('spotPos').textContent = player.position || '—';
     document.getElementById('spotName').textContent = player.name || '—';
-    document.getElementById('spotSub').textContent  = `${confTag}${teamLabel} · ${genderLabel} Basketball (${modeLabel})`;
+    document.getElementById('spotSub').textContent  = `${teamTitle} · ${genderLabel} Basketball (${modeLabel})`;
 
     const spotCols = STAT_CONFIGS[CURRENT_STAT_MODE].filter(c => !c.tableOnly);
     const grid = document.getElementById('spotStatGrid');
