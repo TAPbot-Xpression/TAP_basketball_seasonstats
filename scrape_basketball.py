@@ -6,8 +6,11 @@ Features:
   - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
     Sidearm bot challenges and wait for full DOM hydration.
   - Print Roster URLs: Uses the exact print-view URLs supplied for each team (men's and women's).
-  - Print-Table Parser: Parses tabular and stacked Sidearm print layouts (e.g., handles column
-    order variations like St. Thomas where Year precedes Position).
+  - Print-Table Parser: Parses tabular and stacked Sidearm print layouts.
+  - Old Sidearm HTML tables: Targets <section id="individual-overall"> and matches exact
+    data-label attributes (AVG, FG%, 3PT%, FT%, REB/TOT, AST, TO, STL, BLK) based on live
+    Sidearm table markup (North Dakota, Oral Roberts, South Dakota).
+  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Normalizes Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
   - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
@@ -261,7 +264,7 @@ def normalize_year(yr_str: str) -> str:
 
     y = yr_str.upper().strip()
     y = y.replace("REDSHIRT", "R-").replace("RS-", "R-")
-    y = re.sub(r"[.\s]+", "", y)  # 'R-Jr.' -> 'R-JR', 'Fr.' -> 'FR', '5th' -> '5TH'
+    y = re.sub(r"[.\s]+", "", y)
 
     is_rs = y.startswith("R-")
     base = y[2:] if is_rs else y
@@ -451,7 +454,10 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
 
 
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
-    """Parses Sidearm HTML stats tables from <section id="individual-overall">."""
+    """
+    Parses Sidearm HTML stats tables from <section id="individual-overall"> (or full cumulative table).
+    Extracts all 9 stats via exact data-label attributes matching live Sidearm responsive markup.
+    """
     players: List[Dict[str, Any]] = []
 
     target_sections = soup.find_all("section", id=re.compile(r"individual-overall|individual-scoring|individual-averages", re.I))
@@ -494,6 +500,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
             cell_texts = [c.get_text(strip=True) for c in cells]
 
+            # Build exact data-label dictionary for this row
             label_map: Dict[str, str] = {}
             for cell in cells:
                 lbl = cell.get("data-label", "").strip().upper()
@@ -524,13 +531,16 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             c_num = clean_number(raw_num)
 
             def get_stat(data_labels: List[str]) -> str:
+                """Returns the first non-empty value matching any data-label candidate."""
                 for lbl in data_labels:
                     if lbl in label_map:
                         v = label_map[lbl].strip()
-                        if v and v.lower() not in DISCARD_EXACT_TOKENS and "view bio" not in v.lower():
+                        # Only reject obvious non-stat values like 'View Bio' or empty strings
+                        if v and "view bio" not in v.lower() and v.lower() != "null":
                             return v
                 return ""
 
+            # Explicit mapping to Sidearm HTML table data-labels
             scoring_avg  = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G", "PTS"])
             fg_pct       = get_stat(["FG%", "FG PCT", "PCT"])
             three_pt_pct = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
@@ -541,7 +551,8 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             stl          = get_stat(["STL", "SPG", "STEALS", "STL/G"])
             blk          = get_stat(["BLK", "BPG", "BLOCKS", "BLK/G"])
 
-            if not any([scoring_avg, fg_pct, ft_pct, tot_reb]):
+            # Verify that at least basic stats were extracted
+            if not any([scoring_avg, fg_pct, ft_pct, tot_reb, ast]):
                 continue
 
             table_players.append({
