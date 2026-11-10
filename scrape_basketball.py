@@ -6,10 +6,12 @@ Features:
   - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
     Sidearm bot challenges and wait for full DOM hydration.
   - Print Roster URLs: Uses the exact print-view URLs supplied for each team (men's and women's).
-  - Print-Table Parser: Parses tabular and stacked Sidearm print layouts.
-  - Old Sidearm HTML tables: Targets <section id="individual-overall"> and matches exact
-    data-label attributes (AVG, FG%, 3PT%, FT%, REB/TOT, AST, TO, STL, BLK) based on live
-    Sidearm table markup (North Dakota, Oral Roberts, South Dakota).
+  - Multi-Table Old Sidearm Parser:
+      * Scans all candidate tables on the stats page instead of prematurely breaking on the first
+        partial table (which was previously locking into the 'Scoring Only' table).
+      * Merges player stats across multiple tables (e.g., scoring table + rebounding/assists/defense tables).
+      * Inspects both cell `data-label` attributes and column headers (`thead`/`th`) for robust mapping.
+      * Extracts ALL 9 core statistics: AVG, FG%, 3PT%, FT%, TOT (Rebounds), AST, TO, STL, BLK.
   - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
   - Normalizes Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
@@ -455,25 +457,23 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
 
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
-    Parses Sidearm HTML stats tables from <section id="individual-overall"> (or full cumulative table).
-    Extracts all 9 stats via exact data-label attributes matching live Sidearm responsive markup.
+    Rebuilt multi-table parser for Sidearm HTML stats pages.
+    Instead of stopping after the first partial table (e.g., scoring-only),
+    this aggregates and merges player statistics across all valid overall/cumulative tables.
     """
-    players: List[Dict[str, Any]] = []
+    players_by_key: Dict[str, Dict[str, Any]] = {}
+    player_order: List[str] = []
 
-    target_sections = soup.find_all("section", id=re.compile(r"individual-overall|individual-scoring|individual-averages", re.I))
-    candidate_tables = []
-    if target_sections:
-        for sec in target_sections:
-            candidate_tables.extend(sec.find_all("table"))
-    else:
-        candidate_tables = soup.find_all("table")
+    # Find candidate tables
+    all_tables = soup.find_all("table")
 
-    for table in candidate_tables:
+    for table in all_tables:
         parent_tags = [p for p in table.parents if p.name in ["div", "section"]]
         parent_ids = " ".join(p.get("id", "") for p in parent_tags).lower()
         parent_classes = " ".join(" ".join(p.get("class", [])) for p in parent_tags).lower()
         parent_text = " ".join(p.get_text() for p in parent_tags[:2])[:300].lower()
 
+        # Discard irrelevant tables
         if any(bad in parent_ids for bad in ["game-comparison", "game-by-game", "game-highs"]):
             continue
         if any(bad in parent_classes for bad in ["game-comparison", "game-by-game"]):
@@ -481,12 +481,27 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         if any(bad in parent_text for bad in ["game-by-game", "schedule", "highs", "comparison"]):
             continue
 
+        caption = table.find("caption")
+        if caption and any(bad in caption.get_text().lower() for bad in ["comparison", "game by game", "highs"]):
+            continue
+
+        thead = table.find("thead")
+        if thead:
+            th_texts = [th.get_text().strip().upper() for th in thead.find_all(["th", "td"])]
+            if any(bad in th_texts for bad in ["OPPONENT", "DATE", "RESULT", "SCORE", "MAR"]):
+                continue
+
         tbody = table.find("tbody")
         rows = tbody.find_all("tr") if tbody else table.find_all("tr")
         if not rows:
             continue
 
-        table_players: List[Dict[str, Any]] = []
+        # Extract column header index map as backup for tables without data-labels
+        header_map: Dict[int, str] = {}
+        if thead:
+            header_row = thead.find_all("tr")[-1] if thead.find_all("tr") else thead
+            for idx, th in enumerate(header_row.find_all(["th", "td"])):
+                header_map[idx] = th.get_text(strip=True).upper()
 
         for row in rows:
             if row.find("th") and not row.find("td"):
@@ -500,13 +515,16 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
             cell_texts = [c.get_text(strip=True) for c in cells]
 
-            # Build exact data-label dictionary for this row
+            # Build label map for this row using data-label OR header index
             label_map: Dict[str, str] = {}
-            for cell in cells:
+            for idx, cell in enumerate(cells):
                 lbl = cell.get("data-label", "").strip().upper()
+                if not lbl and idx in header_map:
+                    lbl = header_map[idx]
                 if lbl:
                     label_map[lbl] = cell.get_text(strip=True)
 
+            # Player Name
             raw_name = ""
             name_a = row.find("a", href=re.compile(r"roster", re.I)) or row.find("a", attrs={"data-player-id": True})
             if name_a:
@@ -522,6 +540,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             if not is_valid_player_name(c_name):
                 continue
 
+            # Jersey Number
             raw_num = ""
             jersey_el = row.find(class_=re.compile(r"jersey|number", re.I)) or row.find("td", class_=re.compile(r"hide-on-medium-down", re.I))
             if jersey_el and re.match(r"^\d{1,2}$", jersey_el.get_text(strip=True)):
@@ -531,49 +550,65 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
             c_num = clean_number(raw_num)
 
             def get_stat(data_labels: List[str]) -> str:
-                """Returns the first non-empty value matching any data-label candidate."""
                 for lbl in data_labels:
                     if lbl in label_map:
                         v = label_map[lbl].strip()
-                        # Only reject obvious non-stat values like 'View Bio' or empty strings
                         if v and "view bio" not in v.lower() and v.lower() != "null":
                             return v
                 return ""
 
-            # Explicit mapping to Sidearm HTML table data-labels
-            scoring_avg  = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G", "PTS"])
-            fg_pct       = get_stat(["FG%", "FG PCT", "PCT"])
-            three_pt_pct = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
-            ft_pct       = get_stat(["FT%", "FT PCT", "FTPCT"])
-            tot_reb      = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS", "REB/G"])
-            ast          = get_stat(["AST", "APG", "ASSISTS", "AST/G"])
-            to           = get_stat(["TO", "TOPG", "TURNOVERS", "TO/G"])
-            stl          = get_stat(["STL", "SPG", "STEALS", "STL/G"])
-            blk          = get_stat(["BLK", "BPG", "BLOCKS", "BLK/G"])
+            s_avg   = get_stat(["AVG", "PTS/G", "PPG", "PTS_AVG", "POINTS/G", "PTS"])
+            s_fg    = get_stat(["FG%", "FG PCT", "PCT"])
+            s_3pt   = get_stat(["3PT%", "3FG PCT", "3P%", "3FG%", "3PT PCT"])
+            s_ft    = get_stat(["FT%", "FT PCT", "FTPCT"])
+            s_reb   = get_stat(["REB", "TOT", "TOTAL", "TOTAL REBOUNDS", "TOT REB", "REBOUNDS", "REB/G"])
+            s_ast   = get_stat(["AST", "APG", "ASSISTS", "AST/G"])
+            s_to    = get_stat(["TO", "TOPG", "TURNOVERS", "TO/G"])
+            s_stl   = get_stat(["STL", "SPG", "STEALS", "STL/G"])
+            s_blk   = get_stat(["BLK", "BPG", "BLOCKS", "BLK/G"])
 
-            # Verify that at least basic stats were extracted
-            if not any([scoring_avg, fg_pct, ft_pct, tot_reb, ast]):
-                continue
+            # Use name as composite key to merge stats across tables
+            key = c_name.lower()
+            if key not in players_by_key:
+                player_order.append(key)
+                players_by_key[key] = {
+                    "name": c_name,
+                    "number": c_num,
+                    "avg": s_avg,
+                    "fg_pct": s_fg,
+                    "three_pt_pct": s_3pt,
+                    "ft_pct": s_ft,
+                    "tot_reb": s_reb,
+                    "ast": s_ast,
+                    "to": s_to,
+                    "stl": s_stl,
+                    "blk": s_blk,
+                }
+            else:
+                p_entry = players_by_key[key]
+                if not p_entry["number"] and c_num:
+                    p_entry["number"] = c_num
+                if not p_entry["avg"] and s_avg:
+                    p_entry["avg"] = s_avg
+                if not p_entry["fg_pct"] and s_fg:
+                    p_entry["fg_pct"] = s_fg
+                if not p_entry["three_pt_pct"] and s_3pt:
+                    p_entry["three_pt_pct"] = s_3pt
+                if not p_entry["ft_pct"] and s_ft:
+                    p_entry["ft_pct"] = s_ft
+                if not p_entry["tot_reb"] and s_reb:
+                    p_entry["tot_reb"] = s_reb
+                if not p_entry["ast"] and s_ast:
+                    p_entry["ast"] = s_ast
+                if not p_entry["to"] and s_to:
+                    p_entry["to"] = s_to
+                if not p_entry["stl"] and s_stl:
+                    p_entry["stl"] = s_stl
+                if not p_entry["blk"] and s_blk:
+                    p_entry["blk"] = s_blk
 
-            table_players.append({
-                "name": c_name,
-                "number": c_num,
-                "avg": scoring_avg,
-                "fg_pct": fg_pct,
-                "three_pt_pct": three_pt_pct,
-                "ft_pct": ft_pct,
-                "tot_reb": tot_reb,
-                "ast": ast,
-                "to": to,
-                "stl": stl,
-                "blk": blk,
-            })
-
-        if len(table_players) >= 5:
-            players = table_players
-            break
-
-    return players
+    result_list = [players_by_key[k] for k in player_order if any(players_by_key[k][f] for f in ["avg", "tot_reb", "ast", "fg_pct"])]
+    return result_list
 
 
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
