@@ -7,6 +7,7 @@ lxml==5.2.2               # Fast HTML/XML parser (used by BeautifulSoup)
 # Uncomment the lines below ONLY if switching to a Selenium-based scraper
 # selenium==4.21.0
 # webdriver-manager==4.0.1
+playwright>=1.44.0   # Headless browser for JS-rendered / bot-protected pages
 
 # ── Data Handling ──────────────────────────────────────────────────────────
 python-dateutil==2.9.0    # Robust date/time parsing for last_scraped timestamps
