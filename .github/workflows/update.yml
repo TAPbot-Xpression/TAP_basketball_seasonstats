@@ -7,7 +7,38 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+  workflow_dispatch: # Manual run from the GitHub Actions tab (with Non-Conf link fields)
+    inputs:
+      men_team_name:
+        description: "MEN'S Non-Conf - team name (optional, auto-detected if blank)"
+        required: false
+        default: ""
+        type: string
+      men_stats_url:
+        description: "MEN'S Non-Conf - stats page link (type 'clear' to empty this slot)"
+        required: false
+        default: ""
+        type: string
+      men_roster_url:
+        description: "MEN'S Non-Conf - roster link (optional, auto-found if blank)"
+        required: false
+        default: ""
+        type: string
+      women_team_name:
+        description: "WOMEN'S Non-Conf - team name (optional, auto-detected if blank)"
+        required: false
+        default: ""
+        type: string
+      women_stats_url:
+        description: "WOMEN'S Non-Conf - stats page link (type 'clear' to empty this slot)"
+        required: false
+        default: ""
+        type: string
+      women_roster_url:
+        description: "WOMEN'S Non-Conf - roster link (optional, auto-found if blank)"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: write   # Required to commit JSON files back to the repo
@@ -61,7 +92,63 @@ jobs:
           python -c "from playwright.sync_api import sync_playwright; p = sync_playwright().start(); b = p.chromium.launch(); b.close(); p.stop()" \
             || playwright install --with-deps chromium-headless-shell
 
-      # ── 5. Run the unified basketball scraper (Men's + Women's) ───────────
+      # ── 4c. Save Non-Conf links (only when typed into the Run workflow form)
+      # The links are stored in non_conf_config.json so the daily 9 AM run keeps
+      # refreshing the same Non-Conf opponent until you replace or clear it.
+      - name: Update Non-Conf config
+        env:
+          MEN_NAME: ${{ inputs.men_team_name }}
+          MEN_STATS: ${{ inputs.men_stats_url }}
+          MEN_ROSTER: ${{ inputs.men_roster_url }}
+          WOMEN_NAME: ${{ inputs.women_team_name }}
+          WOMEN_STATS: ${{ inputs.women_stats_url }}
+          WOMEN_ROSTER: ${{ inputs.women_roster_url }}
+        run: |
+          python - <<'PY'
+          import json, os, sys
+
+          PATH = "non_conf_config.json"
+          EMPTY = {"name": "", "stats_url": "", "roster_url": ""}
+
+          try:
+              with open(PATH, encoding="utf-8") as f:
+                  cfg = json.load(f)
+          except (FileNotFoundError, json.JSONDecodeError):
+              cfg = {}
+
+          for gender in ("men", "women"):
+              entry = cfg.get(gender) if isinstance(cfg.get(gender), dict) else {}
+              cfg[gender] = {k: str(entry.get(k, "") or "") for k in EMPTY}
+
+          def env(key):
+              return (os.environ.get(key) or "").strip()
+
+          for gender, prefix in (("men", "MEN"), ("women", "WOMEN")):
+              name = env(prefix + "_NAME")
+              stats = env(prefix + "_STATS")
+              roster = env(prefix + "_ROSTER")
+
+              if not stats:
+                  continue  # nothing typed for this slot -> keep what is saved
+
+              if stats.lower() == "clear":
+                  cfg[gender] = dict(EMPTY)
+                  print(f"Cleared {gender} Non-Conf slot")
+                  continue
+
+              for label, url in (("stats", stats), ("roster", roster)):
+                  if url and not url.startswith(("http://", "https://")):
+                      sys.exit(f"{gender} {label} link must start with http:// or https://")
+
+              cfg[gender] = {"name": name, "stats_url": stats, "roster_url": roster}
+              print(f"Saved {gender} Non-Conf link: {stats}")
+
+          with open(PATH, "w", encoding="utf-8") as f:
+              json.dump(cfg, f, indent=2)
+              f.write("\n")
+          PY
+
+      # ── 5. Run the unified basketball scraper (Conference + Non-Conf) ─────
       - name: Run basketball scraper
         run: python scrape_basketball.py
 
@@ -70,7 +157,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/*.json
+          git add docs/*.json non_conf_config.json
           git diff --cached --quiet || git commit -m "chore: update Men's and Women's basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
 
