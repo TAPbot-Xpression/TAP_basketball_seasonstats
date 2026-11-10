@@ -2,12 +2,12 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state_women",
   "gender": "women",
-  "generated_at": "2026-11-10T01:55:17Z",
+  "generated_at": "2026-11-10T02:26:05Z",
   "players": [
     {
       "name": "Karrington Asp",
       "number": "15",
-      "position": "",
+      "position": "F",
       "year": "",
       "avg": "19.0",
       "fg_pct": ".516",
@@ -22,7 +22,7 @@
     {
       "name": "Jocelyn Schiller",
       "number": "30",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "13.5",
       "fg_pct": ".467",
@@ -37,7 +37,7 @@
     {
       "name": "Marisa Frost",
       "number": "12",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "10.5",
       "fg_pct": ".421",
@@ -52,7 +52,7 @@
     {
       "name": "Elena Lazarevic",
       "number": "10",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "6.5",
       "fg_pct": ".417",
@@ -67,7 +67,7 @@
     {
       "name": "Miriley Simon",
       "number": "32",
-      "position": "",
+      "position": "F",
       "year": "",
       "avg": "5.5",
       "fg_pct": ".500",
@@ -82,7 +82,7 @@
     {
       "name": "McKenna Johnson",
       "number": "35",
-      "position": "",
+      "position": "F",
       "year": "",
       "avg": "5.5",
       "fg_pct": ".400",
@@ -97,7 +97,7 @@
     {
       "name": "Avery Koenen",
       "number": "22",
-      "position": "",
+      "position": "F",
       "year": "",
       "avg": "3.0",
       "fg_pct": "1.000",
@@ -112,7 +112,7 @@
     {
       "name": "Sophie Hawkinson",
       "number": "13",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "3.0",
       "fg_pct": ".111",
@@ -127,8 +127,8 @@
     {
       "name": "Lily Niebuhr",
       "number": "31",
-      "position": "",
-      "year": "",
+      "position": "F",
+      "year": "GR",
       "avg": "3.0",
       "fg_pct": ".500",
       "three_pt_pct": ".000",
@@ -142,7 +142,7 @@
     {
       "name": "Abby Krzewinski",
       "number": "40",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "2.0",
       "fg_pct": ".500",
@@ -157,7 +157,7 @@
     {
       "name": "Madelynn Muniz",
       "number": "3",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "2.0",
       "fg_pct": ".500",
@@ -172,7 +172,7 @@
     {
       "name": "Georgia Ell",
       "number": "14",
-      "position": "",
+      "position": "F",
       "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
@@ -187,7 +187,7 @@
     {
       "name": "Liza Trenbeath",
       "number": "5",
-      "position": "",
+      "position": "G",
       "year": "",
       "avg": "0.0",
       "fg_pct": ".000",
