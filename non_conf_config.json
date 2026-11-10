@@ -1,12 +1,12 @@
 {
   "men": {
-    "name": "",
-    "stats_url": "",
-    "roster_url": ""
+    "name": "Macalester",
+    "stats_url": "https://athletics.macalester.edu/sports/mens-basketball/stats/2026-27",
+    "roster_url": "https://athletics.macalester.edu/sports/mens-basketball/roster?print=true"
   },
   "women": {
-    "name": "",
-    "stats_url": "",
-    "roster_url": ""
+    "name": "St. Kate's",
+    "stats_url": "https://stkatesathletics.com/sports/womens-basketball/stats/2026-27",
+    "roster_url": "https://stkatesathletics.com/sports/womens-basketball/roster?print=true"
   }
 }
