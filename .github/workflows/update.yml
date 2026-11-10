@@ -2,13 +2,11 @@ name: Scrape Basketball Stats
 
 on:
   schedule:
-    # Daily 9am UTC scan
+    # Daily at 9:00 AM UTC
     - cron: "0 9 * * *"
-
   push:
     branches:
       - main
-
   workflow_dispatch: # Allows manual trigger from GitHub Actions UI
 
 permissions:
@@ -16,9 +14,18 @@ permissions:
   pages: write      # Required to deploy to GitHub Pages
   id-token: write   # Required for Pages OIDC authentication
 
+# Prevents two runs (e.g. a push and the daily schedule) from colliding
+concurrency:
+  group: scrape-and-deploy
+  cancel-in-progress: false
+
 jobs:
-  scrape:
+  scrape-and-deploy:
     runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       # ── 1. Check out the repo ──────────────────────────────────────────────
@@ -44,9 +51,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-        # ── 4b. Install Playwright browser ───────────────────────────────────
-      - name: Install Playwright Chromium
-        run: playwright install --with-deps chromium
+      # ── 4b. Install Playwright browser (fast) ──────────────────────────────
+      # Downloads only the small headless browser (no slow apt/font packages).
+      # If it can't launch because of missing system libraries, it falls back
+      # to the full --with-deps install automatically.
+      - name: Install Playwright browser
+        run: |
+          playwright install chromium-headless-shell
+          python -c "from playwright.sync_api import sync_playwright; p = sync_playwright().start(); b = p.chromium.launch(); b.close(); p.stop()" \
+            || playwright install --with-deps chromium-headless-shell
 
       # ── 5. Run the unified basketball scraper (Men's + Women's) ───────────
       - name: Run basketball scraper
@@ -57,22 +70,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/kansas_city.json \
-                  docs/north_dakota.json \
-                  docs/north_dakota_state.json \
-                  docs/omaha.json \
-                  docs/oral_roberts.json \
-                  docs/south_dakota.json \
-                  docs/south_dakota_state.json \
-                  docs/st_thomas.json \
-                  docs/kansas_city_women.json \
-                  docs/north_dakota_women.json \
-                  docs/north_dakota_state_women.json \
-                  docs/omaha_women.json \
-                  docs/oral_roberts_women.json \
-                  docs/south_dakota_women.json \
-                  docs/south_dakota_state_women.json \
-                  docs/st_thomas_women.json
+          git add docs/*.json
           git diff --cached --quiet || git commit -m "chore: update Men's and Women's basketball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
           git push
 
@@ -82,15 +80,6 @@ jobs:
         with:
           path: docs/
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: scrape   # Only runs after scrape job completes successfully
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
       # ── 8. Deploy to GitHub Pages ──────────────────────────────────────────
       - name: Deploy to GitHub Pages
         id: deployment
