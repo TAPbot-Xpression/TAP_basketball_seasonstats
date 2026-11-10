@@ -1,32 +1,30 @@
 """
 scrape_basketball.py
-Unified Summit League Basketball player season stats and roster scraper (Men's & Women's).
+Unified Summit League Basketball player season stats and roster scraper (Men's & Women's)
+plus two flexible "Non-Conf" slots (one Men's, one Women's) for any Sidearm opponent.
 
 Features:
   - High-Performance Concurrent Scraping:
-      * Uses Async Playwright with an asyncio Semaphore pool (concurrency = 5).
-      * Scrapes all 16 Men's and Women's teams in parallel (~20-30 seconds).
+      * Async Playwright with an asyncio Semaphore pool (concurrency = 5).
+      * Scrapes all conference teams and both Non-Conf slots in parallel.
+  - Non-Conf Slots (non_conf.json / non_conf_women.json):
+      * Reads non_conf_config.json (written by the GitHub "Run workflow" form):
+            {"men":   {"name": "", "stats_url": "", "roster_url": ""},
+             "women": {"name": "", "stats_url": "", "roster_url": ""}}
+      * Empty slot  -> writes a placeholder JSON so the site shows "no opponent loaded".
+      * Roster link blank -> derives candidate print-roster URLs from the stats link
+        and tries each until one returns players.
+      * Team name blank -> auto-detected from the stats page (og:site_name / <title> / domain).
+      * Auto-detects New Style (Nuxt JSON) vs Old Style (HTML tables) by what the page contains.
+      * If a Non-Conf link can't be parsed, a stale opponent is never shown as the new one.
+  - Safety: if a scrape returns zero players, existing good data for that team is kept.
   - Position & Academic Class Standardization:
-      * Supports 'G' (Guard), 'F' (Forward), and 'W' (Winger / Wing, e.g., SDSU).
-      * Standardizes academic standing (FR, SO, JR, SR, GR, R-FR, R-SO, R-JR, R-SR).
-      * Supports ordinal year designations (1st, 2nd, 3rd, 4th, 5th / 1st Year, etc. for NDSU).
-  - Robust Nuxt & Print Roster Parser:
-      * Inspects __NUXT_DATA__ on roster and stats pages to extract Position and Year
-        directly from Sidearm state when HTML print tables are client-rendered.
-      * Falls back to responsive HTML table and card block parsers.
-  - Team & TM Discard Filtering:
-      * Completely removes #TM Team, Team, Totals, Opponents, and technical foul rows.
-  - Dual Output (Totals & Per-Game Averages):
-      * Games Played: gp, gs, min, min_avg
-      * Scoring: pts (total points), avg (PTS/G / PPG), fg_pct, three_pt_pct, ft_pct
-      * Rebounding: tot_reb (season total), reb_avg (REB/G), off_reb, def_reb
-      * Playmaking: ast (season total), ast_avg (AST/G), to (season total), to_avg (TO/G)
-      * Defense: stl (season total), stl_avg (STL/G), blk (season total), blk_avg (BLK/G)
-  - Nuxt JSON Disambiguation:
-      * Disambiguates Scoring PPG vs Rebounding RPG.
-      * Includes calculated fallback (Stat / GP) if only cumulative totals are present.
-  - Multi-tier matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
-    Last-name + number correlation -> Fuzzy string distance matching (difflib).
+      * 'G' (Guard), 'F' (Forward), 'W' (Winger / Wing, e.g., SDSU).
+      * FR, SO, JR, SR, GR, R-FR, R-SO, R-JR, R-SR, plus ordinals (1st, 2nd, 3rd, 4th, 5th - NDSU).
+  - Nuxt & Print Roster Parser: __NUXT_DATA__ extraction with table / card-block fallbacks.
+  - Team & TM Discard Filtering: removes #TM Team, Team, Totals, Opponents rows.
+  - Dual Output (Totals & Per-Game Averages) with calculated per-game fallbacks.
+  - Multi-tier roster matching: exact -> jersey -> suffix-agnostic -> last name + number -> fuzzy.
 """
 
 import asyncio
@@ -36,7 +34,8 @@ import logging
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, BrowserContext, Page
 
@@ -47,6 +46,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 CONCURRENCY_LIMIT = 5
+MIN_ROSTER_ENTRIES = 8   # roster_lookup holds name + #number keys, so 8 ~= 4+ players
+NON_CONF_CONFIG_PATH = "non_conf_config.json"
+NON_CONF_SLUGS = {"men": "non_conf", "women": "non_conf_women"}
 
 # ── Summit League Men's Basketball Configuration ──────────────────────────────
 MENS_TEAMS_CONFIG = [
@@ -171,6 +173,81 @@ STAFF_KEYWORDS = [
 ]
 
 
+# ── Non-Conf Config Helpers ───────────────────────────────────────────────────
+
+def load_non_conf_config() -> Dict[str, Dict[str, str]]:
+    """Reads non_conf_config.json. Missing/invalid file means both slots are empty."""
+    cfg = {g: {"name": "", "stats_url": "", "roster_url": ""} for g in ("men", "women")}
+    try:
+        with open(NON_CONF_CONFIG_PATH, encoding="utf-8") as f:
+            raw = json.load(f)
+        for g in ("men", "women"):
+            entry = raw.get(g) if isinstance(raw, dict) else None
+            if isinstance(entry, dict):
+                for k in ("name", "stats_url", "roster_url"):
+                    cfg[g][k] = str(entry.get(k, "") or "").strip()
+    except FileNotFoundError:
+        logger.info(f"{NON_CONF_CONFIG_PATH} not found - Non-Conf slots are empty")
+    except Exception as e:
+        logger.error(f"Could not read {NON_CONF_CONFIG_PATH}: {e}")
+    return cfg
+
+
+def derive_roster_candidates(stats_url: str) -> List[str]:
+    """
+    Builds likely Sidearm print-roster URLs from a stats URL, e.g.
+      https://x.com/sports/mens-basketball/stats/2026-27
+        -> /roster/print/2026-27, /roster/2026-27?print=true, /roster/print,
+           /roster?print=true, /roster/2026-27, /roster
+    """
+    base = stats_url.strip().split("#")[0].split("?")[0].rstrip("/")
+    m = re.match(r"^(.*?)/stats(?:/(\d{4}-\d{2}))?$", base)
+    if not m:
+        return []
+    root, season = m.group(1), m.group(2)
+
+    cands: List[str] = []
+    if season:
+        cands += [f"{root}/roster/print/{season}", f"{root}/roster/{season}?print=true"]
+    cands += [f"{root}/roster/print", f"{root}/roster?print=true"]
+    if season:
+        cands.append(f"{root}/roster/{season}")
+    cands.append(f"{root}/roster")
+
+    seen, unique = set(), []
+    for c in cands:
+        if c not in seen:
+            seen.add(c)
+            unique.append(c)
+    return unique
+
+
+def detect_team_name(html: Optional[str], url: str) -> str:
+    """Best-effort school name from og:site_name, <title>, or the domain."""
+    host = urlparse(url).netloc.lower().replace("www.", "")
+
+    def tidy(text: str) -> str:
+        text = re.sub(r"\s+", " ", text).strip()
+        cleaned = re.sub(r"\s*(Official\s+)?(Athletics?|Athletic\s+Site|Website|Site)\b.*$", "", text, flags=re.I).strip()
+        return cleaned or text
+
+    if html:
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+            og = soup.find("meta", attrs={"property": "og:site_name"})
+            if og and og.get("content", "").strip():
+                return tidy(og["content"])
+            if soup.title and soup.title.string:
+                parts = re.split(r"\s+[|\-–—]\s+", soup.title.string.strip())
+                good = [p for p in parts
+                        if p.strip() and not re.search(r"stat|basketball|roster|schedule|\d{4}", p, re.I)]
+                if good:
+                    return tidy(good[-1])
+        except Exception:
+            pass
+    return host or "Non-Conf Opponent"
+
+
 # ── Async Playwright Fetcher ──────────────────────────────────────────────────
 
 async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
@@ -187,8 +264,7 @@ async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
         except Exception:
             pass
 
-        content = await page.content()
-        return content
+        return await page.content()
     except Exception as e:
         logger.error(f"Failed to fetch {url}: {e}")
         return None
@@ -263,9 +339,7 @@ def clean_number(raw_num: Any) -> str:
 
 
 def normalize_position(pos_str: str) -> str:
-    """
-    Normalizes basketball positions to G (Guard), F (Forward), or W (Winger / Wing).
-    """
+    """Normalizes basketball positions to G (Guard), F (Forward), or W (Winger / Wing)."""
     if not pos_str:
         return ""
     p = pos_str.upper().strip().rstrip(".")
@@ -311,11 +385,10 @@ def normalize_year(yr_str: str) -> str:
     if not y:
         return ""
 
-    # Direct match in map
     if y in _CLASS_MAP:
         return _CLASS_MAP[y]
 
-    # Handle Redshirt prefixes (R-1st, RS-2nd, Redshirt Junior, etc.)
+    # Redshirt prefixes (R-1st, RS-2nd, Redshirt Junior, etc.)
     for prefix in ("REDSHIRT", "RS", "R"):
         if y.startswith(prefix):
             remainder = y[len(prefix):]
@@ -413,10 +486,7 @@ def find_roster_entry(
 # ── Roster & Stats Parsers ────────────────────────────────────────────────────
 
 def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
-    """
-    Extracts roster metadata (Position, Year, Jersey, Name) from __NUXT_DATA__ payloads.
-    Fixes NDSU and modern Sidearm sites where print view renders client-side.
-    """
+    """Extracts roster metadata (Position, Year, Jersey, Name) from __NUXT_DATA__ payloads."""
     roster_lookup: Dict[str, Dict[str, str]] = {}
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -482,10 +552,10 @@ def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
 
 def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
     """
-    Parses Sidearm Print roster pages (Nuxt JSON, responsive HTML tables, or stacked card blocks).
+    Parses Sidearm roster pages (Nuxt JSON, responsive HTML tables, or stacked card blocks).
     Extracts player Name, Jersey Number, Position (G/F/W), and Academic Year.
     """
-    # 1. Try modern Nuxt extraction first (Fixes NDSU)
+    # 1. Modern Nuxt extraction first
     roster_lookup = parse_nuxt_roster_data(html)
     if len(roster_lookup) >= 5:
         return roster_lookup
@@ -574,10 +644,7 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
 
 
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
-    """
-    Parses Sidearm Nuxt JSON payloads (__NUXT_DATA__) for stats on modern layouts.
-    Extracts unambiguous properties and avoids duplicate HTML column collisions.
-    """
+    """Parses Sidearm Nuxt JSON payloads (__NUXT_DATA__) for stats on modern (New Style) layouts."""
     players = []
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -737,7 +804,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
 
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     """
-    Parses Sidearm HTML stats pages into both Totals and Per-Game Averages.
+    Parses Old Style Sidearm HTML stats pages into both Totals and Per-Game Averages.
     Filters out #TM Team and aggregates multiple cumulative tables.
     """
     players_by_key: Dict[str, Dict[str, Any]] = {}
@@ -939,42 +1006,110 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
     return result_list
 
 
+# ── Output Helpers ────────────────────────────────────────────────────────────
+
+def write_team_json(slug: str, team_data: Dict[str, Any]) -> None:
+    for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
+        with open(dest, "w", encoding="utf-8") as f:
+            json.dump(team_data, f, indent=2)
+
+
+def read_existing_json(slug: str) -> Dict[str, Any]:
+    try:
+        with open(os.path.join("docs", f"{slug}.json"), encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def now_iso() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def write_empty_non_conf(gender: str) -> None:
+    """Placeholder for a Non-Conf slot with no link, so the site shows 'no opponent loaded'."""
+    slug = NON_CONF_SLUGS[gender]
+    write_team_json(slug, {
+        "team": "Non-Conf",
+        "display_name": "Non-Conf",
+        "slug": slug,
+        "gender": gender,
+        "is_non_conf": True,
+        "status": "empty",
+        "message": "No Non-Conf opponent loaded. Add a stats link in GitHub Actions > Run workflow.",
+        "source_stats_url": "",
+        "source_roster_url": "",
+        "generated_at": now_iso(),
+        "players": [],
+    })
+    logger.info(f"Non-Conf ({gender}) slot is empty - wrote placeholder {slug}.json")
+
+
 # ── Execution Logic ───────────────────────────────────────────────────────────
+
+async def fetch_roster(
+    context: BrowserContext,
+    candidates: List[str],
+    label: str
+) -> Tuple[Dict[str, Dict[str, str]], str]:
+    """Tries each roster URL in order; returns the first good roster (or the best one found)."""
+    best_lookup: Dict[str, Dict[str, str]] = {}
+    best_url = ""
+
+    for url in candidates:
+        html = await fetch_page_html(context, url)
+        if not html:
+            continue
+        lookup = parse_print_roster(html)
+        if len(lookup) > len(best_lookup):
+            best_lookup, best_url = lookup, url
+        if len(lookup) >= MIN_ROSTER_ENTRIES:
+            return lookup, url
+        logger.info(f"  [{label}] Roster URL gave {len(lookup)} entries, trying next option: {url}")
+
+    return best_lookup, best_url
+
 
 async def scrape_single_team(
     context: BrowserContext,
-    team_cfg: Dict[str, str],
+    team_cfg: Dict[str, Any],
     gender: str,
     semaphore: asyncio.Semaphore
 ) -> Dict[str, Any]:
-    """Scrapes a single team concurrently within the semaphore limit."""
+    """Scrapes one team (conference or Non-Conf) within the semaphore limit."""
     async with semaphore:
-        team_name = team_cfg["name"]
         slug = team_cfg["slug"]
+        is_non_conf = bool(team_cfg.get("is_non_conf"))
+        label = f"{'Non-Conf ' if is_non_conf else ''}{team_cfg['name'] or team_cfg['stats_url']}"
         gender_label = "Women's" if gender == "women" else "Men's"
-        logger.info(f"Processing {team_name} ({gender_label})...")
+        logger.info(f"Processing {label} ({gender_label})...")
 
-        # Fetch both roster and stats pages in parallel for this team
-        roster_task = fetch_page_html(context, team_cfg["roster_url"])
-        stats_task = fetch_page_html(context, team_cfg["stats_url"])
-        roster_html, stats_html = await asyncio.gather(roster_task, stats_task)
+        # Fetch stats page and roster (trying candidate URLs) in parallel
+        stats_html, (roster_lookup, roster_used) = await asyncio.gather(
+            fetch_page_html(context, team_cfg["stats_url"]),
+            fetch_roster(context, team_cfg["roster_candidates"], label),
+        )
 
-        # 1. Parse Roster
-        roster_lookup = parse_print_roster(roster_html) if roster_html else {}
-        logger.info(f"  [{team_name}] Loaded {len(roster_lookup)} roster entries")
+        team_name = team_cfg["name"] or detect_team_name(stats_html, team_cfg["stats_url"])
+        logger.info(f"  [{label}] Loaded {len(roster_lookup)} roster entries")
 
-        # 2. Parse Stats
+        # Parse stats - New Style (Nuxt JSON) first, then Old Style (HTML tables)
         stats_players: List[Dict[str, Any]] = []
+        style = "none"
         if stats_html:
-            # Check modern Nuxt payload first
             stats_players = parse_nuxt_data_stats(stats_html)
-            if not stats_players:
+            if stats_players:
+                style = "New Style (Nuxt data)"
+            else:
                 soup = BeautifulSoup(stats_html, "html.parser")
                 stats_players = parse_old_style_html_table(soup)
+                if stats_players:
+                    style = "Old Style (HTML tables)"
 
-        logger.info(f"  [{team_name}] Parsed {len(stats_players)} player stat lines")
+        logger.info(f"  [{label}] Parsed {len(stats_players)} player stat lines - detected: {style}")
 
-        # 3. Merge stats with roster info
+        # Merge stats with roster info
         merged_players = []
         seen_names: set = set()
 
@@ -1019,20 +1154,72 @@ async def scrape_single_team(
                 "blk_avg": sp.get("blk_avg", ""),
             })
 
-        team_data = {
+        team_data: Dict[str, Any] = {
             "team": team_name,
             "slug": slug,
             "gender": gender,
-            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "generated_at": now_iso(),
             "players": merged_players,
         }
+        if is_non_conf:
+            team_data.update({
+                "display_name": "Non-Conf",
+                "is_non_conf": True,
+                "status": "ok" if merged_players else "no_data",
+                "source_stats_url": team_cfg["stats_url"],
+                "source_roster_url": roster_used,
+                "site_style": style,
+            })
+            if not merged_players:
+                team_data["message"] = (
+                    "Could not read player stats from this link. Make sure it is the team's "
+                    "basketball stats page (a Sidearm site)."
+                )
 
-        # Write output files
-        for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
-            with open(dest, "w", encoding="utf-8") as f:
-                json.dump(team_data, f, indent=2)
+        # Never overwrite good data with an empty scrape
+        if not merged_players:
+            existing = read_existing_json(slug)
+            same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
+            if existing.get("players") and same_source:
+                logger.warning(f"  [{label}] No players parsed - keeping existing {slug}.json")
+                return existing
+            logger.warning(f"  [{label}] No players parsed for {slug}.json")
 
+        write_team_json(slug, team_data)
         return team_data
+
+
+def build_non_conf_tasks(
+    context: BrowserContext,
+    semaphore: asyncio.Semaphore
+) -> List[Any]:
+    """Creates scrape tasks for filled Non-Conf slots and writes placeholders for empty ones."""
+    config = load_non_conf_config()
+    tasks = []
+
+    for gender in ("men", "women"):
+        slot = config[gender]
+        stats_url = slot["stats_url"]
+
+        if not stats_url:
+            write_empty_non_conf(gender)
+            continue
+
+        candidates: List[str] = []
+        if slot["roster_url"]:
+            candidates.append(slot["roster_url"])
+        candidates += [c for c in derive_roster_candidates(stats_url) if c not in candidates]
+
+        team_cfg = {
+            "name": slot["name"],        # blank -> auto-detected from the stats page
+            "slug": NON_CONF_SLUGS[gender],
+            "stats_url": stats_url,
+            "roster_candidates": candidates,
+            "is_non_conf": True,
+        }
+        tasks.append(scrape_single_team(context, team_cfg, gender, semaphore))
+
+    return tasks
 
 
 async def run_scraper():
@@ -1055,22 +1242,28 @@ async def run_scraper():
             locale="en-US"
         )
 
-        logger.info("=== Starting Concurrent Basketball Scraping (Men's & Women's) ===")
+        logger.info("=== Starting Concurrent Basketball Scraping (Conference + Non-Conf) ===")
         tasks = []
 
-        # Men's teams
-        for team_cfg in MENS_TEAMS_CONFIG:
-            tasks.append(scrape_single_team(context, team_cfg, "men", semaphore))
+        for gender, teams in (("men", MENS_TEAMS_CONFIG), ("women", WOMENS_TEAMS_CONFIG)):
+            for team_cfg in teams:
+                cfg = dict(team_cfg)
+                cfg["roster_candidates"] = [team_cfg["roster_url"]]
+                cfg["is_non_conf"] = False
+                tasks.append(scrape_single_team(context, cfg, gender, semaphore))
 
-        # Women's teams
-        for team_cfg in WOMENS_TEAMS_CONFIG:
-            tasks.append(scrape_single_team(context, team_cfg, "women", semaphore))
+        tasks.extend(build_non_conf_tasks(context, semaphore))
 
-        await asyncio.gather(*tasks)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        failures = [r for r in results if isinstance(r, Exception)]
+        for err in failures:
+            logger.error(f"A team scrape failed: {err!r}")
+
         await browser.close()
 
     elapsed = time.time() - start_time
-    logger.info(f"Done — All 16 team JSONs updated in {elapsed:.1f} seconds!")
+    ok = len(results) - len(failures)
+    logger.info(f"Done — {ok} of {len(results)} team scrapes completed in {elapsed:.1f} seconds!")
 
 
 def main():
