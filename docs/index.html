@@ -502,6 +502,13 @@
       gap: 0.85rem;
     }
 
+    /* Left column: title row + player count underneath */
+    .table-card-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
     .table-card-title-wrap {
       display: flex;
       align-items: center;
@@ -543,6 +550,15 @@
       color: var(--team-btn-text, #ffffff);
       border-color: var(--team-accent);
       box-shadow: 0 0 10px var(--team-glow);
+    }
+
+    /* Per Game / Season Totals toggle inside the table header */
+    .table-card-header .toggle-group-wrap {
+      background: var(--surface);
+    }
+
+    .table-card-header .toggle-btn {
+      padding: 0.45rem 0.9rem;
     }
 
     .table-wrap { overflow-x: auto; }
@@ -677,6 +693,7 @@
       .header-controls { align-items: flex-start; width: 100%; }
       .toggle-group-wrap { width: 100%; justify-content: center; }
       .toggle-btn { flex: 1; justify-content: center; }
+      .table-card-header .toggle-group-wrap { width: 100%; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
@@ -693,25 +710,14 @@
       <div class="meta" id="metaBar">Loading data…</div>
     </div>
 
-    <!-- Controls (Division & View Mode) -->
+    <!-- Controls (Division only — Per Game / Totals toggle now lives in the table header) -->
     <div class="header-controls">
-      <!-- Men's / Women's Toggle -->
       <div class="toggle-group-wrap" role="tablist" aria-label="Basketball Division Switcher">
         <button id="btnMens" class="toggle-btn active" onclick="setGender('men')">
           <span>🏀 Men's Stats</span>
         </button>
         <button id="btnWomens" class="toggle-btn" onclick="setGender('women')">
           <span>🏀 Women's Stats</span>
-        </button>
-      </div>
-
-      <!-- Per Game (Averages) vs Season Totals Toggle -->
-      <div class="toggle-group-wrap" role="tablist" aria-label="Stat Mode Switcher">
-        <button id="btnAvgMode" class="toggle-btn active" onclick="setStatMode('avg')">
-          <span>📊 Per Game</span>
-        </button>
-        <button id="btnTotMode" class="toggle-btn" onclick="setStatMode('tot')">
-          <span>📈 Season Totals</span>
         </button>
       </div>
     </div>
@@ -794,27 +800,42 @@
   <!-- Full Table Card -->
   <div class="table-card">
     <div class="table-card-header">
-      <div class="table-card-title-wrap">
-        <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
-        <div class="header-links-group">
-          <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-            Official Stats Site ↗
-          </a>
-          <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-            st_thomas.json ↗
-          </a>
+
+      <!-- Left: Title + links, with player count underneath -->
+      <div class="table-card-left">
+        <div class="table-card-title-wrap">
+          <span class="table-card-title" id="tableTitle">St. Thomas Season Stats — Full Roster</span>
+          <div class="header-links-group">
+            <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+              Official Stats Site ↗
+            </a>
+            <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+              st_thomas.json ↗
+            </a>
+          </div>
+        </div>
+        <div class="status-bar">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Ready</span>
         </div>
       </div>
-      <div class="status-bar">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Ready</span>
+
+      <!-- Right: Per Game / Season Totals toggle -->
+      <div class="toggle-group-wrap" role="tablist" aria-label="Stat Mode Switcher">
+        <button id="btnAvgMode" class="toggle-btn active" onclick="setStatMode('avg')">
+          <span>📊 Per Game</span>
+        </button>
+        <button id="btnTotMode" class="toggle-btn" onclick="setStatMode('tot')">
+          <span>📈 Season Totals</span>
+        </button>
       </div>
+
     </div>
     <div class="table-wrap">
       <table id="statsTable">
         <thead id="tableHead"></thead>
         <tbody id="tableBody">
-          <tr><td colspan="15" class="empty">Loading stats…</td></tr>
+          <tr><td colspan="16" class="empty">Loading stats…</td></tr>
         </tbody>
       </table>
     </div>
@@ -939,24 +960,25 @@
   };
 
   // ── Column Definitions for Both Modes ──────────────────────────────────────
+  // tableOnly: true  → shown in the full table, hidden from the spotlight card
   const STAT_CONFIGS = {
     avg: [
-      { key: 'gp',           label: 'GP',    fixed: true },
-      { key: 'gs',           label: 'GS',    fixed: true },
+      { key: 'gp',           label: 'GP',     tableOnly: true },
+      { key: 'gs',           label: 'GS',     tableOnly: true },
       { key: 'min_avg',      label: 'MIN/G' },
-      { key: 'avg',          label: 'PPG' },
+      { key: 'avg',          label: 'PTS/G' },
       { key: 'fg_pct',       label: 'FG%' },
       { key: 'three_pt_pct', label: '3PT%' },
       { key: 'ft_pct',       label: 'FT%' },
-      { key: 'reb_avg',      label: 'RPG' },
-      { key: 'ast_avg',      label: 'APG' },
-      { key: 'to_avg',       label: 'TOPG' },
-      { key: 'stl_avg',      label: 'SPG' },
-      { key: 'blk_avg',      label: 'BPG' }
+      { key: 'reb_avg',      label: 'REB/G' },
+      { key: 'ast_avg',      label: 'AST/G' },
+      { key: 'to_avg',       label: 'TO/G' },
+      { key: 'stl_avg',      label: 'STL/G' },
+      { key: 'blk_avg',      label: 'BLK/G' }
     ],
     tot: [
-      { key: 'gp',           label: 'GP',    fixed: true },
-      { key: 'gs',           label: 'GS',    fixed: true },
+      { key: 'gp',           label: 'GP',     tableOnly: true },
+      { key: 'gs',           label: 'GS',     tableOnly: true },
       { key: 'min',          label: 'MIN' },
       { key: 'pts',          label: 'PTS' },
       { key: 'fg_pct',       label: 'FG%' },
@@ -1188,13 +1210,15 @@
       });
     }
 
-    body.innerHTML = sorted.map((r, idx) => {
+    body.innerHTML = sorted.map(r => {
       const isHL = searchNum && String(r.number) === String(searchNum);
+      // Use the player's index in the ORIGINAL list so clicks work correctly after sorting
+      const origIdx = PLAYERS.indexOf(r);
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
         <td class="col-jersey">${r.number || '—'}</td>
         <td class="col-pos">${r.position || '—'}</td>
         <td class="col-yr">${r.year || '—'}</td>
-        <td class="col-player" title="Click to view stat card" onclick="displayPlayerCard(${idx})">${esc(r.name)}</td>
+        <td class="col-player" title="Click to view stat card" onclick="displayPlayerCard(${origIdx})">${esc(r.name)}</td>
         ${activeCols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
@@ -1236,10 +1260,11 @@
     document.getElementById('spotName').textContent = player.name || '—';
     document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball (${modeLabel})`;
 
-    const activeCols = STAT_CONFIGS[CURRENT_STAT_MODE];
+    // Spotlight excludes table-only columns (GP, GS)
+    const spotCols = STAT_CONFIGS[CURRENT_STAT_MODE].filter(c => !c.tableOnly);
     const grid = document.getElementById('spotStatGrid');
 
-    grid.innerHTML = activeCols.map(c => {
+    grid.innerHTML = spotCols.map(c => {
       const val = player[c.key] || '—';
       const rank = getRank(c.key, val);
       const rankClass = rank ? `rank-${rank}` : '';
