@@ -11,25 +11,32 @@ JSON layout (identical for every team file, so Datalinq graphics can use one pat
       "generated_at": "...",
       "team_stats_status": "ok" | "partial" | "kept_previous" | "not_found" | "empty",
       "team_stats_missing": [],
-      "team_stats": {                       <- TEAM group (Overall team stats)
-          "ppg", "scoring_margin",
-          "fg_pct", "fg_per_game",
-          "three_pt_pct", "three_pt_per_game",
-          "ft_pct", "ft_per_game",
-          "reb_per_game", "reb_margin",
-          "ast_per_game", "to_per_game", "ast_to_ratio", "pts_off_to",
-          "stl_per_game", "blk_per_game"
-      },
-      "players": [                          <- PLAYER group
-          { "number": "13", "name": "...", ... },   (every row starts with number)
+      "team_stats": { ... 16 keys ... },               <- OVERALL team stats
+      "conference_team_stats_status": "ok" | "partial" | "no_games" | "kept_previous" |
+                                      "not_available_old_style" | "selector_not_found" |
+                                      "not_confirmed" | "unverified_same_as_overall" |
+                                      "error" | "not_found" | "empty",
+      "conference_team_stats_missing": [],
+      "conference_team_stats": { ... same 16 keys ... },   <- CONFERENCE-ONLY team stats
+      "players": [                                      <- PLAYER group
+          { "number": "13", "name": "...", ... },       (every row starts with number)
       ]
     }
 
+Team stat keys (same order in both team_stats and conference_team_stats):
+    ppg, scoring_margin, fg_pct, fg_per_game, three_pt_pct, three_pt_per_game,
+    ft_pct, ft_per_game, reb_per_game, reb_margin, ast_per_game, to_per_game,
+    ast_to_ratio, pts_off_to, stl_per_game, blk_per_game
+
 Features:
-  - Section/Colgroup-Aware Team Stats Parser:
-      * Tracks section categories (Scoring, Shooting, Rebounding, Assists, Turnovers, Steals, Blocks).
-      * Resolves contextual row labels (e.g. "Per Game", "Margin" inside Rebounding; "3PT: Percentage" inside Shooting).
-      * Supports both New Style (Nuxt 3 HTML table markup) and Old Style (Sidearm classic tables).
+  - Section/Colgroup-Aware Team Stats Parser (Scoring, Shooting, Rebounding, Assists,
+    Turnovers, Steals, Blocks) for New Style (Nuxt 3) and Old Style (Sidearm classic) tables.
+  - Conference-only team stats:
+      * New Style: opens the stats page, switches the split dropdown to "Conference",
+        VERIFIES the dropdown now reads "Conference", then parses the same table structure.
+      * Old Style: no Conference-only view found yet -> status "not_available_old_style".
+      * Safety checks: unconfirmed selection, or numbers identical to Overall, are rejected.
+      * Before conference play starts the table is empty -> status "no_games" with zeros.
   - Margins are written without a "+" for positive values ("5.5") and with "-" for negatives ("-3.2").
   - Multi-Row Table Header Resolver for Old Style HTML player tables.
   - Season totals and per-game averages for every player.
@@ -62,6 +69,15 @@ CONCURRENCY_LIMIT = 5
 MIN_ROSTER_ENTRIES = 8
 NON_CONF_CONFIG_PATH = "non_conf_config.json"
 NON_CONF_SLUGS = {"men": "non_conf", "women": "non_conf_women"}
+
+# Matches the dropdown option / selected label "Conference" (but NOT "Non-Conference")
+CONF_OPTION_RE = re.compile(r"^\s*conference(\s+only)?\s*$", re.I)
+
+# Conference statuses where we fall back to the last good conference_team_stats (if any)
+CONF_KEEP_PREVIOUS_ON = {
+    "no_games", "selector_not_found", "not_confirmed",
+    "unverified_same_as_overall", "error", "not_found",
+}
 
 # ── Summit League Men's Basketball Configuration ──────────────────────────────
 MENS_TEAMS_CONFIG = [
@@ -322,7 +338,7 @@ def detect_team_name(html: Optional[str], url: str) -> str:
     return host or "Non-Conf Opponent"
 
 
-# ── Async Playwright Fetcher ──────────────────────────────────────────────────
+# ── Async Playwright Fetchers ─────────────────────────────────────────────────
 
 async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
     page: Optional[Page] = None
@@ -340,6 +356,102 @@ async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
     except Exception as e:
         logger.error(f"Failed to fetch {url}: {e}")
         return None
+    finally:
+        if page:
+            await page.close()
+
+
+async def _combo_text(box: Any) -> str:
+    """Returns the currently selected label of a Sidearm combobox button (e.g. 'Overall', 'Conference')."""
+    try:
+        sel = box.locator(".s-select__selected-option__text")
+        if await sel.count() > 0:
+            return (await sel.first.inner_text()).strip()
+        return (await box.inner_text()).strip()
+    except Exception:
+        return ""
+
+
+async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Optional[str], str]:
+    """
+    New Style (Nuxt) stats pages only.
+    Opens the stats page, switches the split dropdown to "Conference", and VERIFIES the
+    dropdown now reads "Conference" before returning the page HTML.
+
+    The dropdown button looks like:
+        <button role="combobox" data-test-id="s-select__box" aria-label="First Menu Options">
+            <span class="s-select__selected-option__text">Conference</span> ...
+
+    Returns (html, status). status is one of:
+        "selected"            -> dropdown confirmed on Conference; html is the page after selecting it
+        "selector_not_found"  -> no dropdown (or no "Conference" option) found
+        "not_confirmed"       -> clicked an option but the dropdown does not read "Conference"
+        "error"               -> navigation / browser error
+    """
+    page: Optional[Page] = None
+    try:
+        page = await context.new_page()
+        logger.info(f"Navigating to {url} (Conference view)")
+        await page.goto(url, wait_until="domcontentloaded", timeout=25000)
+        try:
+            await page.wait_for_load_state("networkidle", timeout=4000)
+        except Exception:
+            pass
+
+        combos = page.locator('button[role="combobox"][data-test-id="s-select__box"]')
+        total = await combos.count()
+        if total == 0:
+            return None, "selector_not_found"
+
+        # Try the "First Menu Options" dropdown first, then any others
+        order: List[Tuple[int, int]] = []
+        for i in range(total):
+            label = (await combos.nth(i).get_attribute("aria-label")) or ""
+            order.append((0 if "first" in label.lower() else 1, i))
+        order.sort()
+
+        tried_click = False
+        for _, i in order:
+            box = combos.nth(i)
+            try:
+                # Already on Conference?
+                if CONF_OPTION_RE.match(await _combo_text(box)):
+                    return await page.content(), "selected"
+
+                await box.scroll_into_view_if_needed(timeout=3000)
+                await box.click(timeout=3000)
+
+                opts = page.locator('[role="option"]')
+                target = None
+                for j in range(await opts.count()):
+                    txt = (await opts.nth(j).inner_text()).strip()
+                    if CONF_OPTION_RE.match(txt):
+                        target = opts.nth(j)
+                        break
+
+                if target is None:
+                    await page.keyboard.press("Escape")   # this dropdown has no Conference option
+                    continue
+
+                await target.click(timeout=3000)
+                tried_click = True
+                await page.wait_for_timeout(1500)
+                try:
+                    await page.wait_for_load_state("networkidle", timeout=3000)
+                except Exception:
+                    pass
+
+                # Verification: the dropdown must now read "Conference"
+                if CONF_OPTION_RE.match(await _combo_text(box)):
+                    return await page.content(), "selected"
+            except Exception as e:
+                logger.info(f"  Conference dropdown #{i} attempt failed: {e}")
+                continue
+
+        return None, ("not_confirmed" if tried_click else "selector_not_found")
+    except Exception as e:
+        logger.error(f"Failed to load Conference view for {url}: {e}")
+        return None, "error"
     finally:
         if page:
             await page.close()
@@ -637,9 +749,12 @@ def find_roster_entry(
 
 def parse_team_stats(html: str) -> Dict[str, str]:
     """
-    Parses Overall team stats using section/colgroup context (Scoring, Shooting, Rebounding,
+    Parses team stats using section/colgroup context (Scoring, Shooting, Rebounding,
     Assists, Turnovers, Steals, Blocks) as well as direct label aliases.
     Works for both New Style (Nuxt 3) and Old Style (Sidearm classic) team summary tables.
+
+    The same parser is used for the Overall page and for the page after the dropdown has been
+    switched to Conference, because the table structure is identical.
     """
     found: Dict[str, str] = {}
     soup = BeautifulSoup(html, "html.parser")
@@ -781,6 +896,33 @@ def build_team_stats(found: Dict[str, str]) -> Dict[str, str]:
 
 def empty_team_stats() -> Dict[str, str]:
     return build_team_stats({})
+
+
+def classify_conference_stats(conf: Dict[str, str], overall: Dict[str, str]) -> str:
+    """
+    Decides whether parsed Conference stats can be trusted. Call only after the dropdown has been
+    confirmed on "Conference".
+        "no_games"                    -> empty table or every value is zero (conference play not started)
+        "unverified_same_as_overall"  -> numbers identical to Overall (page probably did not switch)
+        "partial" / "ok"              -> real conference numbers (partial = some of the 16 missing)
+    """
+    if not conf:
+        return "no_games"
+
+    nums: List[float] = []
+    for v in conf.values():
+        try:
+            nums.append(float(str(v).replace("%", "")))
+        except Exception:
+            pass
+    if not nums or all(n == 0 for n in nums):
+        return "no_games"
+
+    comparable = [k for k in conf if k in overall]
+    if len(comparable) >= 8 and all(conf[k] == overall[k] for k in comparable):
+        return "unverified_same_as_overall"
+
+    return "ok" if len(conf) == len(TEAM_STAT_KEYS) else "partial"
 
 
 # ── Roster & Stats Parsers ────────────────────────────────────────────────────
@@ -1404,6 +1546,9 @@ def write_empty_non_conf(gender: str) -> None:
         "team_stats_status": "empty",
         "team_stats_missing": list(TEAM_STAT_KEYS),
         "team_stats": empty_team_stats(),
+        "conference_team_stats_status": "empty",
+        "conference_team_stats_missing": list(TEAM_STAT_KEYS),
+        "conference_team_stats": empty_team_stats(),
         "players": [],
     })
     logger.info(f"Non-Conf ({gender}) slot is empty - wrote placeholder {slug}.json")
@@ -1471,7 +1616,7 @@ async def scrape_single_team(
 
         logger.info(f"  [{label}] Parsed {len(stats_players)} player stat lines - detected: {style}")
 
-        # ── Overall team stats (same stats page)
+        # ── Overall team stats (default view of the stats page)
         found_team = parse_team_stats(stats_html) if stats_html else {}
         team_stats = build_team_stats(found_team)
         missing = [k for k in TEAM_STAT_KEYS if k not in found_team]
@@ -1485,6 +1630,21 @@ async def scrape_single_team(
             f"  [{label}] Team stats: {len(found_team)}/{len(TEAM_STAT_KEYS)} found"
             + (f" - missing: {', '.join(missing)}" if missing else "")
         )
+
+        # ── Conference-only team stats
+        #    New Style: switch the dropdown to "Conference" and verify it. Old Style: not available yet.
+        conf_found: Dict[str, str] = {}
+        if style.startswith("New Style"):
+            conf_html, sel_status = await fetch_conference_html(context, team_cfg["stats_url"])
+            if sel_status == "selected" and conf_html:
+                conf_found = parse_team_stats(conf_html)
+                conf_status = classify_conference_stats(conf_found, found_team)
+            else:
+                conf_status = sel_status
+        elif style.startswith("Old Style"):
+            conf_status = "not_available_old_style"
+        else:
+            conf_status = "not_found"
 
         # ── Merge player stats with roster info (each row starts with number)
         merged_players = []
@@ -1534,7 +1694,7 @@ async def scrape_single_team(
         existing = read_existing_json(slug)
         same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
 
-        # Keep the previous team stats if this run could not read any.
+        # Keep the previous Overall team stats if this run could not read any.
         # Values are re-run through the formatters so any old "+5.5" margins become "5.5".
         if ts_status == "not_found" and same_source and existing.get("team_stats") \
                 and existing.get("team_stats_status") in ("ok", "partial", "kept_previous"):
@@ -1544,7 +1704,28 @@ async def scrape_single_team(
             ts_status = "kept_previous"
             logger.warning(f"  [{label}] Team stats not found - keeping previous team_stats")
 
-        # ── Assemble JSON: header info, then TEAM group, then PLAYER group
+        # Conference team stats: use real values only for ok / partial / no_games (zeros)
+        if conf_status in ("ok", "partial", "no_games"):
+            conf_stats = build_team_stats(conf_found)
+        else:
+            conf_stats = empty_team_stats()
+        conf_missing = [k for k in TEAM_STAT_KEYS if k not in conf_found]
+
+        # Fall back to the last good conference numbers if this run failed or came back empty
+        prev_conf = existing.get("conference_team_stats")
+        if conf_status in CONF_KEEP_PREVIOUS_ON and same_source and prev_conf \
+                and existing.get("conference_team_stats_status") in ("ok", "partial", "kept_previous"):
+            conf_stats = {k: format_team_stat(k, prev_conf.get(k)) for k in TEAM_STAT_KEYS}
+            conf_missing = existing.get("conference_team_stats_missing", [])
+            logger.warning(f"  [{label}] Conference stats came back '{conf_status}' - keeping previous conference_team_stats")
+            conf_status = "kept_previous"
+
+        logger.info(
+            f"  [{label}] Conference team stats: {conf_status} "
+            f"({len(conf_found)}/{len(TEAM_STAT_KEYS)} found)"
+        )
+
+        # ── Assemble JSON: header info, OVERALL group, CONFERENCE group, then PLAYER group
         team_data: Dict[str, Any] = {
             "team": team_name,
             "slug": slug,
@@ -1568,6 +1749,9 @@ async def scrape_single_team(
         team_data["team_stats_status"] = ts_status
         team_data["team_stats_missing"] = missing
         team_data["team_stats"] = team_stats
+        team_data["conference_team_stats_status"] = conf_status
+        team_data["conference_team_stats_missing"] = conf_missing
+        team_data["conference_team_stats"] = conf_stats
         team_data["players"] = merged_players
 
         # Never overwrite good data with an empty player scrape
