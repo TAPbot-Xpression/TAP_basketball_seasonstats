@@ -3,16 +3,16 @@ scrape_basketball.py
 Unified Summit League Basketball player season stats and roster scraper (Men's & Women's).
 
 Features:
-  - Generates individual team JSON files (<slug>.json and <slug>_women.json in root & docs/).
-  - Old Sidearm HTML tables: Targets <section id="individual-overall"> to extract ALL 9 stats
-    (AVG, FG%, 3PT%, FT%, TOT, AST, TO, STL, BLK) using exact data-label matching.
-  - New Sidearm Nuxt JSON: Supports all property aliases across Nuxt Sidearm versions for stats.
-  - Roster Nuxt JSON & Composite Text Parsing: Extracts positions and academic years from Nuxt
-    payloads and structured card blocks (e.g., 'Position G Academic Year So.').
+  - Playwright integration: Uses headless Chromium with realistic headers/viewport to bypass
+    Sidearm bot challenges and wait for full DOM hydration.
+  - Print Roster URLs: Uses the exact print-view URLs supplied for each team (men's and women's).
+  - Print-Table Parser: Parses tabular and stacked Sidearm print layouts (e.g., handles column
+    order variations like St. Thomas where Year precedes Position).
   - Normalizes jersey numbers (removes leading zeros: '05' -> '5', '00' -> '0').
-  - Extracts Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
+  - Normalizes Position (G/F) and Academic Year (FR, SO, JR, SR, GR, R-*).
   - Robust multi-tier roster matching: Exact match -> Jersey fallback -> Suffix-agnostic ->
     Last-name + number correlation -> Fuzzy string distance matching (difflib).
+  - Generates individual team JSON files (<slug>.json in root & docs/).
 """
 
 import difflib
@@ -22,8 +22,8 @@ import os
 import re
 import time
 from typing import Any, Dict, List, Optional
-import requests
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright, Page
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,65 +31,55 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-}
-
 # ── Summit League Men's Basketball Configuration ──────────────────────────────
 MENS_TEAMS_CONFIG = [
     {
         "name": "Kansas City",
         "slug": "kansas_city",
         "stats_url": "https://kcroos.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://kcroos.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://kcroos.com/sports/mens-basketball/roster/print/2026-27",
     },
     {
         "name": "North Dakota",
         "slug": "north_dakota",
         "stats_url": "https://fightinghawks.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://fightinghawks.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://fightinghawks.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "North Dakota State",
         "slug": "north_dakota_state",
         "stats_url": "https://gobison.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://gobison.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://gobison.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "Omaha",
         "slug": "omaha",
         "stats_url": "https://omahamavs.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://omahamavs.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://omahamavs.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "Oral Roberts",
         "slug": "oral_roberts",
         "stats_url": "https://oruathletics.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://oruathletics.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://oruathletics.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "South Dakota",
         "slug": "south_dakota",
         "stats_url": "https://goyotes.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://goyotes.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://goyotes.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "South Dakota State",
         "slug": "south_dakota_state",
         "stats_url": "https://gojacks.com/sports/mens-basketball/stats/2026-27",
-        "roster_url": "https://gojacks.com/sports/mens-basketball/roster/2026-27",
+        "roster_url": "https://gojacks.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "St. Thomas",
         "slug": "st_thomas",
         "stats_url": "https://tommiesports.com/sports/mbball/stats/2026-27",
-        "roster_url": "https://tommiesports.com/sports/mbball/roster/2026-27",
+        "roster_url": "https://tommiesports.com/sports/mbball/roster/print",
     },
 ]
 
@@ -99,49 +89,49 @@ WOMENS_TEAMS_CONFIG = [
         "name": "Kansas City",
         "slug": "kansas_city_women",
         "stats_url": "https://kcroos.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://kcroos.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://kcroos.com/sports/womens-basketball/roster/print/2026-27",
     },
     {
         "name": "North Dakota",
         "slug": "north_dakota_women",
         "stats_url": "https://fightinghawks.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://fightinghawks.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://fightinghawks.com/sports/womens-basketball/roster?print=true",
     },
     {
         "name": "North Dakota State",
         "slug": "north_dakota_state_women",
         "stats_url": "https://gobison.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://gobison.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://gobison.com/sports/womens-basketball/roster/print/2026-27",
     },
     {
         "name": "Omaha",
         "slug": "omaha_women",
         "stats_url": "https://omahamavs.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://omahamavs.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://omahamavs.com/sports/womens-basketball/roster/print/2026-27",
     },
     {
         "name": "Oral Roberts",
         "slug": "oral_roberts_women",
         "stats_url": "https://oruathletics.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://oruathletics.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://oruathletics.com/sports/womens-basketball/roster/2026-27?print=true",
     },
     {
         "name": "South Dakota",
         "slug": "south_dakota_women",
         "stats_url": "https://goyotes.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://goyotes.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://goyotes.com/sports/womens-basketball/roster?print=true",
     },
     {
         "name": "South Dakota State",
         "slug": "south_dakota_state_women",
         "stats_url": "https://gojacks.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://gojacks.com/sports/womens-basketball/roster/2026-27",
+        "roster_url": "https://gojacks.com/sports/womens-basketball/roster/print",
     },
     {
         "name": "St. Thomas",
         "slug": "st_thomas_women",
         "stats_url": "https://tommiesports.com/sports/wbball/stats/2026-27",
-        "roster_url": "https://tommiesports.com/sports/wbball/roster/2026-27",
+        "roster_url": "https://tommiesports.com/sports/wbball/roster/print/2026-27",
     },
 ]
 
@@ -153,7 +143,8 @@ DISCARD_EXACT_TOKENS = {
     "full name", "name", "scoring", "averages", "minutes", "fg", "3pt", "ft",
     "rebounds", "player name", "title", "yr.", "bio link", "statistic",
     "high", "opponent(s)", "opp", "technical fouls", "deadball rebounds",
-    "//", "date", "score", "mar", "unassigned"
+    "//", "date", "score", "mar", "unassigned", "pos.", "ht.", "wt.", "cl.",
+    "hometown", "high school", "previous school", "major"
 }
 
 STAFF_KEYWORDS = [
@@ -163,16 +154,27 @@ STAFF_KEYWORDS = [
 ]
 
 
-def fetch_url(url: str) -> Optional[str]:
-    """Fetch URL with custom headers and timeout handling."""
+# ── Playwright Page Fetcher ───────────────────────────────────────────────────
+
+def fetch_page_html(page: Page, url: str) -> Optional[str]:
+    """Fetches URL content using an active Playwright browser page with network wait."""
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        return resp.text
+        logger.info(f"Navigating to {url}")
+        page.goto(url, wait_until="domcontentloaded", timeout=30000)
+
+        try:
+            page.wait_for_load_state("networkidle", timeout=5000)
+        except Exception:
+            pass
+
+        time.sleep(1.0)
+        return page.content()
     except Exception as e:
-        logger.error(f"Failed to fetch {url}: {e}")
+        logger.error(f"Failed to fetch {url} via Playwright: {e}")
         return None
 
+
+# ── Cleaning and Normalization Helpers ─────────────────────────────────────────
 
 def clean_name(raw_name: str) -> str:
     """Normalizes player names to standard 'Firstname Lastname'."""
@@ -184,10 +186,8 @@ def clean_name(raw_name: str) -> str:
     if "@" in text or not text:
         return ""
 
-    # Remove jersey tags like #00 or inline numbers with hash
     text = re.sub(r"#\d{1,2}\b", " ", text)
 
-    # Detect concatenated repeat patterns: 'Hudgens, Trent02Hudgens, Trent'
     dup_m = re.search(r"^(.*?)(?:\d{1,2})?\1$", text)
     if dup_m and len(dup_m.group(1)) > 3:
         text = dup_m.group(1)
@@ -236,37 +236,45 @@ def clean_number(raw_num: Any) -> str:
 
 
 def normalize_position(pos_str: str) -> str:
-    """Normalizes basketball positions strictly to G (Guard) or F (Forward)."""
+    """
+    Normalizes basketball positions strictly to G (Guard) or F (Forward).
+    Uses whole-cell matching so names/hometowns are never mistaken for positions.
+    """
     if not pos_str:
         return ""
-    p = pos_str.upper().strip()
-    if "GUARD" in p or p in ("G", "G/F", "PG", "SG"):
+    p = pos_str.upper().strip().rstrip(".")
+    if re.fullmatch(r"(G|PG|SG|GUARD)(\s*/\s*\w+)?", p):
         return "G"
-    if "FORWARD" in p or "CENTER" in p or p in ("F", "C", "F/C", "SF", "PF"):
-        return "F"
-    if re.search(r"\bG\b", p):
-        return "G"
-    if re.search(r"\bF\b", p):
+    if re.fullmatch(r"(F|C|SF|PF|FORWARD|CENTER)(\s*/\s*\w+)?", p):
         return "F"
     return ""
 
 
 def normalize_year(yr_str: str) -> str:
-    """Standardizes academic class standings (FR, SO, JR, SR, GR, R-*)."""
+    """
+    Standardizes academic class standings (FR, SO, JR, SR, GR, R-*).
+    Uses whole-cell matching (not substring) so names like 'Grant', 'Jason',
+    'Madson' or 'Franks' are never mistaken for a class year.
+    """
     if not yr_str:
         return ""
-    y = yr_str.upper().strip()
-    is_rs = "R-" in y or "RS" in y or "REDSHIRT" in y
 
-    if "5TH" in y or "GRADUATE" in y or "GR" in y or "GRAD" in y:
+    y = yr_str.upper().strip()
+    y = y.replace("REDSHIRT", "R-").replace("RS-", "R-")
+    y = re.sub(r"[.\s]+", "", y)  # 'R-Jr.' -> 'R-JR', 'Fr.' -> 'FR', '5th' -> '5TH'
+
+    is_rs = y.startswith("R-")
+    base = y[2:] if is_rs else y
+
+    if base in ("GR", "GRAD", "GRADUATE", "5TH", "5THYEAR", "5"):
         return "GR"
-    if "SENIOR" in y or "SR" in y or "SR." in y:
+    if base in ("SR", "SENIOR"):
         return "R-SR" if is_rs else "SR"
-    if "JUNIOR" in y or "JR" in y or "JR." in y:
+    if base in ("JR", "JUNIOR"):
         return "R-JR" if is_rs else "JR"
-    if "SOPHOMORE" in y or "SO" in y or "SO." in y:
+    if base in ("SO", "SOPHOMORE"):
         return "R-SO" if is_rs else "SO"
-    if "FRESHMAN" in y or "FR" in y or "FR." in y:
+    if base in ("FR", "FRESHMAN"):
         return "R-FR" if is_rs else "FR"
     return ""
 
@@ -308,14 +316,7 @@ def find_roster_entry(
     number: str,
     roster_lookup: Dict[str, Dict[str, str]]
 ) -> Optional[Dict[str, str]]:
-    """
-    Robust multi-tier lookup to match a stats player against roster entries:
-      1. Exact normalized name match
-      2. Jersey number fallback (#number)
-      3. Suffix-agnostic exact match
-      4. Matching last name + matching jersey number
-      5. Fuzzy matching via difflib sequence similarity
-    """
+    """Multi-tier lookup to match a stats player against roster entries."""
     if not roster_lookup:
         return None
 
@@ -358,164 +359,99 @@ def find_roster_entry(
     return None
 
 
-def parse_nuxt_roster(html: str) -> Dict[str, Dict[str, str]]:
-    """Extracts roster info (number, position, year) from Nuxt JSON payload if available."""
+# ── Roster & Stats Parsers ────────────────────────────────────────────────────
+
+def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
+    """
+    Parses Sidearm Print roster pages (tables or stacked card blocks).
+    Extracts player Name, Jersey Number, Position (G/F), and Academic Year.
+    """
     roster_lookup: Dict[str, Dict[str, str]] = {}
-    m = re.search(r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>', html, re.DOTALL)
-    if not m:
-        return roster_lookup
-
-    try:
-        data = json.loads(m.group(1))
-        if not isinstance(data, list):
-            return roster_lookup
-
-        def resolve(val: Any) -> str:
-            if isinstance(val, int) and 0 <= val < len(data):
-                target = data[val]
-                if isinstance(target, (str, int, float)):
-                    return str(target)
-            return str(val) if val is not None else ""
-
-        for item in data:
-            if not isinstance(item, dict):
-                continue
-
-            raw_name = (
-                item.get("playerName") or item.get("name") or item.get("fullName") or item.get("displayName")
-            )
-            if not raw_name:
-                continue
-
-            c_name = clean_name(resolve(raw_name))
-            if not is_valid_player_name(c_name):
-                continue
-
-            num_raw = (
-                item.get("jersey") or item.get("playerUniform") or item.get("uniform") or item.get("number")
-            )
-            c_num = clean_number(resolve(num_raw))
-
-            pos_raw = (
-                item.get("position") or item.get("playerPosition") or item.get("pos") or item.get("posShort")
-            )
-            c_pos = normalize_position(resolve(pos_raw))
-
-            yr_raw = (
-                item.get("academicYear") or item.get("classYear") or item.get("year") or item.get("class") or item.get("yr")
-            )
-            c_yr = normalize_year(resolve(yr_raw))
-
-            if c_pos or c_yr or c_num:
-                info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
-                roster_lookup[c_name.lower()] = info
-                if c_num != "":
-                    roster_lookup[f"#{c_num}"] = info
-    except Exception as e:
-        logger.debug(f"Nuxt roster parsing encountered an error: {e}")
-
-    return roster_lookup
-
-
-def scrape_roster(roster_url: str) -> Dict[str, Dict[str, str]]:
-    """Scrapes team roster for Position (G/F) and Academic Year using Nuxt JSON & expanded DOM parsing."""
-    html = fetch_url(roster_url)
-    roster_lookup: Dict[str, Dict[str, str]] = {}
-    if not html:
-        return roster_lookup
-
-    # 1. Attempt Nuxt JSON roster extraction first
-    nuxt_lookup = parse_nuxt_roster(html)
-    if nuxt_lookup and len(nuxt_lookup) >= 5:
-        return nuxt_lookup
-
-    # 2. HTML DOM parsing with composite label support
     soup = BeautifulSoup(html, "html.parser")
 
+    # Decompose staff sections
     for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
         staff.decompose()
     for hdr in soup.find_all(["h2", "h3", "h4"], string=re.compile(r"coaching staff|coaches", re.I)):
-        parent = hdr.find_parent(["section", "div"])
+        parent = hdr.find_parent(["section", "div", "table"])
         if parent:
             parent.decompose()
 
-    player_items = soup.find_all(class_=re.compile(
-        r"roster-player|roster__item|sidearm-roster-player|s-person-details|s-stamp-card|s-person-card", re.I))
-
-    for p in player_items:
-        text_block = p.get_text(separator=" ", strip=True)
-
-        name_el = p.find(class_=re.compile(r"name|player-name", re.I)) or p.find(["h2", "h3", "h4"])
-        raw_name = name_el.get_text(separator=" ", strip=True) if name_el else ""
-        c_name = clean_name(raw_name)
-        if not is_valid_player_name(c_name):
+    # Method A: Structured HTML Table Rows
+    for row in soup.find_all("tr"):
+        cells = [c.get_text(strip=True) for c in row.find_all(["td", "th"])]
+        if len(cells) < 3:
             continue
 
-        num_el = p.find(class_=re.compile(r"jersey|number|player-number", re.I))
-        raw_num = num_el.get_text(strip=True) if num_el else ""
-        if not raw_num:
-            m_num = re.search(r"Jersey\s*(?:Number|#)?\s*(\d{1,2})", text_block, re.I)
-            if m_num:
-                raw_num = m_num.group(1)
-        c_num = clean_number(raw_num)
+        num = ""
+        pos = ""
+        yr = ""
+        name_cand = ""
 
-        pos_el = p.find(class_=re.compile(r"position|pos", re.I))
-        raw_pos = pos_el.get_text(strip=True) if pos_el else ""
-        if not raw_pos:
-            m_pos = re.search(r"Position\s*([A-Za-z/]+)", text_block, re.I)
-            if m_pos:
-                raw_pos = m_pos.group(1)
-        c_pos = normalize_position(raw_pos)
-
-        yr_el = p.find(class_=re.compile(r"academic-year|year|class", re.I))
-        raw_yr = yr_el.get_text(strip=True) if yr_el else ""
-        if not raw_yr:
-            m_yr = re.search(r"Academic\s*Year\s*([A-Za-z\.\-]+)", text_block, re.I)
-            if m_yr:
-                raw_yr = m_yr.group(1)
-        c_yr = normalize_year(raw_yr)
-
-        info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
-        roster_lookup[c_name.lower()] = info
-        if c_num != "":
-            roster_lookup[f"#{c_num}"] = info
-
-    # 3. Table-based Fallback
-    if not roster_lookup:
-        for row in soup.find_all("tr"):
-            cols = [td.get_text(strip=True) for td in row.find_all(["td", "th"])]
-            if len(cols) < 3:
+        for col in cells:
+            if not num and re.match(r"^\d{1,2}$", col):
+                num = clean_number(col)
                 continue
-            num = pos = yr = name_cand = ""
-            for col in cols:
-                if not num and re.match(r"^\d{1,2}$", col):
-                    num = clean_number(col)
-                if not pos and normalize_position(col):
-                    pos = normalize_position(col)
-                if not yr and normalize_year(col):
-                    yr = normalize_year(col)
-                c_clean = clean_name(col)
-                if not name_cand and is_valid_player_name(c_clean) and not normalize_position(col) and not normalize_year(col):
-                    name_cand = c_clean
+            if not pos and normalize_position(col):
+                pos = normalize_position(col)
+                continue
+            if not yr and normalize_year(col):
+                yr = normalize_year(col)
+                continue
 
-            if name_cand and is_valid_player_name(name_cand):
-                info = {"name": name_cand, "number": num, "position": pos, "year": yr}
-                roster_lookup[name_cand.lower()] = info
-                if num != "":
-                    roster_lookup[f"#{num}"] = info
+            c_clean = clean_name(col)
+            if not name_cand and is_valid_player_name(c_clean):
+                name_cand = c_clean
+
+        if name_cand and is_valid_player_name(name_cand):
+            info = {"name": name_cand, "number": num, "position": pos, "year": yr}
+            roster_lookup[name_cand.lower()] = info
+            if num != "":
+                roster_lookup[f"#{num}"] = info
+
+    # Method B: Text/Card-Based Block Parsing
+    if not roster_lookup:
+        body_text = soup.get_text(separator="\n", strip=True)
+        lines = [line.strip() for line in body_text.split("\n") if line.strip()]
+
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if re.match(r"^\d{1,2}$", line):
+                p_num = clean_number(line)
+                p_name = ""
+                p_pos = ""
+                p_yr = ""
+
+                j = i + 1
+                limit = min(len(lines), i + 8)
+                while j < limit:
+                    nxt = lines[j]
+                    if re.match(r"^\d{1,2}$", nxt) and j > i + 1:
+                        break
+
+                    if not p_pos and normalize_position(nxt):
+                        p_pos = normalize_position(nxt)
+                    elif not p_yr and normalize_year(nxt):
+                        p_yr = normalize_year(nxt)
+                    elif not p_name and is_valid_player_name(clean_name(nxt)):
+                        p_name = clean_name(nxt)
+
+                    j += 1
+
+                if p_name and is_valid_player_name(p_name):
+                    info = {"name": p_name, "number": p_num, "position": p_pos, "year": p_yr}
+                    roster_lookup[p_name.lower()] = info
+                    if p_num != "":
+                        roster_lookup[f"#{p_num}"] = info
+                i = j - 1
+            i += 1
 
     return roster_lookup
 
 
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
-    """
-    Parses Sidearm HTML tables specifically from <section id="individual-overall"> (or full cumulative table).
-    Extracts all 9 stats via exact data-label attributes:
-      - FG%, 3PT%, FT%
-      - PTS or AVG (Scoring PPG)
-      - REB or TOT (Total Rebounds)
-      - AST, TO, STL, BLK
-    """
+    """Parses Sidearm HTML stats tables from <section id="individual-overall">."""
     players: List[Dict[str, Any]] = []
 
     target_sections = soup.find_all("section", id=re.compile(r"individual-overall|individual-scoring|individual-averages", re.I))
@@ -539,20 +475,10 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
         if any(bad in parent_text for bad in ["game-by-game", "schedule", "highs", "comparison"]):
             continue
 
-        caption = table.find("caption")
-        if caption and any(bad in caption.get_text().lower() for bad in ["comparison", "game by game", "game highs"]):
-            continue
-
-        thead = table.find("thead")
         tbody = table.find("tbody")
         rows = tbody.find_all("tr") if tbody else table.find_all("tr")
         if not rows:
             continue
-
-        if thead:
-            thead_text = thead.get_text().upper()
-            if any(bad in thead_text for bad in ["OPPONENT", "DATE", "RESULT", "SCORE", "MAR"]):
-                continue
 
         table_players: List[Dict[str, Any]] = []
 
@@ -640,10 +566,7 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
 
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
-    """
-    Parses Sidearm Nuxt JSON payloads for modern websites.
-    Supports all stat field alias variations across Sidearm Nuxt versions.
-    """
+    """Parses Sidearm Nuxt JSON payloads for stats on modern layouts."""
     players = []
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -696,38 +619,15 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 c_num = clean_number(resolve(
                     item.get("playerUniform") or item.get("jersey") or item.get("number") or item.get("uniform")))
 
-                ppg = find_stat(item, [
-                    "pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame",
-                    "points_per_game", "ptsAvg", "scoring_avg", "pts"
-                ])
-                fg_pct = find_stat(item, [
-                    "fieldGoalsPercentage", "fg_pct", "fgPct", "fieldGoalPct",
-                    "field_goal_percentage", "fgPercentage"
-                ])
-                three_pct = find_stat(item, [
-                    "threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct",
-                    "threePointPercentage", "three_point_percentage", "threePct"
-                ])
-                ft_pct = find_stat(item, [
-                    "freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct",
-                    "free_throw_percentage", "ftPercentage"
-                ])
-                tot_reb = find_stat(item, [
-                    "rebounds", "totalRebounds", "tot_reb", "reb_avg",
-                    "reboundsPerGame", "rebPerGame", "rebounds_per_game"
-                ])
-                ast = find_stat(item, [
-                    "assists", "ast", "ast_avg", "assistsPerGame", "astPerGame"
-                ])
-                to = find_stat(item, [
-                    "turnovers", "to", "to_avg", "turnoversPerGame", "toPerGame"
-                ])
-                stl = find_stat(item, [
-                    "steals", "stl", "stl_avg", "stealsPerGame", "stlPerGame"
-                ])
-                blk = find_stat(item, [
-                    "blocks", "blk", "blk_avg", "blocksPerGame", "blkPerGame"
-                ])
+                ppg = find_stat(item, ["pointsPerGame", "pts_avg", "ppg", "scoringAvg", "ptsPerGame", "points_per_game", "ptsAvg", "scoring_avg", "pts"])
+                fg_pct = find_stat(item, ["fieldGoalsPercentage", "fg_pct", "fgPct", "fieldGoalPct", "field_goal_percentage", "fgPercentage"])
+                three_pct = find_stat(item, ["threePointFieldGoalsPercentage", "three_pt_pct", "threePtPct", "threePointPercentage", "three_point_percentage", "threePct"])
+                ft_pct = find_stat(item, ["freeThrowsPercentage", "ft_pct", "ftPct", "freeThrowPct", "free_throw_percentage", "ftPercentage"])
+                tot_reb = find_stat(item, ["rebounds", "totalRebounds", "tot_reb", "reb_avg", "reboundsPerGame", "rebPerGame", "rebounds_per_game"])
+                ast = find_stat(item, ["assists", "ast", "ast_avg", "assistsPerGame", "astPerGame"])
+                to = find_stat(item, ["turnovers", "to", "to_avg", "turnoversPerGame", "toPerGame"])
+                stl = find_stat(item, ["steals", "stl", "stl_avg", "stealsPerGame", "stlPerGame"])
+                blk = find_stat(item, ["blocks", "blk", "blk_avg", "blocksPerGame", "blkPerGame"])
 
                 if not any([ppg, fg_pct, ft_pct, tot_reb, ast]):
                     continue
@@ -754,19 +654,22 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
     return players
 
 
-def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]:
-    """Scrapes season cumulative stats & roster for a single Summit League team."""
+# ── Execution Logic ───────────────────────────────────────────────────────────
+
+def scrape_team(page: Page, team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]:
+    """Scrapes season cumulative stats & print roster for a single Summit League team."""
     team_name = team_cfg["name"]
     slug = team_cfg["slug"]
     gender_label = "Women's" if gender == "women" else "Men's"
     logger.info(f"Processing {team_name} ({gender_label})...")
 
-    # 1. Fetch Roster
-    roster_lookup = scrape_roster(team_cfg["roster_url"])
+    # 1. Fetch Print Roster
+    roster_html = fetch_page_html(page, team_cfg["roster_url"])
+    roster_lookup = parse_print_roster(roster_html) if roster_html else {}
     logger.info(f"  Loaded {len(roster_lookup)} roster entries for {team_name}")
 
-    # 2. Fetch Stats page (HTML table first, then Nuxt JSON fallback)
-    stats_html = fetch_url(team_cfg["stats_url"])
+    # 2. Fetch Stats Page
+    stats_html = fetch_page_html(page, team_cfg["stats_url"])
     stats_players: List[Dict[str, Any]] = []
 
     if stats_html:
@@ -819,31 +722,49 @@ def scrape_team(team_cfg: Dict[str, str], gender: str = "men") -> Dict[str, Any]
     }
 
 
-def process_league(teams_config: List[Dict[str, str]], gender: str):
-    """Processes all teams in a conference division and writes individual JSON files."""
+def process_league(page: Page, teams_config: List[Dict[str, str]], gender: str):
+    """Processes all teams in a conference division and writes JSON output files."""
     for team_cfg in teams_config:
-        team_data = scrape_team(team_cfg, gender=gender)
+        team_data = scrape_team(page, team_cfg, gender=gender)
         slug = team_data["slug"]
 
         for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
             with open(dest, "w", encoding="utf-8") as f:
                 json.dump(team_data, f, indent=2)
 
-        time.sleep(1.5)
+        time.sleep(1.0)
 
 
 def main():
     os.makedirs("docs", exist_ok=True)
 
-    # 1. Process Men's Basketball
-    logger.info("=== Starting Men's Basketball Scraping ===")
-    process_league(MENS_TEAMS_CONFIG, gender="men")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled"]
+        )
+        context = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1280, "height": 800},
+            locale="en-US"
+        )
+        page = context.new_page()
 
-    # 2. Process Women's Basketball
-    logger.info("=== Starting Women's Basketball Scraping ===")
-    process_league(WOMENS_TEAMS_CONFIG, gender="women")
+        # 1. Process Men's Basketball
+        logger.info("=== Starting Men's Basketball Scraping ===")
+        process_league(page, MENS_TEAMS_CONFIG, gender="men")
 
-    logger.info("Done — Individual Summit League basketball stats JSONs updated!")
+        # 2. Process Women's Basketball
+        logger.info("=== Starting Women's Basketball Scraping ===")
+        process_league(page, WOMENS_TEAMS_CONFIG, gender="women")
+
+        browser.close()
+
+    logger.info("Done — Individual Summit League basketball stats and rosters JSONs updated!")
 
 
 if __name__ == "__main__":
