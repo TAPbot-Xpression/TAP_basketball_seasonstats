@@ -6,7 +6,7 @@
   <title>Summit League Basketball Stats</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
 
   <style>
     /* ── Team Color Themes (Dynamically applied via data-theme) ─────────────── */
@@ -139,14 +139,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
+      gap: 1.25rem;
+      flex-wrap: nowrap;            /* stays on one row until the narrow breakpoint below */
     }
 
     .wordmark {
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      min-width: 0;                 /* lets the title shrink/wrap instead of pushing the switcher down */
+      flex: 1 1 auto;
     }
 
     .wordmark-eyebrow {
@@ -160,7 +162,7 @@
     }
 
     h1 {
-      font-size: 2.3rem;
+      font-size: clamp(1.35rem, 2.3vw, 2rem);   /* scales with window width, max 2rem */
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.15;
@@ -182,6 +184,7 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 0.45rem;
+      flex-shrink: 0;
     }
 
     .division-caption {
@@ -237,6 +240,13 @@
       color: #ffffff;
       box-shadow: 0 0 18px var(--team-glow), inset 0 1px 1px rgba(255,255,255,0.2);
       transform: scale(1.02);
+    }
+
+    @media (max-width: 1100px) {
+      .div-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+      }
     }
 
     /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
@@ -788,16 +798,17 @@
       text-decoration: underline;
     }
 
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
     @media (max-width: 980px) {
       .table-card-header { flex-wrap: wrap; }
-      .division-control-wrap { align-items: flex-start; width: 100%; }
-      .division-switcher { width: 100%; justify-content: center; }
-      .div-btn { flex: 1; justify-content: center; }
       .table-card-header .toggle-group-wrap { width: 100%; }
     }
 
-    @media (max-width: 768px) {
-      h1 { font-size: 1.8rem; }
+    @media (max-width: 720px) {
+      header { flex-wrap: wrap; }
+      .division-control-wrap { align-items: flex-start; width: 100%; }
+      .division-switcher { width: 100%; justify-content: center; }
+      .div-btn { flex: 1; justify-content: center; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
       .team-pill.non-conf { margin-left: 0; }
     }
@@ -915,7 +926,7 @@
       <!-- Left: Title + compact links, with player count underneath -->
       <div class="table-card-left">
         <div class="table-card-title-wrap">
-          <span class="table-card-title" id="tableTitle">St. Thomas Men's Stats</span>
+          <span class="table-card-title" id="tableTitle">St. Thomas Tommies Men's Stats</span>
           <div class="header-links-group">
             <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
               Stats Site ↗
@@ -924,7 +935,7 @@
               Roster Site ↗
             </a>
             <a id="teamJsonLink" href="st_thomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-              JSON ↗
+              st_thomas.json ↗
             </a>
           </div>
         </div>
@@ -966,6 +977,8 @@
 
 <script>
   // ── Team Registry & Config ─────────────────────────────────────────────────
+  // Non-Conf links are NOT hard-coded: they come from "source_stats_url" and
+  // "source_roster_url" inside non_conf.json / non_conf_women.json.
   const TEAMS = {
     kansas_city: {
       id: 'kansas_city',
@@ -1097,6 +1110,8 @@
     }
   };
 
+  // ── Column Definitions for Both Modes ──────────────────────────────────────
+  // tableOnly: true → shown in the full table, hidden from the spotlight card
   const STAT_CONFIGS = {
     avg: [
       { key: 'gp',           label: 'GP',     tableOnly: true },
@@ -1131,7 +1146,7 @@
   };
 
   let CURRENT_GENDER = 'men';
-  let CURRENT_STAT_MODE = 'avg';
+  let CURRENT_STAT_MODE = 'avg'; // 'avg' or 'tot'
   let CURRENT_TEAM = 'st_thomas';
   let RAW_DATA = null;
   let PLAYERS = [];
@@ -1139,8 +1154,9 @@
   let sortDir = -1;
   let searchNum = '';
   let RANKS = {};
-  let LOAD_TOKEN = 0;
+  let LOAD_TOKEN = 0; // guards against out-of-order responses when switching quickly
 
+  // ── Switch Gender Division ──────────────────────────────────────────────────
   function setGender(gender) {
     if (CURRENT_GENDER === gender) return;
     CURRENT_GENDER = gender;
@@ -1152,6 +1168,7 @@
     loadTeamData(CURRENT_TEAM);
   }
 
+  // ── Switch Stat View Mode (Game Averages vs Totals) ─────────────────────────
   function setStatMode(mode) {
     if (CURRENT_STAT_MODE === mode) return;
     CURRENT_STAT_MODE = mode;
@@ -1169,6 +1186,7 @@
     }
   }
 
+  // ── Switch Team ─────────────────────────────────────────────────────────────
   function selectTeam(teamId, btn) {
     if (!TEAMS[teamId]) return;
     CURRENT_TEAM = teamId;
@@ -1188,6 +1206,7 @@
     document.getElementById('notFound').style.display = 'none';
   }
 
+  // ── Stat Parser Helper ──────────────────────────────────────────────────────
   function parseStat(val) {
     if (val === undefined || val === null || val === '-' || val === '--' || val === '') {
       return -999999;
@@ -1197,13 +1216,15 @@
     return isNaN(num) ? -999999 : num;
   }
 
+  // ── Calculate Roster Ranks for Active Mode ───────────────────────────────────
+  // Zeros are excluded so a "0" value never earns a leader medal.
   function calculateRanks() {
     RANKS = {};
     const cols = STAT_CONFIGS[CURRENT_STAT_MODE];
     cols.forEach(c => {
       const vals = PLAYERS
         .map(p => parseStat(p[c.key]))
-        .filter(v => v !== -999999);
+        .filter(v => v > 0);
       const distinct = [...new Set(vals)].sort((a, b) => b - a);
       RANKS[c.key] = { 1: distinct[0], 2: distinct[1], 3: distinct[2] };
     });
@@ -1211,7 +1232,7 @@
 
   function getRank(key, val) {
     const num = parseStat(val);
-    if (num === -999999) return null;
+    if (num <= 0) return null;
     const r = RANKS[key];
     if (!r) return null;
     if (num === r[1]) return 1;
@@ -1220,6 +1241,7 @@
     return null;
   }
 
+  // ── Link Helpers ────────────────────────────────────────────────────────────
   function setLink(id, url, title) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1233,6 +1255,7 @@
     }
   }
 
+  // ── Display name: "Macalester (Non-Conf)" for the Non-Conf slot ──────────────
   function getDisplayTeamName(teamObj, rawJson) {
     if (teamObj.isNonConf) {
       const opp = (rawJson && rawJson.team && rawJson.team !== 'Non-Conf') ? rawJson.team : 'Non-Conf Opponent';
@@ -1241,11 +1264,13 @@
     return teamObj.name;
   }
 
+  // ── Placeholder / Error Panels ──────────────────────────────────────────────
   function showTablePanel(html) {
     document.getElementById('tableHead').innerHTML = '';
     document.getElementById('tableBody').innerHTML = `<tr><td colspan="16" class="empty">${html}</td></tr>`;
   }
 
+  // ── Load Stats JSON ─────────────────────────────────────────────────────────
   async function loadTeamData(teamId) {
     const token = ++LOAD_TOKEN;
     const team = TEAMS[teamId];
@@ -1257,6 +1282,7 @@
     document.getElementById('statusText').textContent = 'Loading…';
     showTablePanel(`Loading ${esc(team.shortName)} (${genderLabel}) stats…`);
 
+    // Conference teams have fixed links; Non-Conf links are filled in after the JSON loads
     if (isNonConf) {
       setLink('teamStatsLink', '');
       setLink('teamRosterLink', '');
@@ -1289,6 +1315,7 @@
         rawList = RAW_DATA;
       }
 
+      // Missing/blank values always display as "0" (counts), "0.0" (averages), ".000" (percentages)
       PLAYERS = rawList.map(p => ({
         name:         p.name || p.player || p.player_name || '—',
         number:       p.number !== undefined && p.number !== null ? String(p.number) : (p.jersey ? String(p.jersey) : ''),
@@ -1297,24 +1324,24 @@
         gp:           p.gp || '0',
         gs:           p.gs || '0',
         min:          p.min || '0',
-        min_avg:      p.min_avg || '0.0',
+        min_avg:      p.min_avg || p.mpg || '0.0',
         pts:          p.pts || '0',
-        avg:          p.avg || '0.0',
-        fg_pct:       p.fg_pct || '.000',
-        three_pt_pct: p.three_pt_pct || '.000',
-        ft_pct:       p.ft_pct || '.000',
+        avg:          p.avg || p.ppg || '0.0',
+        fg_pct:       p.fg_pct || p['fg%'] || '.000',
+        three_pt_pct: p.three_pt_pct || p['3pt%'] || p['3p%'] || '.000',
+        ft_pct:       p.ft_pct || p['ft%'] || '.000',
         off_reb:      p.off_reb || '0',
         def_reb:      p.def_reb || '0',
-        tot_reb:      p.tot_reb || '0',
-        reb_avg:      p.reb_avg || '0.0',
+        tot_reb:      p.tot_reb || p.reb || p.tot || '0',
+        reb_avg:      p.reb_avg || p.rpg || '0.0',
         ast:          p.ast || '0',
-        ast_avg:      p.ast_avg || '0.0',
-        to:           p.to || '0',
-        to_avg:       p.to_avg || '0.0',
+        ast_avg:      p.ast_avg || p.apg || '0.0',
+        to:           p.to || p.turnovers || '0',
+        to_avg:       p.to_avg || p.topg || '0.0',
         stl:          p.stl || '0',
-        stl_avg:      p.stl_avg || '0.0',
+        stl_avg:      p.stl_avg || p.spg || '0.0',
         blk:          p.blk || '0',
-        blk_avg:      p.blk_avg || '0.0'
+        blk_avg:      p.blk_avg || p.bpg || '0.0'
       }));
 
       calculateRanks();
@@ -1325,21 +1352,23 @@
 
       document.getElementById('tableTitle').textContent = `${formattedTitle} ${genderLabel} Stats`;
 
+      // ── Non-Conf dynamic configuration ──────────────────────────────────────
       if (isNonConf) {
-        const stackUrl  = RAW_DATA.source_stats_url  || '';
+        const statsUrl  = RAW_DATA.source_stats_url  || '';
         const rosterUrl = RAW_DATA.source_roster_url || '';
         const rawName   = (RAW_DATA.team && RAW_DATA.team !== 'Non-Conf') ? RAW_DATA.team : 'Non-Conf';
 
-        document.getElementById('nonConfPillLabel').textContent = `${rawName} (Non-Conf)`;
+        document.getElementById('nonConfPillLabel').textContent =
+          status === 'empty' ? 'Non-Conf' : `${rawName} (Non-Conf)`;
 
-        setLink('teamStatsLink',  stackUrl,  `View ${rawName} stats on their athletics website`);
+        setLink('teamStatsLink',  statsUrl,  `View ${rawName} stats on their athletics website`);
         setLink('teamRosterLink', rosterUrl, `View ${rawName} roster on their athletics website`);
 
         if (status === 'empty') {
           document.getElementById('statusDot').className = 'status-dot warn';
           document.getElementById('statusText').textContent = 'No opponent loaded';
           document.getElementById('metaBar').innerHTML =
-            `<strong>${formattedTitle} ${genderLabel}</strong> · Waiting for an opponent link`;
+            `<strong>Non-Conf ${genderLabel}</strong> · Waiting for an opponent link`;
           showTablePanel(`
             <span class="empty-title">No ${genderLabel} Opponent Loaded</span>
             ${esc(RAW_DATA.message || 'Add a stats link to load an opponent.')}
@@ -1358,14 +1387,14 @@
             `<strong>${esc(formattedTitle)}</strong> · Updated: ${updatedTime}`;
           showTablePanel(`
             <span class="empty-title">Couldn't read stats for ${esc(formattedTitle)}</span>
-            ${esc(RAW_DATA.message || 'Make sure the link is the opponent\'s basketball stats page.')}
-            ${stackUrl ? `<br><small>Link used: <a href="${esc(stackUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--team-accent)">${esc(stackUrl)}</a></small>` : ''}`);
+            ${esc(RAW_DATA.message || "Make sure the link is the opponent's basketball stats page.")}
+            ${statsUrl ? `<br><small>Link used: <a href="${esc(statsUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--team-accent)">${esc(statsUrl)}</a></small>` : ''}`);
           return;
         }
 
-        const styleNote = RAW_DATA.site_style ? ` · ${esc(RAW_DATA.site_style)}` : '';
+        // Site style (Old/New) is still saved in the JSON but no longer shown here
         document.getElementById('metaBar').innerHTML =
-          `<strong>${esc(formattedTitle)}</strong> · ${genderLabel} Basketball · Updated: ${updatedTime}${styleNote}`;
+          `<strong>${esc(formattedTitle)}</strong> · ${genderLabel} Basketball · Updated: ${updatedTime}`;
       } else {
         document.getElementById('metaBar').innerHTML =
           `<strong>${esc(team.name)}</strong> · Updated: ${updatedTime}`;
@@ -1393,6 +1422,7 @@
     }
   }
 
+  // ── Render Full Table ──────────────────────────────────────────────────────
   function renderTable() {
     const head = document.getElementById('tableHead');
     const body = document.getElementById('tableBody');
@@ -1426,6 +1456,7 @@
 
     body.innerHTML = sorted.map(r => {
       const isHL = searchNum && String(r.number) === String(searchNum);
+      // Index in the ORIGINAL list so clicks work correctly after sorting
       const origIdx = PLAYERS.indexOf(r);
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${esc(r.number)}">
         <td class="col-jersey">${esc(r.number) || '—'}</td>
@@ -1437,6 +1468,7 @@
     }).join('');
   }
 
+  // ── Sorting ────────────────────────────────────────────────────────────────
   function sortBy(col) {
     if (sortCol === col) {
       sortDir *= -1;
@@ -1448,6 +1480,7 @@
     if (searchNum) highlightRow(searchNum);
   }
 
+  // ── Render Spotlight Card ──────────────────────────────────────────────────
   function renderPlayerSpotlight(player) {
     const notFound = document.getElementById('notFound');
     const card     = document.getElementById('spotlightCard');
@@ -1464,8 +1497,7 @@
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
     const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Game Averages" : "Season Totals";
-    const teamObj     = TEAMS[CURRENT_TEAM];
-    const teamTitle   = getDisplayTeamName(teamObj, RAW_DATA);
+    const teamTitle   = getDisplayTeamName(TEAMS[CURRENT_TEAM], RAW_DATA);
 
     document.getElementById('spotJersey').textContent = player.number || '—';
     document.getElementById('spotYr').textContent  = player.year || '—';
@@ -1473,6 +1505,7 @@
     document.getElementById('spotName').textContent = player.name || '—';
     document.getElementById('spotSub').textContent  = `${teamTitle} · ${genderLabel} Basketball (${modeLabel})`;
 
+    // Spotlight excludes table-only columns (GP, GS)
     const spotCols = STAT_CONFIGS[CURRENT_STAT_MODE].filter(c => !c.tableOnly);
     const grid = document.getElementById('spotStatGrid');
 
@@ -1491,6 +1524,7 @@
     highlightRow(player.number);
   }
 
+  // ── Click on Player Name ───────────────────────────────────────────────────
   function displayPlayerCard(playerIdx) {
     const player = PLAYERS[playerIdx];
     if (!player) return;
@@ -1503,6 +1537,7 @@
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  // ── Spotlight Search Input ─────────────────────────────────────────────────
   document.getElementById('playerSearch').addEventListener('input', function () {
     searchNum = this.value.trim();
     const notFound = document.getElementById('notFound');
