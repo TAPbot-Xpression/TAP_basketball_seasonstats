@@ -694,7 +694,7 @@
 
     .site-link-btn.hidden { display: none; }
 
-    /* Secondary Mode Switcher (Game Averages vs Totals) */
+    /* Secondary Mode Switcher (Game Averages vs Totals, Overall vs Conference) */
     .toggle-group-wrap {
       display: inline-flex;
       background: var(--surface);
@@ -735,19 +735,20 @@
 
     .table-wrap { overflow-x: auto; }
 
+    /* ── Player Stats Table Typography & Layout ─────────────────────────────── */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.92rem;
+      font-size: 1.02rem; /* Increased readability */
     }
 
     thead th {
       background: rgba(0,0,0,0.3);
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      padding: 0.8rem 0.85rem;
+      padding: 0.85rem 0.9rem;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       text-align: center;
@@ -766,13 +767,13 @@
     thead th.sorted { color: var(--team-accent); }
 
     tbody td {
-      padding: 0.75rem 0.85rem;
+      padding: 0.82rem 0.9rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--text);
       white-space: nowrap;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
+      font-size: 0.98rem; /* Increased readability */
     }
 
     tbody td.col-player {
@@ -782,6 +783,7 @@
       cursor: pointer;
       color: #ffffff;
       transition: color 0.15s ease;
+      font-size: 1rem;
     }
 
     tbody td.col-player:hover {
@@ -789,19 +791,20 @@
       text-decoration: underline;
     }
 
+    /* Player jersey number centered */
     tbody td.col-jersey {
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      width: 45px;
-      text-align: left;
+      width: 55px;
+      text-align: center; /* Centered player numbers */
     }
 
     tbody td.col-pos,
     tbody td.col-yr {
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       font-weight: 600;
       width: 50px;
     }
@@ -834,7 +837,11 @@
       user-select: none;
     }
 
-    .team-stat-box:hover {
+    .team-stat-box.is-non-conf-box {
+      cursor: default;
+    }
+
+    .team-stat-box:hover:not(.is-non-conf-box) {
       background: var(--surface-2);
       border-color: var(--team-accent);
     }
@@ -860,13 +867,6 @@
       font-size: 1.45rem;
       font-weight: 800;
       color: var(--text);
-    }
-
-    .team-stat-rank-hint {
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--team-accent);
-      font-weight: 700;
     }
 
     .status-bar {
@@ -1043,7 +1043,7 @@
     No player found with that jersey number on this roster.
   </div>
 
-  <!-- Player Spotlight Card -->
+  <!-- Player Spotlight Card (Positioned above table) -->
   <div class="spotlight-card" id="spotlightCard">
     <div class="spotlight-header">
       <div class="jersey-badge" id="spotJersey">—</div>
@@ -1058,20 +1058,6 @@
     </div>
     <div>
       <div class="stat-grid" id="spotStatGrid"></div>
-    </div>
-  </div>
-
-  <!-- Team Stat Leaderboard Spotlight Card -->
-  <div class="spotlight-card" id="teamLeaderboardCard">
-    <div class="spotlight-header leaderboard-header">
-      <div class="trophy-badge">🏆</div>
-      <div class="spotlight-details">
-        <div class="spotlight-name" id="leaderboardStatTitle">Summit League Leaderboard</div>
-        <div class="spotlight-sub" id="leaderboardStatSub">Comparing all 8 Summit League Conference Teams</div>
-      </div>
-    </div>
-    <div>
-      <div class="leaderboard-grid" id="leaderboardGrid"></div>
     </div>
   </div>
 
@@ -1120,14 +1106,38 @@
     </div>
   </div>
 
-  <!-- Overall Team Stats Table Card -->
+  <!-- Team Stat Leaderboard Spotlight Card (Positioned directly under player table) -->
+  <div class="spotlight-card" id="teamLeaderboardCard">
+    <div class="spotlight-header leaderboard-header">
+      <div class="trophy-badge">🏆</div>
+      <div class="spotlight-details">
+        <div class="spotlight-name" id="leaderboardStatTitle">Summit League Leaderboard</div>
+        <div class="spotlight-sub" id="leaderboardStatSub">Summit League Leaderboard · Men's Basketball</div>
+      </div>
+    </div>
+    <div>
+      <div class="leaderboard-grid" id="leaderboardGrid"></div>
+    </div>
+  </div>
+
+  <!-- Team Stats Table Card with Overall / Conference Toggle -->
   <div class="table-card" id="teamStatsSection">
     <div class="table-card-header">
       <div class="table-card-left">
         <div class="table-card-title-wrap">
           <span class="table-card-title" id="teamStatsCardTitle">Overall Team Stats</span>
-          <span class="search-hint" style="font-size:0.82rem; margin-left:0.4rem;">(Click any stat below to rank all Summit League teams)</span>
+          <span class="search-hint" id="teamStatsCardHint" style="font-size:0.82rem; margin-left:0.4rem;">(Click any stat below to rank all Summit League teams)</span>
         </div>
+      </div>
+
+      <!-- Overall vs Conference Team Stats Toggle -->
+      <div class="toggle-group-wrap" role="tablist" aria-label="Team Stat Split Switcher">
+        <button id="btnTeamOverall" class="toggle-btn active" onclick="setTeamSplitMode('overall')">
+          <span>🌐 Overall</span>
+        </button>
+        <button id="btnTeamConf" class="toggle-btn" onclick="setTeamSplitMode('conference')">
+          <span>🏆 Conference</span>
+        </button>
       </div>
     </div>
     <div class="team-stats-grid" id="teamStatsGrid">
@@ -1316,9 +1326,10 @@
     ]
   };
 
-  // ── Team Stats Specs (Overall) ─────────────────────────────────────────────
+  // ── Team Stats Specs (Overall & Conference) ────────────────────────────────
   const TEAM_STAT_DEFINITIONS = [
     { key: 'ppg',               label: 'PTS/G',         desc: 'Points Per Game',               asc: false },
+    { key: 'opp_ppg',           label: 'OPP PTS/G',     desc: 'Opponent Points Per Game',      asc: true  },
     { key: 'scoring_margin',    label: 'Scoring Mgn',   desc: 'Scoring Margin (PTS/G +/-)',     asc: false },
     { key: 'fg_pct',            label: 'FG%',           desc: 'Field Goal Percentage',         asc: false },
     { key: 'fg_per_game',       label: 'FG/G',          desc: 'Field Goals Made Per Game',      asc: false },
@@ -1329,15 +1340,16 @@
     { key: 'reb_per_game',      label: 'REB/G',         desc: 'Rebounds Per Game',             asc: false },
     { key: 'reb_margin',        label: 'Reb Mgn',       desc: 'Rebound Margin (REB/G +/-)',    asc: false },
     { key: 'ast_per_game',      label: 'AST/G',         desc: 'Assists Per Game',              asc: false },
-    { key: 'to_per_game',       label: 'TO/G',          desc: 'Turnovers Per Game (Fewer=Better)', asc: true },
+    { key: 'to_per_game',       label: 'TO/G',          desc: 'Turnovers Per Game',            asc: true  },
     { key: 'ast_to_ratio',      label: 'AST/TO',        desc: 'Assist to Turnover Ratio',      asc: false },
-    { key: 'pts_off_to',        label: 'PTS Off TO',    desc: 'Points Off Turnovers Per Game', asc: false },
+    { key: 'pts_off_to',        label: 'PTS Off TO',    desc: 'Points Off Turnovers Per Game',  asc: false },
     { key: 'stl_per_game',      label: 'STL/G',         desc: 'Steals Per Game',               asc: false },
     { key: 'blk_per_game',      label: 'BLK/G',         desc: 'Blocks Per Game',               asc: false },
   ];
 
   let CURRENT_GENDER = 'men';
   let CURRENT_STAT_MODE = 'avg';
+  let CURRENT_TEAM_SPLIT = 'overall'; // 'overall' or 'conference'
   let CURRENT_TEAM = 'st_thomas';
   let RAW_DATA = null;
   let PLAYERS = [];
@@ -1379,6 +1391,23 @@
     if (searchNum) {
       const p = PLAYERS.find(pl => String(pl.number) === searchNum);
       if (p) renderPlayerSpotlight(p);
+    }
+  }
+
+  // ── Switch Team Split Mode (Overall vs Conference) ──────────────────────────
+  function setTeamSplitMode(splitMode) {
+    if (CURRENT_TEAM_SPLIT === splitMode) return;
+    CURRENT_TEAM_SPLIT = splitMode;
+
+    document.getElementById('btnTeamOverall').classList.toggle('active', splitMode === 'overall');
+    document.getElementById('btnTeamConf').classList.toggle('active', splitMode === 'conference');
+
+    const formattedTitle = getDisplayTeamName(TEAMS[CURRENT_TEAM], RAW_DATA);
+    document.getElementById('teamStatsCardTitle').textContent = `${formattedTitle} Team Stats (${splitMode === 'conference' ? 'Conference Only' : 'Overall'})`;
+
+    renderTeamStatsTable();
+    if (ACTIVE_COMPARE_STAT && !TEAMS[CURRENT_TEAM].isNonConf) {
+      displayTeamLeaderboard(ACTIVE_COMPARE_STAT);
     }
   }
 
@@ -1478,7 +1507,10 @@
         const res = await fetch(`${file}?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
-          CONFERENCE_TEAM_CACHE[gender][key] = data.team_stats || {};
+          CONFERENCE_TEAM_CACHE[gender][key] = {
+            overall: data.team_stats || {},
+            conference: data.conference_team_stats || {}
+          };
         }
       } catch (e) {}
     }));
@@ -1522,7 +1554,10 @@
       RAW_DATA = data;
 
       if (!isNonConf) {
-        CONFERENCE_TEAM_CACHE[CURRENT_GENDER][teamId] = data.team_stats || {};
+        CONFERENCE_TEAM_CACHE[CURRENT_GENDER][teamId] = {
+          overall: data.team_stats || {},
+          conference: data.conference_team_stats || {}
+        };
       }
 
       let rawList = [];
@@ -1567,9 +1602,10 @@
       const formattedTitle = getDisplayTeamName(team, RAW_DATA);
 
       document.getElementById('tableTitle').textContent = `${formattedTitle} ${genderLabel} Stats`;
-      document.getElementById('teamStatsCardTitle').textContent = `${formattedTitle} Team Stats (Overall)`;
+      document.getElementById('teamStatsCardTitle').textContent = `${formattedTitle} Team Stats (${CURRENT_TEAM_SPLIT === 'conference' ? 'Conference Only' : 'Overall'})`;
 
       if (isNonConf) {
+        document.getElementById('teamStatsCardHint').style.display = 'none';
         const statsUrl  = RAW_DATA.source_stats_url  || '';
         const rosterUrl = RAW_DATA.source_roster_url || '';
         const rawName   = (RAW_DATA.team && RAW_DATA.team !== 'Non-Conf') ? RAW_DATA.team : 'Non-Conf';
@@ -1593,7 +1629,7 @@
               GitHub → Actions → "Scrape Basketball Stats" → Run workflow<br>
               Paste the opponent's stats link in the ${genderLabel} fields
             </span>`);
-          renderTeamStatsTable({});
+          renderTeamStatsTable();
           return;
         }
 
@@ -1606,13 +1642,14 @@
             <span class="empty-title">Couldn't read stats for ${esc(formattedTitle)}</span>
             ${esc(RAW_DATA.message || "Make sure the link is the opponent's basketball stats page.")}
             ${statsUrl ? `<br><small>Link used: <a href="${esc(statsUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--team-accent)">${esc(statsUrl)}</a></small>` : ''}`);
-          renderTeamStatsTable({});
+          renderTeamStatsTable();
           return;
         }
 
         document.getElementById('metaBar').innerHTML =
           `<strong>${esc(formattedTitle)}</strong> · ${genderLabel} Basketball · Updated: ${updatedTime}`;
       } else {
+        document.getElementById('teamStatsCardHint').style.display = 'inline';
         document.getElementById('metaBar').innerHTML =
           `<strong>${esc(team.name)}</strong> · Updated: ${updatedTime}`;
       }
@@ -1622,7 +1659,7 @@
 
       sortCol = null;
       renderTable();
-      renderTeamStatsTable(RAW_DATA.team_stats || {});
+      renderTeamStatsTable();
     } catch (err) {
       if (token !== LOAD_TOKEN) return;
       PLAYERS = [];
@@ -1637,7 +1674,7 @@
         <span style="color:#f87171">Failed to load stats for ${esc(team.name)} (${esc(teamConfig.file)}).</span><br>
         <small style="color:var(--text-muted)">${hint}</small>`);
       document.getElementById('metaBar').textContent = `Error loading ${teamConfig.file}`;
-      renderTeamStatsTable({});
+      renderTeamStatsTable();
     }
   }
 
@@ -1648,7 +1685,7 @@
     const activeCols = STAT_CONFIGS[CURRENT_STAT_MODE];
 
     head.innerHTML = `<tr>
-      <th class="col-left">#</th>
+      <th class="col-center-fixed">#</th>
       <th class="col-center-fixed">Pos</th>
       <th class="col-center-fixed">Yr</th>
       <th class="col-left">Player</th>
@@ -1698,21 +1735,34 @@
   }
 
   // ── Render Team Stats Table (Grid) ─────────────────────────────────────────
-  function renderTeamStatsTable(teamStats) {
+  function renderTeamStatsTable() {
     const grid = document.getElementById('teamStatsGrid');
-    if (!teamStats || Object.keys(teamStats).length === 0) {
+    if (!RAW_DATA) {
       grid.innerHTML = `<div class="empty" style="grid-column: 1 / -1;">No team stats recorded for this selection.</div>`;
+      return;
+    }
+
+    const teamStats = (CURRENT_TEAM_SPLIT === 'conference')
+      ? (RAW_DATA.conference_team_stats || {})
+      : (RAW_DATA.team_stats || {});
+
+    const isNonConf = !!TEAMS[CURRENT_TEAM].isNonConf;
+
+    if (!teamStats || Object.keys(teamStats).length === 0) {
+      grid.innerHTML = `<div class="empty" style="grid-column: 1 / -1;">No team stats available for this view.</div>`;
       return;
     }
 
     grid.innerHTML = TEAM_STAT_DEFINITIONS.map(def => {
       const val = cleanVal(teamStats[def.key] || '0.0');
-      const isActive = ACTIVE_COMPARE_STAT === def.key ? 'active-compare' : '';
+      const isActive = (!isNonConf && ACTIVE_COMPARE_STAT === def.key) ? 'active-compare' : '';
+      const clickAttr = isNonConf ? '' : `onclick="displayTeamLeaderboard('${def.key}')"`;
+      const titleAttr = isNonConf ? `${def.desc}` : `Click to rank all Summit League teams for ${def.desc}`;
+      const nonConfClass = isNonConf ? 'is-non-conf-box' : '';
 
-      return `<div class="team-stat-box ${isActive}" onclick="displayTeamLeaderboard('${def.key}')" title="Click to rank all Summit League teams for ${def.desc}">
+      return `<div class="team-stat-box ${isActive} ${nonConfClass}" ${clickAttr} title="${titleAttr}">
         <span class="team-stat-label">
           <span>${def.label}</span>
-          <span class="team-stat-rank-hint">Rank ↗</span>
         </span>
         <span class="team-stat-val">${esc(val)}</span>
       </div>`;
@@ -1721,18 +1771,21 @@
 
   // ── Display Conference Leaderboard Spotlight (Rank #1 to #8) ───────────────
   async function displayTeamLeaderboard(statKey) {
+    if (TEAMS[CURRENT_TEAM].isNonConf) return; // Ignore non-conf teams for leaderboard spotlight
+
     ACTIVE_COMPARE_STAT = statKey;
-    renderTeamStatsTable(RAW_DATA.team_stats || {});
+    renderTeamStatsTable();
 
     const def = TEAM_STAT_DEFINITIONS.find(d => d.key === statKey);
     if (!def) return;
 
-    // Ensure conference data is loaded
     await prefetchConferenceStats();
     const cache = CONFERENCE_TEAM_CACHE[CURRENT_GENDER];
+    const splitKey = CURRENT_TEAM_SPLIT === 'conference' ? 'conference' : 'overall';
 
     const rankedTeams = SUMMIT_TEAM_KEYS.map(key => {
-      const stats = cache[key] || {};
+      const entry = cache[key] || {};
+      const stats = entry[splitKey] || entry.overall || {};
       const rawV = stats[statKey];
       const numV = parseStat(rawV);
       const displayV = cleanVal(rawV || '0.0');
@@ -1745,7 +1798,6 @@
       };
     });
 
-    // Sort order: ascending for turnovers (fewer = better), descending for all others
     rankedTeams.sort((a, b) => {
       if (def.asc) {
         return a.num - b.num;
@@ -1753,13 +1805,10 @@
       return b.num - a.num;
     });
 
-    // Render leaderboard card
     const card = document.getElementById('teamLeaderboardCard');
-    const playerCard = document.getElementById('spotlightCard');
-    playerCard.style.display = 'none'; // hide player card if open
 
     document.getElementById('leaderboardStatTitle').textContent = `${def.desc} (${def.label})`;
-    document.getElementById('leaderboardStatSub').textContent = `Summit League Leaderboard · ${CURRENT_GENDER === 'women' ? "Women's" : "Men's"} Basketball (Ranked Best to Worst)`;
+    document.getElementById('leaderboardStatSub').textContent = `Summit League Leaderboard · ${CURRENT_GENDER === 'women' ? "Women's" : "Men's"} Basketball (${splitKey === 'conference' ? 'Conference' : 'Overall'})`;
 
     const grid = document.getElementById('leaderboardGrid');
     grid.innerHTML = rankedTeams.map((t, idx) => {
@@ -1784,7 +1833,6 @@
   function renderPlayerSpotlight(player) {
     const notFound = document.getElementById('notFound');
     const card     = document.getElementById('spotlightCard');
-    const teamLb   = document.getElementById('teamLeaderboardCard');
 
     if (!player) {
       card.style.display = 'none';
@@ -1793,7 +1841,6 @@
       return;
     }
 
-    teamLb.style.display   = 'none';
     notFound.style.display = 'none';
     card.style.display     = 'block';
 
