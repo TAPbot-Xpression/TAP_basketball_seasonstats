@@ -4,13 +4,13 @@ Unified Summit League Basketball player season stats and roster scraper (Men's &
 
 Features:
   - High-Performance Concurrent Scraping:
-      * Uses Async Playwright with an asyncio Semaphore pool (concurrency = 4-6).
-      * Scrapes all 16 Men's and Women's teams in parallel, reducing total execution
-        time from 3-4 minutes down to ~20-30 seconds.
+      * Uses Async Playwright with an asyncio Semaphore pool (concurrency = 5).
+      * Scrapes all 16 Men's and Women's teams in parallel (~20-30 seconds).
   - Position & Academic Class Standardization:
       * Supports 'G' (Guard), 'F' (Forward), and 'W' (Winger / Wing, e.g., SDSU).
       * Standardizes academic standing (FR, SO, JR, SR, GR, R-FR, R-SO, R-JR, R-SR).
-  - Robust Nuxt & Print Roster Parser (Fixes NDSU & Nuxt sites):
+      * Supports ordinal year designations (1st, 2nd, 3rd, 4th, 5th / 1st Year, etc. for NDSU).
+  - Robust Nuxt & Print Roster Parser:
       * Inspects __NUXT_DATA__ on roster and stats pages to extract Position and Year
         directly from Sidearm state when HTML print tables are client-rendered.
       * Falls back to responsive HTML table and card block parsers.
@@ -281,28 +281,48 @@ def normalize_position(pos_str: str) -> str:
     return ""
 
 
+_CLASS_MAP = {
+    # Standard labels
+    "FR": "FR", "FRESHMAN": "FR",
+    "SO": "SO", "SOPHOMORE": "SO",
+    "JR": "JR", "JUNIOR": "JR",
+    "SR": "SR", "SENIOR": "SR",
+    "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADUATESTUDENT": "GR",
+    "GRADSTUDENT": "GR", "GS": "GR",
+
+    # Ordinal labels (NDSU: 1st, 2nd, 3rd, 4th, 5th, etc.)
+    "1ST": "FR", "1STYEAR": "FR", "1": "FR", "FIRSTYEAR": "FR", "FIRST": "FR",
+    "2ND": "SO", "2NDYEAR": "SO", "2": "SO", "SECONDYEAR": "SO", "SECOND": "SO",
+    "3RD": "JR", "3RDYEAR": "JR", "3": "JR", "THIRDYEAR": "JR", "THIRD": "JR",
+    "4TH": "SR", "4THYEAR": "SR", "4": "SR", "FOURTHYEAR": "SR", "FOURTH": "SR",
+    "5TH": "GR", "5THYEAR": "GR", "5": "GR", "FIFTHYEAR": "GR", "FIFTH": "GR",
+}
+
+
 def normalize_year(yr_str: str) -> str:
-    """Standardizes academic class standings (FR, SO, JR, SR, GR, R-*)."""
+    """
+    Standardizes academic class standings (FR, SO, JR, SR, GR, R-*).
+    Handles traditional, redshirt, and ordinal (1st Year, 2nd, 3rd, 4th, 5th) notations.
+    """
     if not yr_str:
         return ""
 
-    y = yr_str.upper().strip()
-    y = y.replace("REDSHIRT", "R-").replace("RS-", "R-")
-    y = re.sub(r"[.\s]+", "", y)
+    y = re.sub(r"[^A-Z0-9]", "", str(yr_str).upper())
+    if not y:
+        return ""
 
-    is_rs = y.startswith("R-")
-    base = y[2:] if is_rs else y
+    # Direct match in map
+    if y in _CLASS_MAP:
+        return _CLASS_MAP[y]
 
-    if base in ("GR", "GRAD", "GRADUATE", "5TH", "5THYEAR", "5"):
-        return "GR"
-    if base in ("SR", "SENIOR"):
-        return "R-SR" if is_rs else "SR"
-    if base in ("JR", "JUNIOR"):
-        return "R-JR" if is_rs else "JR"
-    if base in ("SO", "SOPHOMORE"):
-        return "R-SO" if is_rs else "SO"
-    if base in ("FR", "FRESHMAN"):
-        return "R-FR" if is_rs else "FR"
+    # Handle Redshirt prefixes (R-1st, RS-2nd, Redshirt Junior, etc.)
+    for prefix in ("REDSHIRT", "RS", "R"):
+        if y.startswith(prefix):
+            remainder = y[len(prefix):]
+            if remainder in _CLASS_MAP:
+                base = _CLASS_MAP[remainder]
+                return f"R-{base}" if base != "GR" else "GR"
+
     return ""
 
 
@@ -442,7 +462,8 @@ def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
                 c_pos = normalize_position(resolve(raw_pos))
 
                 raw_yr = (item.get("academicYear") or item.get("year") or item.get("class") or
-                          item.get("academicClass") or item.get("classYear") or item.get("cl"))
+                          item.get("academicClass") or item.get("classYear") or item.get("cl") or
+                          item.get("yearShort") or item.get("academicYearShort") or item.get("academicStanding"))
                 c_yr = normalize_year(resolve(raw_yr))
 
                 if c_name:
@@ -611,7 +632,10 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
 
                 # Position and Year if present in stats object
                 c_pos = normalize_position(resolve(item.get("position") or item.get("pos") or item.get("positionShort")))
-                c_yr  = normalize_year(resolve(item.get("academicYear") or item.get("year") or item.get("class")))
+                c_yr  = normalize_year(resolve(
+                    item.get("academicYear") or item.get("year") or item.get("class") or
+                    item.get("academicClass") or item.get("classYear") or item.get("yearShort")
+                ))
 
                 gp = find_stat(item, ["gamesPlayed", "gp", "games", "gp_gs"])
                 gs = find_stat(item, ["gamesStarted", "gs", "starts"])
