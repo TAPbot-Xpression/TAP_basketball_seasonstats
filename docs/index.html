@@ -39,6 +39,7 @@
 
       --green:          #10b981;
       --red:            #ef4444;
+      --amber:          #f59e0b;
 
       --radius:         12px;
       --radius-sm:      8px;
@@ -106,6 +107,15 @@
       --team-glow:      rgba(139, 92, 246, 0.32);
       --team-light:     #ddd6fe;
       --team-btn-text:  #ffffff;
+    }
+
+    /* Non-Conf: neutral steel so it reads as "visiting opponent", not a Summit team */
+    [data-theme="non_conf"] {
+      --team-primary:   #334155;
+      --team-accent:    #94a3b8;
+      --team-glow:      rgba(148, 163, 184, 0.30);
+      --team-light:     #e2e8f0;
+      --team-btn-text:  #0b1220;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -262,12 +272,28 @@
       box-shadow: 0 0 15px var(--team-glow);
     }
 
+    /* Non-Conf pill: dashed outline sets it apart from the 8 Summit teams */
+    .team-pill.non-conf {
+      border-style: dashed;
+      border-color: var(--border-light);
+      margin-left: 0.4rem;
+    }
+
+    .team-pill.non-conf.active {
+      border-style: solid;
+    }
+
     .team-pill-dot {
       width: 11px;
       height: 11px;
       border-radius: 50%;
       background: currentColor;
       display: inline-block;
+    }
+
+    .team-pill-dot.ring {
+      background: transparent;
+      border: 2px solid currentColor;
     }
 
     /* ── Search Spotlight ────────────────────────────────────────────────────── */
@@ -522,6 +548,24 @@
       color: var(--text);
     }
 
+    /* Opponent chip shown next to the title on the Non-Conf tab */
+    .opponent-chip {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      background: var(--team-glow);
+      border: 1px solid var(--team-accent);
+      color: var(--team-light);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .opponent-chip.show { display: inline-flex; }
+
     .header-links-group {
       display: inline-flex;
       align-items: center;
@@ -551,6 +595,8 @@
       border-color: var(--team-accent);
       box-shadow: 0 0 10px var(--team-glow);
     }
+
+    .site-link-btn.hidden { display: none; }
 
     /* Game Averages / Season Totals toggle inside the table header */
     .table-card-header .toggle-group-wrap {
@@ -658,12 +704,37 @@
       background: var(--green);
     }
     .status-dot.error { background: var(--red); }
+    .status-dot.warn  { background: var(--amber); }
 
     .empty {
       padding: 3.5rem;
       text-align: center;
       color: var(--text-muted);
       font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .empty strong { color: var(--text); }
+
+    .empty .empty-title {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .empty .empty-steps {
+      display: inline-block;
+      text-align: left;
+      margin-top: 0.9rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1.15rem;
     }
 
     /* ── Footer ─────────────────────────────────────────────────────────────── */
@@ -695,6 +766,7 @@
       .toggle-btn { flex: 1; justify-content: center; }
       .table-card-header .toggle-group-wrap { width: 100%; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .team-pill.non-conf { margin-left: 0; }
     }
   </style>
 </head>
@@ -751,6 +823,9 @@
       <button class="team-pill active" data-team="st_thomas" onclick="selectTeam('st_thomas', this)">
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
+      <button class="team-pill non-conf" data-team="non_conf" onclick="selectTeam('non_conf', this)">
+        <span class="team-pill-dot ring" style="color:#94a3b8"></span> Non-Conf
+      </button>
     </div>
   </section>
 
@@ -804,7 +879,8 @@
       <!-- Left: Title + links, with player count underneath -->
       <div class="table-card-left">
         <div class="table-card-title-wrap">
-          <span class="table-card-title" id="tableTitle">St. Thomas Season Stats</span>
+          <span class="table-card-title" id="tableTitle">St. Thomas Men's Stats</span>
+          <span class="opponent-chip" id="opponentChip" title="Opponent loaded in the Non-Conf slot"></span>
           <div class="header-links-group">
             <a id="teamStatsLink" href="https://tommiesports.com/sports/mbball/stats/2026-27" target="_blank" rel="noopener noreferrer" class="site-link-btn">
               Official Stats Site ↗
@@ -855,6 +931,8 @@
 
 <script>
   // ── Team Registry & Config ─────────────────────────────────────────────────
+  // Non-Conf links are NOT hard-coded: they come from "source_stats_url" and
+  // "source_roster_url" inside non_conf.json / non_conf_women.json.
   const TEAMS = {
     kansas_city: {
       id: 'kansas_city',
@@ -975,6 +1053,14 @@
         statsSiteUrl: 'https://tommiesports.com/sports/wbball/stats/2026-27',
         rosterSiteUrl: 'https://tommiesports.com/sports/wbball/roster/print/2026-27'
       }
+    },
+    non_conf: {
+      id: 'non_conf',
+      name: 'Non-Conf',
+      shortName: 'Non-Conf',
+      isNonConf: true,
+      men:   { file: 'non_conf.json',       statsSiteUrl: '', rosterSiteUrl: '' },
+      women: { file: 'non_conf_women.json', statsSiteUrl: '', rosterSiteUrl: '' }
     }
   };
 
@@ -1021,6 +1107,7 @@
   let sortDir = -1;
   let searchNum = '';
   let RANKS = {};
+  let LOAD_TOKEN = 0; // guards against out-of-order responses when switching quickly
 
   // ── Switch Gender Division ──────────────────────────────────────────────────
   function setGender(gender) {
@@ -1106,29 +1193,59 @@
     return null;
   }
 
+  // ── Link Helpers ────────────────────────────────────────────────────────────
+  function setLink(id, url, title) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (url) {
+      el.href = url;
+      el.title = title || '';
+      el.classList.remove('hidden');
+    } else {
+      el.removeAttribute('href');
+      el.classList.add('hidden');
+    }
+  }
+
+  function setOpponentChip(text) {
+    const chip = document.getElementById('opponentChip');
+    if (text) {
+      chip.textContent = `vs. ${text}`;
+      chip.classList.add('show');
+    } else {
+      chip.textContent = '';
+      chip.classList.remove('show');
+    }
+  }
+
+  // ── Placeholder / Error Panels ──────────────────────────────────────────────
+  function showTablePanel(html) {
+    document.getElementById('tableHead').innerHTML = '';
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="16" class="empty">${html}</td></tr>`;
+  }
+
   // ── Load Stats JSON ─────────────────────────────────────────────────────────
   async function loadTeamData(teamId) {
+    const token = ++LOAD_TOKEN;
     const team = TEAMS[teamId];
     const teamConfig = team[CURRENT_GENDER];
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
+    const isNonConf = !!team.isNonConf;
 
     document.getElementById('statusDot').className = 'status-dot';
     document.getElementById('statusText').textContent = 'Loading…';
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="16" class="empty">Loading ${team.shortName} (${genderLabel}) stats…</td></tr>`;
+    showTablePanel(`Loading ${esc(team.shortName)} (${genderLabel}) stats…`);
 
-    // Removed "— Full Roster" from title
     document.getElementById('tableTitle').textContent = `${team.shortName} ${genderLabel} Stats`;
+    setOpponentChip('');
 
-    const linkStatsEl = document.getElementById('teamStatsLink');
-    if (linkStatsEl && teamConfig.statsSiteUrl) {
-      linkStatsEl.href = teamConfig.statsSiteUrl;
-      linkStatsEl.title = `View official ${team.shortName} stats on their athletics website`;
-    }
-
-    const linkRosterEl = document.getElementById('teamRosterLink');
-    if (linkRosterEl && teamConfig.rosterSiteUrl) {
-      linkRosterEl.href = teamConfig.rosterSiteUrl;
-      linkRosterEl.title = `View official ${team.shortName} roster on their athletics website`;
+    // Conference teams have fixed links; Non-Conf links are filled in after the JSON loads
+    if (isNonConf) {
+      setLink('teamStatsLink', '');
+      setLink('teamRosterLink', '');
+    } else {
+      setLink('teamStatsLink', teamConfig.statsSiteUrl, `View official ${team.shortName} stats on their athletics website`);
+      setLink('teamRosterLink', teamConfig.rosterSiteUrl, `View official ${team.shortName} roster on their athletics website`);
     }
 
     const jsonLinkEl = document.getElementById('teamJsonLink');
@@ -1140,9 +1257,12 @@
 
     try {
       const res = await fetch(`${teamConfig.file}?t=${Date.now()}`);
+      if (token !== LOAD_TOKEN) return; // a newer selection took over
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      RAW_DATA = await res.json();
+      const data = await res.json();
+      if (token !== LOAD_TOKEN) return;
+      RAW_DATA = data;
 
       let rawList = [];
       if (RAW_DATA && Array.isArray(RAW_DATA.players)) {
@@ -1181,23 +1301,73 @@
 
       calculateRanks();
 
+      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
+      const status = RAW_DATA.status || 'ok';
+
+      // ── Non-Conf specific handling ────────────────────────────────────────
+      if (isNonConf) {
+        const stackUrl  = RAW_DATA.source_stats_url  || '';
+        const rosterUrl = RAW_DATA.source_roster_url || '';
+        const oppName   = (status === 'empty') ? '' : (RAW_DATA.team || '');
+
+        setLink('teamStatsLink',  stackUrl,  `View ${oppName || 'opponent'} stats on their athletics website`);
+        setLink('teamRosterLink', rosterUrl, `View ${oppName || 'opponent'} roster on their athletics website`);
+        setOpponentChip(oppName && oppName !== 'Non-Conf' ? oppName : '');
+
+        if (status === 'empty') {
+          document.getElementById('statusDot').className = 'status-dot warn';
+          document.getElementById('statusText').textContent = 'No opponent loaded';
+          document.getElementById('metaBar').innerHTML =
+            `<strong>Non-Conf ${genderLabel}</strong> · Waiting for an opponent link`;
+          showTablePanel(`
+            <span class="empty-title">No Non-Conf ${genderLabel} opponent loaded</span>
+            ${esc(RAW_DATA.message || 'Add a stats link to load an opponent.')}
+            <br>
+            <span class="empty-steps">
+              GitHub → Actions → "Scrape Basketball Stats" → Run workflow<br>
+              Paste the opponent's stats link in the ${genderLabel} fields
+            </span>`);
+          return;
+        }
+
+        if (!PLAYERS.length) {
+          document.getElementById('statusDot').className = 'status-dot warn';
+          document.getElementById('statusText').textContent = '0 Players';
+          document.getElementById('metaBar').innerHTML =
+            `<strong>${esc(RAW_DATA.team || 'Non-Conf')}</strong> · Updated: ${updatedTime}`;
+          showTablePanel(`
+            <span class="empty-title">Couldn't read stats for ${esc(RAW_DATA.team || 'this opponent')}</span>
+            ${esc(RAW_DATA.message || 'Make sure the link is the opponent\'s basketball stats page.')}
+            ${stackUrl ? `<br><small>Link used: <a href="${esc(stackUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--team-accent)">${esc(stackUrl)}</a></small>` : ''}`);
+          return;
+        }
+
+        const styleNote = RAW_DATA.site_style ? ` · ${esc(RAW_DATA.site_style)}` : '';
+        document.getElementById('metaBar').innerHTML =
+          `<strong>${esc(RAW_DATA.team || 'Non-Conf')}</strong> · Non-Conf ${genderLabel} · Updated: ${updatedTime}${styleNote}`;
+      } else {
+        document.getElementById('metaBar').innerHTML =
+          `<strong>${esc(team.name)}</strong> · Updated: ${updatedTime}`;
+      }
+
       document.getElementById('statusDot').className = 'status-dot';
       document.getElementById('statusText').textContent = `${PLAYERS.length} Players`;
-
-      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
-      document.getElementById('metaBar').innerHTML =
-        `<strong>${team.name}</strong> · Updated: ${updatedTime}`;
 
       sortCol = null;
       renderTable();
     } catch (err) {
+      if (token !== LOAD_TOKEN) return;
+      PLAYERS = [];
       document.getElementById('statusDot').className = 'status-dot error';
       document.getElementById('statusText').textContent = 'Error';
-      document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="16" class="empty" style="color:#f87171">
-          Failed to load stats for ${team.name} (${teamConfig.file}).<br>
-          <small style="color:var(--text-muted)">Ensure the scraper has run and generated this file.</small>
-        </td></tr>`;
+
+      const hint = isNonConf
+        ? `The Non-Conf file hasn't been created yet. Run the GitHub workflow once and it will appear.`
+        : `Ensure the scraper has run and generated this file.`;
+
+      showTablePanel(`
+        <span style="color:#f87171">Failed to load stats for ${esc(team.name)} (${esc(teamConfig.file)}).</span><br>
+        <small style="color:var(--text-muted)">${hint}</small>`);
       document.getElementById('metaBar').textContent = `Error loading ${teamConfig.file}`;
     }
   }
@@ -1237,12 +1407,12 @@
     body.innerHTML = sorted.map(r => {
       const isHL = searchNum && String(r.number) === String(searchNum);
       const origIdx = PLAYERS.indexOf(r);
-      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
-        <td class="col-jersey">${r.number || '—'}</td>
-        <td class="col-pos">${r.position || '—'}</td>
-        <td class="col-yr">${r.year || '—'}</td>
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${esc(r.number)}">
+        <td class="col-jersey">${esc(r.number) || '—'}</td>
+        <td class="col-pos">${esc(r.position) || '—'}</td>
+        <td class="col-yr">${esc(r.year) || '—'}</td>
         <td class="col-player" title="Click to view stat card" onclick="displayPlayerCard(${origIdx})">${esc(r.name)}</td>
-        ${activeCols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
+        ${activeCols.map(c => `<td>${esc(r[c.key]) || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
   }
@@ -1276,12 +1446,15 @@
 
     const genderLabel = CURRENT_GENDER === 'women' ? "Women's" : "Men's";
     const modeLabel   = CURRENT_STAT_MODE === 'avg' ? "Game Averages" : "Season Totals";
+    const isNonConf   = !!TEAMS[CURRENT_TEAM].isNonConf;
+    const teamLabel   = (RAW_DATA && RAW_DATA.team) || TEAMS[CURRENT_TEAM].name;
+    const confTag     = isNonConf ? 'Non-Conf · ' : '';
 
     document.getElementById('spotJersey').textContent = player.number || '—';
     document.getElementById('spotYr').textContent  = player.year || '—';
     document.getElementById('spotPos').textContent = player.position || '—';
     document.getElementById('spotName').textContent = player.name || '—';
-    document.getElementById('spotSub').textContent  = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name} · ${genderLabel} Basketball (${modeLabel})`;
+    document.getElementById('spotSub').textContent  = `${confTag}${teamLabel} · ${genderLabel} Basketball (${modeLabel})`;
 
     const spotCols = STAT_CONFIGS[CURRENT_STAT_MODE].filter(c => !c.tableOnly);
     const grid = document.getElementById('spotStatGrid');
@@ -1294,7 +1467,7 @@
 
       return `<div class="stat-cell ${rankClass}">
         <span class="stat-key">${c.label} ${rankBadge}</span>
-        <span class="stat-val">${val}</span>
+        <span class="stat-val">${esc(val)}</span>
       </div>`;
     }).join('');
 
@@ -1338,7 +1511,8 @@
   }
 
   function esc(str) {
-    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(str === undefined || str === null ? '' : str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   // Initial load
