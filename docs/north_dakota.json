@@ -2,11 +2,9 @@
   "team": "North Dakota",
   "slug": "north_dakota",
   "gender": "men",
-  "generated_at": "2026-11-10T17:44:53Z",
-  "team_stats_status": "partial",
-  "team_stats_missing": [
-    "reb_margin"
-  ],
+  "generated_at": "2026-11-10T18:02:08Z",
+  "team_stats_status": "ok",
+  "team_stats_missing": [],
   "team_stats": {
     "ppg": "73.3",
     "scoring_margin": "-15.7",
@@ -17,7 +15,7 @@
     "ft_pct": ".753",
     "ft_per_game": "18.3",
     "reb_per_game": "32.0",
-    "reb_margin": "0.0",
+    "reb_margin": "-4.7",
     "ast_per_game": "9.7",
     "to_per_game": "10.0",
     "ast_to_ratio": "1.00",
