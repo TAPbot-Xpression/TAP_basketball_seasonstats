@@ -2,7 +2,7 @@
   "team": "North Dakota State",
   "slug": "north_dakota_state",
   "gender": "men",
-  "generated_at": "2026-11-11T14:14:55Z",
+  "generated_at": "2026-11-12T03:54:58Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
@@ -24,7 +24,7 @@
     "stl_per_game": "8.5",
     "blk_per_game": "1.8"
   },
-  "conference_team_stats_status": "selector_not_found",
+  "conference_team_stats_status": "no_games",
   "conference_team_stats_missing": [
     "ppg",
     "opp_ppg",
