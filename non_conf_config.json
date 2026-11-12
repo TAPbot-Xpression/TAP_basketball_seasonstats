@@ -1,8 +1,8 @@
 {
   "men": {
-    "name": "Macalester",
-    "stats_url": "https://athletics.macalester.edu/sports/mens-basketball/stats/2026-27",
-    "roster_url": "https://athletics.macalester.edu/sports/mens-basketball/roster?print=true"
+    "name": "SEMO",
+    "stats_url": "https://semoredhawks.com/sports/mens-basketball/stats/2026",
+    "roster_url": "https://semoredhawks.com/sports/mens-basketball/roster/print"
   },
   "women": {
     "name": "Central Michigan",
