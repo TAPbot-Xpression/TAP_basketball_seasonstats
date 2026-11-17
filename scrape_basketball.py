@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 scrape_basketball.py
 Unified Summit League Basketball player season stats and roster scraper (Men's & Women's)
@@ -6,8 +7,8 @@ plus flexible "Non-Conf" slots for any Sidearm opponent.
 JSON layout (identical for every team file, so Datalinq graphics can use one path):
     {
       "team": "St. Thomas",
-      "slug": "st_thomas_women",
-      "gender": "women",
+      "slug": "st_thomas_men",
+      "gender": "men",
       "generated_at": "...",
       "team_stats_status": "ok" | "partial" | "kept_previous" | "not_found" | "empty",
       "team_stats_missing": [],
@@ -28,25 +29,14 @@ Team stat keys (same order in both team_stats and conference_team_stats):
     ft_pct, ft_per_game, reb_per_game, reb_margin, ast_per_game, to_per_game,
     ast_to_ratio, pts_off_to, stl_per_game, blk_per_game
 
-Features:
-  - Pulls Opponent Points Per Game (opp_ppg) to track scoring defense across all teams.
-  - Section/Colgroup-Aware Team Stats Parser (Scoring, Shooting, Rebounding, Assists,
-    Turnovers, Steals, Blocks) for New Style (Nuxt 3) and Old Style (Sidearm classic) tables.
-  - Conference-only team stats:
-      * New Style: opens the stats page, switches the split dropdown to "Conference",
-        VERIFIES the dropdown now reads "Conference", then parses the same table structure.
-      * Old Style: no Conference-only view found yet -> status "not_available_old_style".
-      * Safety checks: unconfirmed selection, or numbers identical to Overall, are rejected.
-      * Before conference play starts the table is empty -> status "no_games" with zeros.
-  - Margins are written without a "+" for positive values ("5.5") and with "-" for negatives ("-3.2").
-  - Multi-Row Table Header Resolver for Old Style HTML player tables.
-  - Season totals and per-game averages for every player.
-  - Universal normalization: counting stats -> "0", averages -> "0.0", percentages -> ".000".
-  - Position (G/F/W) and class (FR/SO/JR/SR/GR/R-*) standardization.
-  - Non-Conf slots for Men's and Women's driven by non_conf_config.json.
-  - Safety: empty scrapes never overwrite good existing data.
-  - Async Playwright with concurrency = 5.
+Updates applied:
+  - Suffix formatting fix (handles 'Williams, Jr., Fontaine' -> 'Fontaine Williams, Jr.').
+  - All Men's team output JSON files now end with '_men.json' (e.g. st_thomas_men.json, non_conf_men.json).
+  - Winger (W), Guard (G), Forward (F) normalization.
+  - Ordinal academic year normalization (1st, 2nd, 3rd, 4th, 5th -> FR, SO, JR, SR, GR).
 """
+
+from __future__ import annotations
 
 import asyncio
 import difflib
@@ -57,8 +47,9 @@ import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright, BrowserContext, Page
+from playwright.async_api import BrowserContext, Page, async_playwright
 
 logging.basicConfig(
     level=logging.INFO,
@@ -69,64 +60,62 @@ logger = logging.getLogger(__name__)
 CONCURRENCY_LIMIT = 5
 MIN_ROSTER_ENTRIES = 8
 NON_CONF_CONFIG_PATH = "non_conf_config.json"
-NON_CONF_SLUGS = {"men": "non_conf", "women": "non_conf_women"}
+NON_CONF_SLUGS = {"men": "non_conf_men", "women": "non_conf_women"}
 
-# Matches the dropdown option / selected label "Conference" (but NOT "Non-Conference")
 CONF_OPTION_RE = re.compile(r"^\s*conference(\s+only)?\s*$", re.I)
 
-# Conference statuses where we fall back to the last good conference_team_stats (if any)
 CONF_KEEP_PREVIOUS_ON = {
     "no_games", "selector_not_found", "not_confirmed",
     "unverified_same_as_overall", "error", "not_found",
 }
 
-# ── Summit League Men's Basketball Configuration ──────────────────────────────
+# ── Summit League Men's Basketball Configuration (_men slugs) ─────────────────
 MENS_TEAMS_CONFIG = [
     {
         "name": "Kansas City",
-        "slug": "kansas_city",
+        "slug": "kansas_city_men",
         "stats_url": "https://kcroos.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://kcroos.com/sports/mens-basketball/roster/print/2026-27",
     },
     {
         "name": "North Dakota",
-        "slug": "north_dakota",
+        "slug": "north_dakota_men",
         "stats_url": "https://fightinghawks.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://fightinghawks.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "North Dakota State",
-        "slug": "north_dakota_state",
+        "slug": "north_dakota_state_men",
         "stats_url": "https://gobison.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://gobison.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "Omaha",
-        "slug": "omaha",
+        "slug": "omaha_men",
         "stats_url": "https://omahamavs.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://omahamavs.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "Oral Roberts",
-        "slug": "oral_roberts",
+        "slug": "oral_roberts_men",
         "stats_url": "https://oruathletics.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://oruathletics.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "South Dakota",
-        "slug": "south_dakota",
+        "slug": "south_dakota_men",
         "stats_url": "https://goyotes.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://goyotes.com/sports/mens-basketball/roster?print=true",
     },
     {
         "name": "South Dakota State",
-        "slug": "south_dakota_state",
+        "slug": "south_dakota_state_men",
         "stats_url": "https://gojacks.com/sports/mens-basketball/stats/2026-27",
         "roster_url": "https://gojacks.com/sports/mens-basketball/roster/print",
     },
     {
         "name": "St. Thomas",
-        "slug": "st_thomas",
+        "slug": "st_thomas_men",
         "stats_url": "https://tommiesports.com/sports/mbball/stats/2026-27",
         "roster_url": "https://tommiesports.com/sports/mbball/roster/print",
     },
@@ -150,7 +139,7 @@ WOMENS_TEAMS_CONFIG = [
         "name": "North Dakota State",
         "slug": "north_dakota_state_women",
         "stats_url": "https://gobison.com/sports/womens-basketball/stats/2026-27",
-        "roster_url": "https://gobison.com/sports/womens-basketball/roster/print/2026-27",
+        "roster_url": "https://gobison.com/sports/womens-basketball/roster/print",
     },
     {
         "name": "Omaha",
@@ -202,9 +191,9 @@ STAFF_KEYWORDS = [
     "communications", "compliance", "academic", "marketing"
 ]
 
+_SUFFIX_SET = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v"}
+
 # ── Team Stats Definition ─────────────────────────────────────────────────────
-# (json_key, kind, [global label aliases])
-# kind: pct -> ".445" | avg -> "72.5" | margin -> "5.5" or "-3.2" | ratio -> "1.25" | int -> "12"
 TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
     ("ppg", "avg", [
         "Points Per Game", "Pts Per Game", "Points/Game", "PPG", "Scoring Offense", "Points per game"]),
@@ -250,11 +239,8 @@ TEAM_STAT_SPECS: List[Tuple[str, str, List[str]]] = [
 TEAM_STAT_KEYS = [spec[0] for spec in TEAM_STAT_SPECS]
 TEAM_STAT_KIND = {spec[0]: spec[1] for spec in TEAM_STAT_SPECS}
 
-
 def _label_key(text: str) -> str:
-    """Normalizes a label for matching: 'Points Per Game:' -> 'pointspergame:'."""
     return re.sub(r"[^a-z0-9%/:]", "", (text or "").lower())
-
 
 _LABEL_LOOKUP: Dict[str, str] = {}
 for _key, _kind, _aliases in TEAM_STAT_SPECS:
@@ -263,19 +249,14 @@ for _key, _kind, _aliases in TEAM_STAT_SPECS:
 
 _NUM_RE = re.compile(r"^[+\-]?\d*\.?\d+%?$")
 
-
 def _num_text(s: str) -> Optional[str]:
-    """Returns the cleaned numeric text if s is a number (supports +/-/% and unicode minus), else None."""
     if s is None:
         return None
     t = str(s).strip().replace("\u2212", "-").replace("\u2013", "-").replace(",", "")
     return t if t and _NUM_RE.match(t) else None
 
-
 # ── Non-Conf Config Helpers ───────────────────────────────────────────────────
-
 def load_non_conf_config() -> Dict[str, Dict[str, str]]:
-    """Reads non_conf_config.json. Missing/invalid file means both slots are empty."""
     cfg = {g: {"name": "", "stats_url": "", "roster_url": ""} for g in ("men", "women")}
     try:
         with open(NON_CONF_CONFIG_PATH, encoding="utf-8") as f:
@@ -291,9 +272,7 @@ def load_non_conf_config() -> Dict[str, Dict[str, str]]:
         logger.error(f"Could not read {NON_CONF_CONFIG_PATH}: {e}")
     return cfg
 
-
 def derive_roster_candidates(stats_url: str) -> List[str]:
-    """Builds likely print-roster URLs from a Sidearm stats URL."""
     base = stats_url.strip().split("#")[0].split("?")[0].rstrip("/")
     m = re.match(r"^(.*?)/stats(?:/(\d{4}-\d{2}))?$", base)
     if not m:
@@ -315,9 +294,7 @@ def derive_roster_candidates(stats_url: str) -> List[str]:
             unique.append(c)
     return unique
 
-
 def detect_team_name(html: Optional[str], url: str) -> str:
-    """Best-effort team name: og:site_name -> <title> -> domain."""
     host = urlparse(url).netloc.lower().replace("www.", "")
 
     def tidy(text: str) -> str:
@@ -341,9 +318,7 @@ def detect_team_name(html: Optional[str], url: str) -> str:
             pass
     return host or "Non-Conf Opponent"
 
-
 # ── Async Playwright Fetchers ─────────────────────────────────────────────────
-
 async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
     page: Optional[Page] = None
     try:
@@ -364,9 +339,7 @@ async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
         if page:
             await page.close()
 
-
 async def _combo_text(box: Any) -> str:
-    """Returns the currently selected label of a Sidearm combobox button (e.g. 'Overall', 'Conference')."""
     try:
         sel = box.locator(".s-select__selected-option__text")
         if await sel.count() > 0:
@@ -375,13 +348,7 @@ async def _combo_text(box: Any) -> str:
     except Exception:
         return ""
 
-
 async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Optional[str], str]:
-    """
-    New Style (Nuxt) stats pages only.
-    Opens the stats page, switches the split dropdown to "Conference", and VERIFIES the
-    dropdown now reads "Conference" before returning the page HTML.
-    """
     page: Optional[Page] = None
     try:
         page = await context.new_page()
@@ -397,7 +364,6 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
         if total == 0:
             return None, "selector_not_found"
 
-        # Try the "First Menu Options" dropdown first, then any others
         order: List[Tuple[int, int]] = []
         for i in range(total):
             label = (await combos.nth(i).get_attribute("aria-label")) or ""
@@ -448,11 +414,8 @@ async def fetch_conference_html(context: BrowserContext, url: str) -> Tuple[Opti
         if page:
             await page.close()
 
-
 # ── Normalization & Cleaning Helpers ──────────────────────────────────────────
-
 def clean_stat_int(val: Any) -> str:
-    """Counting stats (gp, gs, min, pts, off_reb, def_reb, tot_reb, ast, to, stl, blk) -> '0', '12'."""
     if val is None:
         return "0"
     s = str(val).strip()
@@ -465,9 +428,7 @@ def clean_stat_int(val: Any) -> str:
         m = re.match(r"^(\d+)", s)
         return m.group(1) if m else "0"
 
-
 def clean_stat_float(val: Any) -> str:
-    """Average stats -> '0.0', '5.5'."""
     if val is None:
         return "0.0"
     s = str(val).strip()
@@ -478,9 +439,7 @@ def clean_stat_float(val: Any) -> str:
     except Exception:
         return "0.0"
 
-
 def clean_stat_pct(val: Any) -> str:
-    """Percentages -> '.000', '.455', '1.000'."""
     if val is None:
         return ".000"
     s = str(val).strip().replace("%", "")
@@ -499,9 +458,7 @@ def clean_stat_pct(val: Any) -> str:
     except Exception:
         return ".000"
 
-
 def clean_stat_margin(val: Any) -> str:
-    """Margins drop the '+' and keep the '-': '5.5', '-3.2', '0.0'."""
     t = _num_text(val) if val is not None else None
     if t is None:
         return "0.0"
@@ -511,9 +468,7 @@ def clean_stat_margin(val: Any) -> str:
     except Exception:
         return "0.0"
 
-
 def clean_stat_ratio(val: Any) -> str:
-    """AST/TO ratio -> '1.25'."""
     t = _num_text(val) if val is not None else None
     if t is None:
         return "0.00"
@@ -521,7 +476,6 @@ def clean_stat_ratio(val: Any) -> str:
         return f"{float(t):.2f}"
     except Exception:
         return "0.00"
-
 
 def format_team_stat(key: str, raw: Optional[str]) -> str:
     kind = TEAM_STAT_KIND[key]
@@ -535,8 +489,11 @@ def format_team_stat(key: str, raw: Optional[str]) -> str:
         return clean_stat_int(raw)
     return clean_stat_float(raw)
 
-
 def clean_name(raw_name: str) -> str:
+    """
+    Cleans player names and ensures suffixes (Jr., Sr., III, etc.) stay at the end.
+    Example: 'Williams, Jr., Fontaine' -> 'Fontaine Williams, Jr.'
+    """
     if not raw_name:
         return ""
 
@@ -555,23 +512,29 @@ def clean_name(raw_name: str) -> str:
     text = text.strip().rstrip(",").strip()
 
     if "," in text:
-        parts = [p.strip() for p in text.split(",", 1)]
-        p1 = re.sub(r"\b\d{1,2}\b", "", parts[0]).strip()
-        p2 = re.sub(r"\b\d{1,2}\b", "", parts[1]).strip() if len(parts) > 1 else ""
+        raw_parts = [re.sub(r"\b\d{1,2}\b", "", p).strip() for p in text.split(",") if p.strip()]
+        last_name = raw_parts[0]
+        first_name = ""
+        suffix = ""
 
-        p1_words = p1.split()
-        p2_words = p2.split()
+        remaining = raw_parts[1:]
+        non_suffix = []
+        for p in remaining:
+            if p.lower() in _SUFFIX_SET or re.sub(r"[^a-z]", "", p.lower()) in {"jr", "sr", "ii", "iii", "iv", "v"}:
+                suffix = p
+            else:
+                non_suffix.append(p)
 
-        if len(p1_words) >= 2 and len(p2_words) == 1 and p1_words[0].lower() == p2_words[0].lower():
-            text = p1
-        elif len(p2_words) >= 2 and len(p1_words) >= 1 and p2_words[-1].lower() == p1_words[-1].lower():
-            text = p2
-        elif p1.lower() == p2.lower():
-            text = p1
-        elif p1 and p2:
-            text = f"{p2} {p1}"
+        first_name = " ".join(non_suffix).strip()
+
+        if first_name and last_name:
+            if suffix:
+                clean_suf = suffix if suffix.endswith(".") or suffix.upper() in {"II", "III", "IV", "V"} else f"{suffix}."
+                text = f"{first_name} {last_name}, {clean_suf.title() if clean_suf.lower().startswith('j') or clean_suf.lower().startswith('s') else clean_suf.upper()}"
+            else:
+                text = f"{first_name} {last_name}"
         else:
-            text = p2 or p1
+            text = first_name or last_name
 
     text = re.sub(r"\b\d{1,2}\b", "", text)
     text = " ".join(text.split()).strip()
@@ -582,7 +545,6 @@ def clean_name(raw_name: str) -> str:
         text = " ".join(words[:half])
 
     return text
-
 
 def clean_number(raw_num: Any) -> str:
     if raw_num is None:
@@ -595,7 +557,6 @@ def clean_number(raw_num: Any) -> str:
         return ""
     return str(int(m.group(1)))
 
-
 def normalize_position(pos_str: str) -> str:
     if not pos_str:
         return ""
@@ -607,7 +568,6 @@ def normalize_position(pos_str: str) -> str:
     if re.fullmatch(r"(F|C|SF|PF|FORWARD|CENTER)(\s*/\s*\w+)?", p):
         return "F"
     return ""
-
 
 _CLASS_MAP = {
     # Freshman / 1st Year
@@ -632,7 +592,6 @@ _CLASS_MAP = {
     "5TH": "GR", "5THYEAR": "GR", "5": "GR",
 }
 
-
 def normalize_year(yr_str: str) -> str:
     if not yr_str:
         return ""
@@ -652,7 +611,6 @@ def normalize_year(yr_str: str) -> str:
                 return f"R-{base}" if base != "GR" else "GR"
 
     return ""
-
 
 def is_valid_player_name(name: str) -> bool:
     if not name or len(name.strip()) < 2:
@@ -682,11 +640,9 @@ def is_valid_player_name(name: str) -> bool:
 
     return True
 
-
 def strip_suffixes(name: str) -> str:
     cleaned = re.sub(r"\b(jr\.?|sr\.?|iii|iv|ii)\b", "", name.lower()).strip()
     return re.sub(r"\s+", " ", cleaned)
-
 
 def find_roster_entry(
     name: str,
@@ -734,15 +690,8 @@ def find_roster_entry(
 
     return None
 
-
 # ── Section / Colgroup Aware Team Stats Parser ───────────────────────────────
-
 def parse_team_stats(html: str) -> Dict[str, str]:
-    """
-    Parses team stats using section/colgroup context (Scoring, Shooting, Rebounding,
-    Assists, Turnovers, Steals, Blocks) as well as direct label aliases.
-    Pulls both team values and Opponent Points Per Game (opp_ppg).
-    """
     found: Dict[str, str] = {}
     soup = BeautifulSoup(html, "html.parser")
 
@@ -769,7 +718,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
         overall_idx: Optional[int] = None
         opp_idx: Optional[int] = None
 
-        # Check for header row that names columns (e.g. St. Thomas (MN), Opponents)
         for tr in table.find_all("tr"):
             th_cells = tr.find_all(["th", "td"])
             if th_cells:
@@ -783,7 +731,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
                     break
 
         for tr in table.find_all("tr"):
-            # Section divider / colgroup header row
             section_cell = tr.find(["th", "td"], attrs={"scope": re.compile(r"colgroup", re.I)}) or \
                            tr.find(["th", "td"], attrs={"id": re.compile(r"^team-(scoring|shooting|rebounding|assists|turnovers|steals|blocks)", re.I)})
 
@@ -804,7 +751,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
             first_cell_text = cell_texts[0].strip()
             label_norm = _label_key(first_cell_text)
 
-            # Team value: 'Overall' column if header identified, else first numeric cell after label
             val: Optional[str] = None
             if overall_idx is not None and overall_idx < len(cell_texts):
                 val = _num_text(cell_texts[overall_idx])
@@ -817,7 +763,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
             if val is None:
                 continue
 
-            # Opponent value (if available in row)
             opp_val: Optional[str] = None
             if opp_idx is not None and opp_idx < len(cell_texts):
                 opp_val = _num_text(cell_texts[opp_idx])
@@ -826,7 +771,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
 
             matched_key: Optional[str] = None
 
-            # 1. Section-aware contextual matching
             if current_section == "scoring":
                 if "pointspergame" in label_norm or "ppg" in label_norm or label_norm == "pergame":
                     matched_key = "ppg"
@@ -878,7 +822,6 @@ def parse_team_stats(html: str) -> Dict[str, str]:
                     elif "pergame" in label_norm or "/g" in label_norm:
                         matched_key = "ft_per_game"
 
-            # 2. Global direct alias lookup fallback
             if not matched_key:
                 matched_key = _LABEL_LOOKUP.get(label_norm)
 
@@ -887,20 +830,13 @@ def parse_team_stats(html: str) -> Dict[str, str]:
 
     return found
 
-
 def build_team_stats(found: Dict[str, str]) -> Dict[str, str]:
-    """Formats parsed values in fixed key order. Missing values use standard zero format."""
     return {key: format_team_stat(key, found.get(key)) for key in TEAM_STAT_KEYS}
-
 
 def empty_team_stats() -> Dict[str, str]:
     return build_team_stats({})
 
-
 def classify_conference_stats(conf: Dict[str, str], overall: Dict[str, str]) -> str:
-    """
-    Decides whether parsed Conference stats can be trusted.
-    """
     if not conf:
         return "no_games"
 
@@ -919,9 +855,7 @@ def classify_conference_stats(conf: Dict[str, str], overall: Dict[str, str]) -> 
 
     return "ok" if len(conf) == len(TEAM_STAT_KEYS) else "partial"
 
-
 # ── Roster & Stats Parsers ────────────────────────────────────────────────────
-
 def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
     roster_lookup: Dict[str, Dict[str, str]] = {}
     patterns = [
@@ -984,7 +918,6 @@ def parse_nuxt_roster_data(html: str) -> Dict[str, Dict[str, str]]:
             break
 
     return roster_lookup
-
 
 def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
     roster_lookup = parse_nuxt_roster_data(html)
@@ -1064,9 +997,7 @@ def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
 
     return roster_lookup
 
-
 def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
-    """Parses Sidearm Nuxt JSON payloads (__NUXT_DATA__) for player stats on New Style layouts."""
     players = []
     patterns = [
         r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>',
@@ -1168,7 +1099,6 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
                 blk = find_stat(item, ["blocks", "blk", "totalBlocks", "blocksTotal"])
                 blk_avg = find_stat(item, ["blocksPerGame", "blk_avg", "bpg", "blkPerGame", "blocks_per_game", "blocksAvg"])
 
-                # Calculated per-game fallbacks if missing
                 try:
                     gp_val = float(gp) if gp else 0.0
                     if gp_val > 0:
@@ -1230,12 +1160,7 @@ def parse_nuxt_data_stats(html: str) -> List[Dict[str, Any]]:
 
     return players
 
-
 def build_table_header_grid(thead: BeautifulSoup) -> Dict[int, str]:
-    """
-    Builds a true 2D column header map by simulating HTML table layout
-    with rowspan and colspan expansion across multi-row <thead> elements.
-    """
     rows = thead.find_all("tr")
     if not rows:
         return {}
@@ -1281,12 +1206,7 @@ def build_table_header_grid(thead: BeautifulSoup) -> Dict[int, str]:
 
     return col_headers
 
-
 def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
-    """
-    Parses Old Style Sidearm HTML stats pages into both Totals and Per-Game Averages.
-    Uses multi-row table header resolution to avoid column alignment bugs.
-    """
     players_by_key: Dict[str, Dict[str, Any]] = {}
     player_order: List[str] = []
 
@@ -1502,14 +1422,11 @@ def parse_old_style_html_table(soup: BeautifulSoup) -> List[Dict[str, Any]]:
 
     return result_list
 
-
 # ── Output Helpers ────────────────────────────────────────────────────────────
-
 def write_team_json(slug: str, team_data: Dict[str, Any]) -> None:
     for dest in [f"{slug}.json", os.path.join("docs", f"{slug}.json")]:
         with open(dest, "w", encoding="utf-8") as f:
-            json.dump(team_data, f, indent=2)  # no sort_keys: key order is part of the layout
-
+            json.dump(team_data, f, indent=2)
 
 def read_existing_json(slug: str) -> Dict[str, Any]:
     try:
@@ -1519,13 +1436,10 @@ def read_existing_json(slug: str) -> Dict[str, Any]:
     except Exception:
         return {}
 
-
 def now_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
-
 def write_empty_non_conf(gender: str) -> None:
-    """Placeholder for a Non-Conf slot with no link, so the site shows 'no opponent loaded'."""
     slug = NON_CONF_SLUGS[gender]
     write_team_json(slug, {
         "team": "Non-Conf",
@@ -1548,15 +1462,12 @@ def write_empty_non_conf(gender: str) -> None:
     })
     logger.info(f"Non-Conf ({gender}) slot is empty - wrote placeholder {slug}.json")
 
-
 # ── Execution Logic ───────────────────────────────────────────────────────────
-
 async def fetch_roster(
     context: BrowserContext,
     candidates: List[str],
     label: str
 ) -> Tuple[Dict[str, Dict[str, str]], str]:
-    """Tries each roster URL in order; returns the first with enough entries (or the best found)."""
     best_lookup: Dict[str, Dict[str, str]] = {}
     best_url = ""
 
@@ -1573,7 +1484,6 @@ async def fetch_roster(
 
     return best_lookup, best_url
 
-
 async def scrape_single_team(
     context: BrowserContext,
     team_cfg: Dict[str, Any],
@@ -1587,7 +1497,6 @@ async def scrape_single_team(
         gender_label = "Women's" if gender == "women" else "Men's"
         logger.info(f"Processing {label} ({gender_label})...")
 
-        # Stats page and roster page load in parallel
         stats_html, (roster_lookup, roster_used) = await asyncio.gather(
             fetch_page_html(context, team_cfg["stats_url"]),
             fetch_roster(context, team_cfg["roster_candidates"], label),
@@ -1596,7 +1505,6 @@ async def scrape_single_team(
         team_name = team_cfg["name"] or detect_team_name(stats_html, team_cfg["stats_url"])
         logger.info(f"  [{label}] Loaded {len(roster_lookup)} roster entries")
 
-        # ── Player stats: New Style (Nuxt JSON) first, then Old Style (HTML tables)
         stats_players: List[Dict[str, Any]] = []
         style = "none"
         if stats_html:
@@ -1611,7 +1519,6 @@ async def scrape_single_team(
 
         logger.info(f"  [{label}] Parsed {len(stats_players)} player stat lines - detected: {style}")
 
-        # ── Overall team stats (default view of the stats page)
         found_team = parse_team_stats(stats_html) if stats_html else {}
         team_stats = build_team_stats(found_team)
         missing = [k for k in TEAM_STAT_KEYS if k not in found_team]
@@ -1626,7 +1533,6 @@ async def scrape_single_team(
             + (f" - missing: {', '.join(missing)}" if missing else "")
         )
 
-        # ── Conference-only team stats
         conf_found: Dict[str, str] = {}
         if style.startswith("New Style"):
             conf_html, sel_status = await fetch_conference_html(context, team_cfg["stats_url"])
@@ -1640,7 +1546,6 @@ async def scrape_single_team(
         else:
             conf_status = "not_found"
 
-        # ── Merge player stats with roster info (each row starts with number)
         merged_players = []
         seen_names: set = set()
 
@@ -1688,7 +1593,6 @@ async def scrape_single_team(
         existing = read_existing_json(slug)
         same_source = (not is_non_conf) or existing.get("source_stats_url") == team_cfg["stats_url"]
 
-        # Keep the previous Overall team stats if this run could not read any
         if ts_status == "not_found" and same_source and existing.get("team_stats") \
                 and existing.get("team_stats_status") in ("ok", "partial", "kept_previous"):
             old_ts = existing["team_stats"]
@@ -1697,14 +1601,12 @@ async def scrape_single_team(
             ts_status = "kept_previous"
             logger.warning(f"  [{label}] Team stats not found - keeping previous team_stats")
 
-        # Conference team stats: use real values only for ok / partial / no_games (zeros)
         if conf_status in ("ok", "partial", "no_games"):
             conf_stats = build_team_stats(conf_found)
         else:
             conf_stats = empty_team_stats()
         conf_missing = [k for k in TEAM_STAT_KEYS if k not in conf_found]
 
-        # Fall back to the last good conference numbers if this run failed or came back empty
         prev_conf = existing.get("conference_team_stats")
         if conf_status in CONF_KEEP_PREVIOUS_ON and same_source and prev_conf \
                 and existing.get("conference_team_stats_status") in ("ok", "partial", "kept_previous"):
@@ -1718,7 +1620,6 @@ async def scrape_single_team(
             f"({len(conf_found)}/{len(TEAM_STAT_KEYS)} found)"
         )
 
-        # ── Assemble JSON: header metadata, OVERALL group, CONFERENCE group, then PLAYER group
         team_data: Dict[str, Any] = {
             "team": team_name,
             "slug": slug,
@@ -1747,7 +1648,6 @@ async def scrape_single_team(
         team_data["conference_team_stats"] = conf_stats
         team_data["players"] = merged_players
 
-        # Never overwrite good data with an empty player scrape
         if not merged_players:
             if existing.get("players") and same_source:
                 logger.warning(f"  [{label}] No players parsed - keeping existing {slug}.json")
@@ -1757,12 +1657,10 @@ async def scrape_single_team(
         write_team_json(slug, team_data)
         return team_data
 
-
 def build_non_conf_tasks(
     context: BrowserContext,
     semaphore: asyncio.Semaphore
 ) -> List[Any]:
-    """Creates scrape tasks for filled Non-Conf slots; writes placeholders for empty ones."""
     config = load_non_conf_config()
     tasks = []
 
@@ -1789,7 +1687,6 @@ def build_non_conf_tasks(
         tasks.append(scrape_single_team(context, team_cfg, gender, semaphore))
 
     return tasks
-
 
 async def run_scraper():
     os.makedirs("docs", exist_ok=True)
@@ -1834,10 +1731,8 @@ async def run_scraper():
     ok = len(results) - len(failures)
     logger.info(f"Done — {ok} of {len(results)} team scrapes completed in {elapsed:.1f} seconds!")
 
-
 def main():
     asyncio.run(run_scraper())
-
 
 if __name__ == "__main__":
     main()
