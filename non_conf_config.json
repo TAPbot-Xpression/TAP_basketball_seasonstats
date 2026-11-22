@@ -1,8 +1,8 @@
 {
   "men": {
-    "name": "SEMO",
-    "stats_url": "https://semoredhawks.com/sports/mens-basketball/stats/2026",
-    "roster_url": "https://semoredhawks.com/sports/mens-basketball/roster/print"
+    "name": "North Central",
+    "stats_url": "https://ncurams.com/sports/mens-basketball/stats",
+    "roster_url": "https://ncurams.com/sports/mens-basketball/roster?print=true"
   },
   "women": {
     "name": "Central Michigan",
