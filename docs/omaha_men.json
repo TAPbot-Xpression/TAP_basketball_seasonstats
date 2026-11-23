@@ -2,7 +2,7 @@
   "team": "Omaha",
   "slug": "omaha_men",
   "gender": "men",
-  "generated_at": "2026-11-22T09:39:41Z",
+  "generated_at": "2026-11-23T10:02:40Z",
   "team_stats_status": "ok",
   "team_stats_missing": [],
   "team_stats": {
@@ -24,7 +24,7 @@
     "stl_per_game": "6.7",
     "blk_per_game": "2.8"
   },
-  "conference_team_stats_status": "no_games",
+  "conference_team_stats_status": "selector_not_found",
   "conference_team_stats_missing": [
     "ppg",
     "opp_ppg",
